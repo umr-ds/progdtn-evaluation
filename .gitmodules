@@ -1,0 +1,4 @@
+[submodule "dtn7-go"]
+	path = dtn7-go
+	url = git@github.com:umr-ds/dtn7-go.git
+	branch = mmdr
