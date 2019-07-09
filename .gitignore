@@ -1,0 +1,10 @@
+Experiments/
+binary_files/
+.vscode/
+maci-docker-compose/
+*.pyc
+dotcore/plugins.conf
+dotcore/servers.conf
+dotcore/prefs.conf
+.idea/
+*.log
