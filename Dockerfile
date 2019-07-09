@@ -32,7 +32,7 @@ RUN wget -nv http://sys.cs.uos.de/bonnmotion/src/bonnmotion-3.0.1.zip \
 ### Setup core worker container
 FROM maciresearch/core_worker:0.3
 LABEL maintainer="hoechst@mathematik.uni-marburg.de"
-LABEL name="umrds/multi_mechanism_dtn_routing"
+LABEL name="umrds/dtn7-mmdr"
 LABEL version="0.1"
 
 # install dependencies 
@@ -44,25 +44,13 @@ RUN apt-get update \
     sysstat \
     tcpdump \
     openjdk-8-jre-headless \
-    python3-numpy \
     && apt-get clean
 
-# install local pyserval
-ADD pyserval /pyserval
-RUN python -m pip install /pyserval \
-    && python3 -m pip install /pyserval \
-    && python -m pip install pynacl \
-    && python3 -m pip install pynacl \
-    && rm -rf /root/.cache/pip/*
-
-# install core-serval integration
-COPY --from=dtn7-builder /dtn7-go/dtncat  /usr/local/sbin/dtncat
-COPY --from=dtn7-builder /dtn7-go/dtnd  /usr/local/sbin/dtnd
+# install core-dtn7 integration
+COPY --from=dtn7-builder /dtn7cat  /usr/local/sbin/dtn7cat
+COPY --from=dtn7-builder /dtn7d  /usr/local/sbin/dtn7d
 COPY dotcore /root/.core/
-ENV BASH_ENV /root/.serval
-RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf \
-    && echo 'export SERVALINSTANCE_PATH=$SESSION_DIR/`hostname`.conf' >> /root/.serval \
-    && echo 'export SERVALINSTANCE_PATH=$SESSION_DIR/`hostname`.conf' >> /root/.bashrc
+RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 
 # install BonnMotion
