@@ -32,12 +32,11 @@ nohup dtn7d {} &> dtn7d_run.log &\
 [core]
 store = "store_{node_name}"
 node-id = "dtn://{node_name}/"
-routing = "spray"
 
 [logging]
-level = "info"
+level = "debug"
 report-caller = false
-format = "json"
+format = "text"
 
 [discovery]
 ipv4 = true
@@ -50,4 +49,7 @@ listen = "127.0.0.1:8080"
 [[listen]]
 protocol = "mtcp"
 endpoint = ":35037"
+
+[routing]
+algorithm = "spray"
         '''.format(node_name=node.name)
