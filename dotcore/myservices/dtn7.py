@@ -32,6 +32,7 @@ nohup dtn7d {} &> dtn7d_run.log &\
 [core]
 store = "store_{node_name}"
 node-id = "dtn://{node_name}/"
+routing = "spray"
 
 [logging]
 level = "info"
