@@ -1,13 +1,3 @@
-### Build dtn7d dtn7cat
-FROM golang:1.11 AS dtn7-builder
-
-COPY dtn7-go /dtn7-go
-WORKDIR /dtn7-go
-RUN go build -o /dtn7cat ./cmd/dtncat \
-&& go build -o /dtn7d ./cmd/dtnd
-
-
-
 ### Build BonnMotion in seperate container
 FROM maciresearch/core_worker:0.3 as jdk_builder
 
@@ -26,6 +16,16 @@ RUN wget -nv http://sys.cs.uos.de/bonnmotion/src/bonnmotion-3.0.1.zip \
     && ./install \
     && mv /bonnmotion-3.0.1/bin/bm /usr/local/bin/ \
     && rm -rf bin/ src/ doc/ javadoc/ validate/ lib/*.txt install install.bat GPL
+
+
+
+### Build dtn7d dtn7cat
+FROM golang:1.11 AS dtn7-builder
+
+COPY dtn7-go /dtn7-go
+WORKDIR /dtn7-go
+RUN go build -o /dtn7cat ./cmd/dtncat \
+&& go build -o /dtn7d ./cmd/dtnd
 
 
 
