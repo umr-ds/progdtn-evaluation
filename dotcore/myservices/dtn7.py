@@ -51,5 +51,8 @@ protocol = "mtcp"
 endpoint = ":35037"
 
 [routing]
-algorithm = "binary_spray"
+algorithm = "spray"
+
+[routing.sprayconf]
+L = 4
         '''.format(node_name=node.name)
