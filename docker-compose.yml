@@ -1,17 +1,19 @@
 version: "3"
-services: 
+services:
     core:
         build:
             context: .
             dockerfile: Dockerfile
         volumes:
             - /lib/modules:/lib/modules
+            - /tmp/.X11-unix:/tmp/.X11-unix
             - ./dotcore:/root/.core
             - .:/dtn_routing
         tty: true
         privileged: true
         cap_add:
             - NET_ADMIN
+            - SYS_ADMIN
         tmpfs:
             - /tmp:exec,mode=777,size=200G
         environment:
@@ -19,19 +21,3 @@ services:
             - DISPLAY
             - BACKEND
             - ALGORITHMS
-    builder:
-        build:
-            context: .
-            dockerfile: builder.Dockerfile
-        volumes:
-            - /lib/modules:/lib/modules
-            - ./dtn7-go:/dtn7-go
-        tty: true
-        privileged: true
-        cap_add:
-            - NET_ADMIN
-        tmpfs:
-            - /tmp:exec,mode=777,size=200G
-        environment:
-            - CORE_PARAMS=/dtn_routing/scenarios/default.imn
-            - DISPLAY
