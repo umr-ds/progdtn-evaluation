@@ -51,8 +51,10 @@ protocol = "mtcp"
 endpoint = ":35037"
 
 [routing]
-algorithm = "spray"
+algorithm = "dtlsr"
 
-[routing.sprayconf]
-L = 4
+[routing.dtlsrconf]
+recomputetime = "30s"
+broadcasttime = "30s"
+purgetime = "1m"
         '''.format(node_name=node.name)
