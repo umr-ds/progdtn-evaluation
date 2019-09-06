@@ -53,8 +53,11 @@ endpoint = ":35037"
 [routing]
 algorithm = "dtlsr"
 
+[routing.sprayconf]
+multiplicity = 10
+
 [routing.dtlsrconf]
 recomputetime = "30s"
 broadcasttime = "30s"
-purgetime = "1m"
+purgetime = "10m"
         '''.format(node_name=node.name)
