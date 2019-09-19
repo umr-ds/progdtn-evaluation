@@ -51,7 +51,7 @@ protocol = "mtcp"
 endpoint = ":35037"
 
 [routing]
-algorithm = "dtlsr"
+algorithm = "prophet"
 
 [routing.sprayconf]
 multiplicity = 10
@@ -60,4 +60,10 @@ multiplicity = 10
 recomputetime = "30s"
 broadcasttime = "30s"
 purgetime = "10m"
+
+[routing.prophetconf]
+pinit = 0.75
+beta = 0.25
+gamma = 0.98
+ageinterval = "30s"
         '''.format(node_name=node.name)
