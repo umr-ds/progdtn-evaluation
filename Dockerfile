@@ -1,5 +1,5 @@
 ### Build BonnMotion in seperate container
-FROM maciresearch/core_worker:0.3 as jdk_builder
+FROM maciresearch/core_worker:0.5.1 as jdk_builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends\
@@ -30,10 +30,10 @@ RUN go build -o /dtn7cat ./cmd/dtncat \
 
 
 ### Setup core worker container
-FROM maciresearch/core_worker:0.3
+FROM maciresearch/core_worker:0.5.1
 LABEL maintainer="hoechst@mathematik.uni-marburg.de"
 LABEL name="umrds/dtn7-mmdr"
-LABEL version="0.1"
+LABEL version="0.2.1"
 
 # install dependencies 
 RUN apt-get update \
