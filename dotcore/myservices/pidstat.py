@@ -1,5 +1,4 @@
-from core.service import CoreService
-from core.service import ServiceMode
+from core.services.coreservices import CoreService, ServiceMode
 
 class PidstatService(CoreService):
     name = "pidstat"
