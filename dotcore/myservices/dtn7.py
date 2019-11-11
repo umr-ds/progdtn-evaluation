@@ -1,4 +1,4 @@
-from core.service import CoreService, ServiceMode
+from core.services.coreservices import CoreService, ServiceMode
 
 
 class Dtn7Service(CoreService):
@@ -12,9 +12,7 @@ class Dtn7Service(CoreService):
 
     configs = ("dtn7d.toml", )
 
-    startup = ('bash -c "\
-nohup dtn7d {} &> dtn7d_run.log &\
-"'.format(configs[0]), )
+    startup = (f'bash -c "nohup dtn7d {configs[0]} &> dtn7d_run.log &"', )
 
     validate = ('bash -c "ps -C dtn7d"', )      # ps -C returns 0 if the process is found, 1 if not.
 
@@ -28,10 +26,10 @@ nohup dtn7d {} &> dtn7d_run.log &\
 
     @classmethod
     def generate_config(cls, node, filename):
-        return '''
+        return f'''
 [core]
-store = "store_{node_name}"
-node-id = "dtn://{node_name}/"
+store = "store_{node.name}"
+node-id = "dtn://{node.name}/"
 
 [logging]
 level = "debug"
@@ -43,7 +41,7 @@ ipv4 = true
 interval = 2
 
 [simple-rest]
-node = "dtn://{node_name}/"
+node = "dtn://{node.name}/"
 listen = "127.0.0.1:8080"
 
 [[listen]]
@@ -66,4 +64,4 @@ pinit = 0.75
 beta = 0.25
 gamma = 0.98
 ageinterval = "30s"
-        '''.format(node_name=node.name)
+        '''
