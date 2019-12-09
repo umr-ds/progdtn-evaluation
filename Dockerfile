@@ -31,15 +31,16 @@ RUN go build -o /dtn7cat ./cmd/dtncat \
 
 ### Setup core worker container
 FROM maciresearch/core_worker:0.5.1
-LABEL maintainer="hoechst@mathematik.uni-marburg.de"
-LABEL name="umrds/dtn7-mmdr"
-LABEL version="0.2.1"
+LABEL maintainer="msommer@informatik.uni-marburg.de"
+LABEL name="umrds/cadr-evaluation"
+LABEL version="0.3"
 
 # install dependencies 
 RUN apt-get update \
     && apt-get install -y \
     python-pip \
     python3-pip \
+    python3-requests \
     bwm-ng \
     sysstat \
     tcpdump \
@@ -47,8 +48,9 @@ RUN apt-get update \
     && apt-get clean
 
 # install core-dtn7 integration
-COPY --from=dtn7-builder /dtn7cat  /usr/local/sbin/dtn7cat
-COPY --from=dtn7-builder /dtn7d  /usr/local/sbin/dtn7d
+COPY --from=dtn7-builder /dtn7cat /usr/local/sbin/dtn7cat
+COPY --from=dtn7-builder /dtn7d /usr/local/sbin/dtn7d
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnclient.py /usr/local/sbin/dtnclient
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 

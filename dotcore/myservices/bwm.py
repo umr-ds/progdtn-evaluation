@@ -1,5 +1,6 @@
 from core.services.coreservices import CoreService, ServiceMode
 
+
 class BWMService(CoreService):
     name = "bwm-ng"
     group = "Logging"

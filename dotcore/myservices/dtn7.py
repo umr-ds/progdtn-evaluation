@@ -6,11 +6,11 @@ class Dtn7Service(CoreService):
 
     group = "DTN"
 
-    executables = ("dtn7d", "dtn7cat", )
+    executables = ("dtn7d", "dtn7cat", "dtnclient")
 
     dependencies = ("bwm-ng", "pidstat")
 
-    configs = ("dtn7d.toml", )
+    configs = ("dtn7d.toml", "config.js")
 
     startup = (f'bash -c "nohup dtn7d {configs[0]} &> dtn7d_run.log &"', )
 
@@ -26,7 +26,8 @@ class Dtn7Service(CoreService):
 
     @classmethod
     def generate_config(cls, node, filename):
-        return f'''
+        if filename == "dtn7d.toml":
+            return f'''
 [core]
 store = "store_{node.name}"
 node-id = "dtn://{node.name}/"
@@ -44,24 +45,21 @@ interval = 2
 node = "dtn://{node.name}/"
 listen = "127.0.0.1:8080"
 
+[context-rest]
+listen = "127.0.0.1:35038"
+
 [[listen]]
 protocol = "mtcp"
 endpoint = ":35037"
 
 [routing]
-algorithm = "prophet"
+algorithm = "context"
 
-[routing.sprayconf]
-multiplicity = 10
-
-[routing.dtlsrconf]
-recomputetime = "30s"
-broadcasttime = "30s"
-purgetime = "10m"
-
-[routing.prophetconf]
-pinit = 0.75
-beta = 0.25
-gamma = 0.98
-ageinterval = "30s"
-        '''
+[routing.contextconf]
+scriptpath = "{node.nodedir}/config.js"
+listenaddress = "127.0.0.1:35043"
+'''
+        elif filename == "config.js":
+            return """loggingFunc("JAVASCRIPT: This is a test");"""
+        else:
+            return ""

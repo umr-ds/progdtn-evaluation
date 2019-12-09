@@ -1,5 +1,6 @@
 from core.services.coreservices import CoreService, ServiceMode
 
+
 class PidstatService(CoreService):
     name = "pidstat"
     group = "Logging"
