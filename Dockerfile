@@ -50,7 +50,9 @@ RUN apt-get update \
 # install core-dtn7 integration
 COPY --from=dtn7-builder /dtn7cat /usr/local/sbin/dtn7cat
 COPY --from=dtn7-builder /dtn7d /usr/local/sbin/dtn7d
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnclient.py /usr/local/sbin/dtnclient
+COPY --from=dtn7-builder /dtn7-go/helpers/dtnclient.py /usr/local/sbin/dtnclient
+COPY --from=dtn7-builder /dtn7-go/helpers/context_generator.py /usr/local/sbin/context_generator
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context.js /root/context.js
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 

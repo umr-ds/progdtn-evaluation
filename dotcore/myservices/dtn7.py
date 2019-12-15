@@ -10,7 +10,7 @@ class Dtn7Service(CoreService):
 
     dependencies = ("bwm-ng", "pidstat")
 
-    configs = ("dtn7d.toml", "config.js")
+    configs = ("dtn7d.toml", "context.js")
 
     startup = (f'bash -c "nohup dtn7d {configs[0]} &> dtn7d_run.log &"', )
 
@@ -56,10 +56,12 @@ endpoint = ":35037"
 algorithm = "context"
 
 [routing.contextconf]
-scriptpath = "{node.nodedir}/config.js"
+scriptpath = "{node.nodedir}/context.js"
 listenaddress = "127.0.0.1:35043"
 '''
-        elif filename == "config.js":
-            return """loggingFunc("JAVASCRIPT: This is a test");"""
+        elif filename == "context.js":
+            with open("/root/context.js", "r") as f:
+                context = f.read()
+                return context
         else:
             return ""
