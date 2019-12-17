@@ -6,8 +6,8 @@ class ContextGeneratorService(CoreService):
 
     name = "ContextGenerator"
     executables = ("context_generator", )
-    dependencies = ("dtn7", )
-    startup = (f'bash -c "context_generator &> context.log &"', )
+    dependencies = ("DTN7", )
+    startup = ('bash -c "nohup context_generator &2>1 | tee context.log &"', )
 
     @classmethod
     def generate_config(cls, node, filename):
