@@ -20,12 +20,12 @@ RUN wget -nv http://sys.cs.uos.de/bonnmotion/src/bonnmotion-3.0.1.zip \
 
 
 ### Build dtn7d dtn7cat
-FROM golang:1.11 AS dtn7-builder
+FROM golang:1.13 AS dtn7-builder
 
 COPY dtn7-go /dtn7-go
 WORKDIR /dtn7-go
-RUN go build -o /dtn7cat ./cmd/dtncat \
-&& go build -o /dtn7d ./cmd/dtnd
+RUN go build -o /dtncat ./cmd/dtncat \
+&& go build -o /dtnd ./cmd/dtnd
 
 
 
@@ -33,7 +33,7 @@ RUN go build -o /dtn7cat ./cmd/dtncat \
 FROM maciresearch/core_worker:0.5.1
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
-LABEL version="0.3"
+LABEL version="0.4"
 
 # install dependencies 
 RUN apt-get update \
@@ -48,11 +48,11 @@ RUN apt-get update \
     && apt-get clean
 
 # install core-dtn7 integration
-COPY --from=dtn7-builder /dtn7cat /usr/local/sbin/dtn7cat
-COPY --from=dtn7-builder /dtn7d /usr/local/sbin/dtn7d
+COPY --from=dtn7-builder /dtncat /usr/local/sbin/dtncat
+COPY --from=dtn7-builder /dtnd /usr/local/sbin/dtnd
 COPY --from=dtn7-builder /dtn7-go/helpers/dtnclient.py /usr/local/sbin/dtnclient
 COPY --from=dtn7-builder /dtn7-go/helpers/context_generator.py /usr/local/sbin/context_generator
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context.js /root/context.js
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_data.js /root/context.js
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 

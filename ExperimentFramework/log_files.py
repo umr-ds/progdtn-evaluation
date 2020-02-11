@@ -1,4 +1,3 @@
-
 import os
 import shutil
 
@@ -7,7 +6,27 @@ import framework
 
 excluded_files = [
     #DTN7
-    "store_n"
+    "store_n",
+    # Serval
+    "blob",
+    "serval.log",
+    "keyring.dump",
+    "proc/",
+    "rhizome.db",
+    "serval.keyring",
+    # Forban
+    "forban/bin",
+    "forban/doc",
+    "forban/lib",
+    "forban/var/loot",
+    "forban/var/share",
+    "forban/cfg",
+    ".git",
+    "AUTHORS",
+    "FAQ",
+    "README",
+    # IBRDTN
+    "inbox"
 ]
 
 
