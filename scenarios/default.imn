@@ -1,156 +1,3 @@
-node n1 {
-    type router
-    model mobile
-    network-config {
-	hostname n1
-	!
-	interface eth0
-	 ipv6 address 2001:0::1/128
-	 ip address 10.0.0.1/24
-	!
-    }
-    canvas c1
-    iconcoords {144.0 75.0}
-    labelcoords {144.0 107.0}
-    interface-peer {eth0 n10}
-}
-
-node n2 {
-    type router
-    model mobile
-    network-config {
-	hostname n2
-	!
-	interface eth0
-	 ipv6 address 2001:0::6/128
-	 ip address 10.0.0.6/24
-	!
-    }
-    canvas c1
-    iconcoords {69.0 485.0}
-    labelcoords {69.0 517.0}
-    interface-peer {eth0 n10}
-}
-
-node n3 {
-    type router
-    model mobile
-    network-config {
-	hostname n3
-	!
-	interface eth0
-	 ipv6 address 2001:0::5/128
-	 ip address 10.0.0.5/24
-	!
-    }
-    canvas c1
-    iconcoords {258.0 491.0}
-    labelcoords {258.0 523.0}
-    interface-peer {eth0 n10}
-}
-
-node n4 {
-    type router
-    model mobile
-    network-config {
-	hostname n4
-	!
-	interface eth0
-	 ipv6 address 2001:0::4/128
-	 ip address 10.0.0.4/24
-	!
-    }
-    canvas c1
-    iconcoords {917.0 178.0}
-    labelcoords {917.0 210.0}
-    interface-peer {eth0 n10}
-}
-
-node n5 {
-    type router
-    model mobile
-    network-config {
-	hostname n5
-	!
-	interface eth0
-	 ipv6 address 2001:0::3/128
-	 ip address 10.0.0.3/24
-	!
-    }
-    canvas c1
-    iconcoords {920.0 274.0}
-    labelcoords {920.0 306.0}
-    interface-peer {eth0 n10}
-}
-
-node n6 {
-    type router
-    model mobile
-    network-config {
-	hostname n6
-	!
-	interface eth0
-	 ipv6 address 2001:0::2/128
-	 ip address 10.0.0.2/24
-	!
-    }
-    canvas c1
-    iconcoords {75.0 571.0}
-    labelcoords {75.0 603.0}
-    interface-peer {eth0 n10}
-}
-
-node n7 {
-    type router
-    model mobile
-    network-config {
-	hostname n7
-	!
-	interface eth0
-	 ipv6 address 2001:0::7/128
-	 ip address 10.0.0.7/24
-	!
-    }
-    canvas c1
-    iconcoords {815.0 235.0}
-    labelcoords {815.0 267.0}
-    interface-peer {eth0 n10}
-}
-
-node n8 {
-    type router
-    model mobile
-    network-config {
-	hostname n8
-	!
-	interface eth0
-	 ipv6 address 2001:0::8/128
-	 ip address 10.0.0.8/24
-	!
-    }
-    canvas c1
-    iconcoords {227.0 571.0}
-    labelcoords {227.0 603.0}
-    interface-peer {eth0 n10}
-}
-
-node n9 {
-    type router
-    model mobile
-    network-config {
-	hostname n9
-	!
-	interface eth0
-	 ipv6 address 2001:0::9/128
-	 ip address 10.0.0.9/24
-	!
-    }
-    canvas c1
-    iconcoords {190.0 434.0}
-    labelcoords {190.0 466.0}
-    interface-peer {eth0 n10}
-}
-
 node n10 {
     type wlan
     network-config {
@@ -180,14 +27,203 @@ node n10 {
     iconcoords {449.0 285.0}
     labelcoords {449.0 317.0}
     interface-peer {e0 n1}
-    interface-peer {e1 n6}
-    interface-peer {e2 n5}
+    interface-peer {e1 n2}
+    interface-peer {e2 n3}
     interface-peer {e3 n4}
-    interface-peer {e4 n3}
-    interface-peer {e5 n2}
+    interface-peer {e4 n5}
+    interface-peer {e5 n6}
     interface-peer {e6 n7}
     interface-peer {e7 n8}
     interface-peer {e8 n9}
+    interface-peer {e9 n11}
+    interface-peer {e10 n12}
+}
+
+node n1 {
+    type router
+    model sensor
+    network-config {
+	hostname n1
+	!
+	interface eth0
+	 ip address 10.0.0.1/24
+	 ipv6 address 2001:0::1/128
+	!
+    }
+    canvas c1
+    iconcoords {81.0 133.0}
+    labelcoords {81.0 165.0}
+    interface-peer {eth0 n10}
+}
+
+node n2 {
+    type router
+    model sensor
+    network-config {
+	hostname n2
+	!
+	interface eth0
+	 ip address 10.0.0.2/24
+	 ipv6 address 2001:0::2/128
+	!
+    }
+    canvas c1
+    iconcoords {203.0 76.0}
+    labelcoords {203.0 108.0}
+    interface-peer {eth0 n10}
+}
+
+node n3 {
+    type router
+    model sensor
+    network-config {
+	hostname n3
+	!
+	interface eth0
+	 ip address 10.0.0.3/24
+	 ipv6 address 2001:0::3/128
+	!
+    }
+    canvas c1
+    iconcoords {199.0 183.0}
+    labelcoords {199.0 215.0}
+    interface-peer {eth0 n10}
+}
+
+node n4 {
+    type router
+    model sensor
+    network-config {
+	hostname n4
+	!
+	interface eth0
+	 ip address 10.0.0.4/24
+	 ipv6 address 2001:0::4/128
+	!
+    }
+    canvas c1
+    iconcoords {165.0 581.0}
+    labelcoords {165.0 613.0}
+    interface-peer {eth0 n10}
+}
+
+node n5 {
+    type router
+    model sensor
+    network-config {
+	hostname n5
+	!
+	interface eth0
+	 ip address 10.0.0.5/24
+	 ipv6 address 2001:0::5/128
+	!
+    }
+    canvas c1
+    iconcoords {560.0 647.0}
+    labelcoords {560.0 679.0}
+    interface-peer {eth0 n10}
+}
+
+node n6 {
+    type router
+    model sensor
+    network-config {
+	hostname n6
+	!
+	interface eth0
+	 ip address 10.0.0.6/24
+	 ipv6 address 2001:0::6/128
+	!
+    }
+    canvas c1
+    iconcoords {736.0 595.0}
+    labelcoords {736.0 627.0}
+    interface-peer {eth0 n10}
+}
+
+node n7 {
+    type router
+    model backbone
+    network-config {
+	hostname n7
+	!
+	interface eth0
+	 ip address 10.0.0.7/24
+	 ipv6 address 2001:0::7/128
+	!
+    }
+    canvas c1
+    iconcoords {584.0 540.0}
+    labelcoords {584.0 572.0}
+    interface-peer {eth0 n10}
+}
+
+node n8 {
+    type router
+    model backbone
+    network-config {
+	hostname n8
+	!
+	interface eth0
+	 ip address 10.0.0.8/24
+	 ipv6 address 2001:0::8/128
+	!
+    }
+    canvas c1
+    iconcoords {445.0 530.0}
+    labelcoords {445.0 562.0}
+    interface-peer {eth0 n10}
+}
+
+node n9 {
+    type router
+    model backbone
+    network-config {
+	hostname n9
+	!
+	interface eth0
+	 ip address 10.0.0.9/24
+	 ipv6 address 2001:0::9/128
+	!
+    }
+    canvas c1
+    iconcoords {307.0 509.0}
+    labelcoords {307.0 541.0}
+    interface-peer {eth0 n10}
+}
+
+node n11 {
+    type router
+    model visitor
+    network-config {
+	hostname n11
+	!
+	interface eth0
+	 ip address 10.0.0.10/24
+	 ipv6 address 2001:0::10/128
+	!
+    }
+    canvas c1
+    iconcoords {625.0 57.0}
+    labelcoords {625.0 89.0}
+    interface-peer {eth0 n10}
+}
+
+node n12 {
+    type router
+    model visitor
+    network-config {
+	hostname n12
+	!
+	interface eth0
+	 ip address 10.0.0.11/24
+	 ipv6 address 2001:0::11/128
+	!
+    }
+    canvas c1
+    iconcoords {856.0 359.0}
+    labelcoords {856.0 391.0}
+    interface-peer {eth0 n10}
 }
 
 link l1 {
@@ -195,11 +231,11 @@ link l1 {
 }
 
 link l2 {
-    nodes {n10 n6}
+    nodes {n10 n2}
 }
 
 link l3 {
-    nodes {n10 n5}
+    nodes {n10 n3}
 }
 
 link l4 {
@@ -207,11 +243,11 @@ link l4 {
 }
 
 link l5 {
-    nodes {n10 n3}
+    nodes {n10 n5}
 }
 
 link l6 {
-    nodes {n10 n2}
+    nodes {n10 n6}
 }
 
 link l7 {
@@ -224,6 +260,14 @@ link l8 {
 
 link l9 {
     nodes {n10 n9}
+}
+
+link l10 {
+    nodes {n10 n11}
+}
+
+link l11 {
+    nodes {n10 n12}
 }
 
 canvas c1 {
@@ -245,3 +289,4 @@ option global {
 
 option session {
 }
+
