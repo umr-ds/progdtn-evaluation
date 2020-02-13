@@ -50,12 +50,16 @@ RUN apt-get update \
 # install core-dtn7 integration
 COPY --from=dtn7-builder /dtncat /usr/local/sbin/dtncat
 COPY --from=dtn7-builder /dtnd /usr/local/sbin/dtnd
-COPY --from=dtn7-builder /dtn7-go/helpers/dtnclient.py /usr/local/sbin/dtnclient
-COPY --from=dtn7-builder /dtn7-go/helpers/context_generator.py /usr/local/sbin/context_generator
 COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_data.js /root/context.js
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
+COPY --from=dtn7-builder /dtn7-go/helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
+COPY --from=dtn7-builder /dtn7-go/helpers/cadrhelpers/context_generator.py /usr/local/sbin/context_generator
+
+# install python package for dependencies
+COPY --from=dtn7-builder /dtn7-go/helpers /root/helpers
+RUN pip3 install /root/helpers
 
 # install BonnMotion
 COPY --from=jdk_builder /bonnmotion-3.0.1 /bonnmotion-3.0.1
