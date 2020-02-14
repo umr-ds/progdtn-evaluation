@@ -36,7 +36,7 @@ This worker is available with a gui to be used during experiment development as 
 
 ### Build images
 ```bash
-docker build -t umrds/mmdr_core_worker -f Dockerfile .
+docker build -t umrds/cadr-evaluation -f Dockerfile .
 # or
 docker-compose build core
 ```
@@ -78,7 +78,7 @@ Add the remote docker host to the `xhost` access control list (`xhost +<DOCKER_H
 The container can be started adding your IP to the DISPLAY variable:
 
 ```
-docker run --rm --privileged -v /lib/modules:/lib/modules -it --cap-add=NET_ADMIN -e DISPLAY=<IP>:0 umrds/mmdr_core_worker
+docker run --rm --privileged -v /lib/modules:/lib/modules -it --cap-add=NET_ADMIN -e DISPLAY=<IP>:0 umrds/cadr-evaluation
 # or
 DISPLAY=<IP>:0 docker-compose run core
 ```
