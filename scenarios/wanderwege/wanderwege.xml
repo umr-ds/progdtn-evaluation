@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/dtn_routing/scenarios/wanderwege/wanderwege.xml">
+  <networks>
+    <network id="10" name="wlan1" type="WIRELESS_LAN">
+      <position x="1127" y="538" lat="47.57176982283576" lon="-122.10996707873831" alt="2.0"/>
+    </network>
+  </networks>
+  <devices>
+    <device id="1" name="n1" type="visitor">
+      <position x="30" y="260" lat="47.575689226132454" lon="-122.13178104886495" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="2" name="n2" type="visitor">
+      <position x="83" y="264" lat="47.57562723841611" lon="-122.13072495511862" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="3" name="n3" type="visitor">
+      <position x="152" y="276" lat="47.57545485587248" lon="-122.12935156417021" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="4" name="n4" type="visitor">
+      <position x="1070" y="32" lat="47.57860728734684" lon="-122.1109881661342" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="5" name="n5" type="visitor">
+      <position x="2292" y="32" lat="47.57841579277603" lon="-122.08661653229848" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="6" name="n6" type="visitor">
+      <position x="2468" y="1310" lat="47.56114083821828" lon="-122.08340739063995" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="7" name="n7" type="visitor">
+      <position x="2544" y="85" lat="47.577660411295646" lon="-122.08160317088463" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="8" name="n8" type="visitor">
+      <position x="1620" y="34" lat="47.578494749269005" lon="-122.10001936789538" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="9" name="n9" type="visitor">
+      <position x="505" y="1319" lat="47.561325485267645" lon="-122.12254681235783" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+    <device id="11" name="n11" type="visitor">
+      <position x="2242" y="1320" lat="47.56104180730031" lon="-122.08791558433677" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="DTN7"/>
+        <service name="ContextGenerator"/>
+      </services>
+    </device>
+  </devices>
+  <links>
+    <link node_one="10" node_two="1">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.1" ip4_mask="32" ip6="2001::1" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="2">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.2" ip4_mask="32" ip6="2001::2" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="3">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:02" ip4="10.0.0.3" ip4_mask="32" ip6="2001::3" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="4">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:03" ip4="10.0.0.4" ip4_mask="32" ip6="2001::4" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="5">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:04" ip4="10.0.0.5" ip4_mask="32" ip6="2001::5" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="6">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:05" ip4="10.0.0.6" ip4_mask="32" ip6="2001::6" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="7">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.0.7" ip4_mask="32" ip6="2001::7" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="8">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:07" ip4="10.0.0.8" ip4_mask="32" ip6="2001::8" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="9">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.0.9" ip4_mask="32" ip6="2001::9" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+    <link node_one="10" node_two="11">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:09" ip4="10.0.0.10" ip4_mask="32" ip6="2001::10" ip6_mask="128"/>
+      <options delay="0" bandwidth="0" per="0.0" dup="0" jitter="0" type="0" unidirectional="0"/>
+    </link>
+  </links>
+  <mobility_configurations>
+    <mobility_configuration node="10" model="basic_range">
+      <configuration name="range" value="275"/>
+      <configuration name="bandwidth" value="54000000"/>
+      <configuration name="jitter" value="0"/>
+      <configuration name="delay" value="20000"/>
+      <configuration name="error" value="0"/>
+    </mobility_configuration>
+    <mobility_configuration node="10" model="ns2script">
+      <configuration name="file" value="/dtn_routing/scenarios/wanderwege/wanderwege.ns_movements"/>
+      <configuration name="refresh_ms" value="1000"/>
+      <configuration name="loop" value="0"/>
+      <configuration name="autostart" value=""/>
+      <configuration name="map" value=""/>
+      <configuration name="script_start" value=""/>
+      <configuration name="script_pause" value=""/>
+      <configuration name="script_stop" value=""/>
+    </mobility_configuration>
+  </mobility_configurations>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="150.0"/>
+  <session_metadata>
+    <configuration name="canvas c1" value="{name {Canvas1}} {wallpaper-style {upperleft}} {wallpaper {/dtn_routing/scenarios/wanderwege/map.png}} {refpt {0 0 47.5791667 -122.132322 2.0}} {scale {150.0}} {size {2560 1357}}"/>
+    <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=no background_images=no annotations=yes grid=no traffic_start=0"/>
+  </session_metadata>
+  <default_services>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="prouter">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+    <node type="visitor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="DTN7"/>
+      <service name="ContextGenerator"/>
+    </node>
+    <node type="backbone">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="DTN7"/>
+      <service name="ContextGenerator"/>
+    </node>
+    <node type="sensor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="DTN7"/>
+      <service name="ContextGenerator"/>
+    </node>
+  </default_services>
+</scenario>
