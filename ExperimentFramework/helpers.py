@@ -2,7 +2,7 @@ import os
 import uuid
 
 
-def cleanup_payloads():
+def cleanup_payloads() -> None:
     dir_name = "/tmp/"
     files = os.listdir(dir_name)
 
@@ -11,7 +11,7 @@ def cleanup_payloads():
             os.remove(os.path.join(dir_name, item))
 
 
-def create_payload(size):
+def create_payload(size: int) -> str:
     path = f"/tmp/{uuid.uuid4()}.file"
 
     with open(path, "wb") as f:

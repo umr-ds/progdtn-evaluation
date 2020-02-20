@@ -1,21 +1,14 @@
-### ENV int size "Size of payload to be sent in bytes"
+### ENV int payload_size "Size of payload to be sent in bytes"
 ### ENV string routing "Routing algorithm"
 
-import csv
-import datetime
-import json
 import os
-import random
-import shutil
-import struct
 import time
+import logging
 
 import framework
 
-from core.emulator.coreemu import CoreEmu
+from core.emulator.coreemu import CoreEmu, Session
 from core.emulator.enumerations import EventTypes
-from core.emulator.emudata import IpPrefixes
-from core.emulator.emudata import NodeOptions
 from core.nodes.base import CoreNode
 from core.services import ServiceManager
 
@@ -24,38 +17,41 @@ from log_files import *
 from helpers import *
 
 
-def create_session(topo_path, _id, dtn_software):
+def create_session(topo_path, _id):
     coreemu = CoreEmu()
-    session = coreemu.create_session(_id=_id)
-    session.set_state(EventTypes.CONFIGURATION_STATE)
+    core_session: Session = coreemu.create_session(_id=_id)
+    core_session.set_state(EventTypes.CONFIGURATION_STATE)
 
     ServiceManager.add_services('/root/.core/myservices')
 
-    session.open_xml(topo_path)
+    core_session.open_xml(topo_path)
 
-    for obj in session.objects.values():
-        if type(obj) is CoreNode:
-            session.services.add_services(obj, obj.type, ['pidstat', 'bwm-ng', dtn_software])
+    print(core_session.nodes)
 
-    session.instantiate()
+    #for node in core_session.nodes.values():
+    #    if isinstance(node, CoreNode):
+    #        core_session.services.add_services(node, node.type, ['pidstat', 'bwm-ng', "DTN7"])
 
-    return session
+    core_session.instantiate()
+
+    return core_session
 
 
 if __name__ in ["__main__", "__builtin__"]:
     framework.start()
+    logging.basicConfig(level=logging.DEBUG)
 
     # Prepare experiment
-    path = create_payload({{size}})
+    path = create_payload({{payload_size}})
     session = create_session(
-        "/dtn-routing/scenarios/wanderwege/wanderwege.xml", {{simInstanceId}}, "DTN7")
+        "/dtn_routing/scenarios/wanderwege/wanderwege.xml", {{simInstanceId}})
     time.sleep(10)
 
     # Run the experiment
     software = DTN7(session)
-    software.send_file("n15", path, "n40")
-    software.wait_for_arrival("n40")
-    time.sleep(10)
+    #software.send_file("n15", path, "n40")
+    #software.wait_for_arrival("n40")
+    #time.sleep(10)
 
     # When the experiment is finished, we set the session to
     # DATACOLLECT_STATE and collect the logs.
