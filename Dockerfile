@@ -6,10 +6,8 @@ WORKDIR /dtn7-go
 RUN go build -o /dtncat ./cmd/dtncat \
 && go build -o /dtnd ./cmd/dtnd
 
-
-
 ### Setup core worker container
-FROM maciresearch/core_worker:0.4.2
+FROM maciresearch/core_worker:git-develop-20200220
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
 LABEL version="0.4"
