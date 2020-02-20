@@ -45,7 +45,7 @@ protocol = "mtcp"
 endpoint = ":35037"
 
 [routing]
-algorithm = "context"
+algorithm = "epidemic"
 
 [routing.contextconf]
 scriptpath = "{node.nodedir}/context.js"

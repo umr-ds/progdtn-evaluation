@@ -1,6 +1,5 @@
-### ENV int node_num "How many nodes should be emulated"
 ### ENV int size "Size of payload to be sent in bytes"
-### ENV string software "Which DTN software should be used"
+### ENV string routing "Routing algorithm"
 
 import csv
 import datetime
@@ -49,13 +48,13 @@ if __name__ in ["__main__", "__builtin__"]:
     # Prepare experiment
     path = create_payload({{size}})
     session = create_session(
-        "/topologies/chain/{}.xml".format({{node_num}}), {{simInstanceId}}, "{{software}}")
+        "/dtn-routing/scenarios/wanderwege/wanderwege.xml", {{simInstanceId}}, "DTN7")
     time.sleep(10)
 
     # Run the experiment
-    software = {{software}}(session)
-    software.send_file("n1", path, "n{{node_num}}")
-    software.wait_for_arrival("n{{node_num}}")
+    software = DTN7(session)
+    software.send_file("n15", path, "n40")
+    software.wait_for_arrival("n40")
     time.sleep(10)
 
     # When the experiment is finished, we set the session to

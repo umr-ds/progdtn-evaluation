@@ -48,10 +48,10 @@ def addLogfile(filename):
 
 
 def addBinaryFile(filename):
-    print("adding binary file", filename)
+    print(f"adding binary file {filename}")
     try:
         with open("binary_files.txt", 'a') as myfile:
-            myfile.write(filename + "\n")
+            myfile.write(f"{filename}\n")
     except IOError:
         warn(filename, "IO Error adding binary file with MACI.")
 
@@ -85,8 +85,7 @@ def record(key, value, offset=None, key1=None, key2=None):
 def checkRequestedParams():
     for (paramKey, paramValue) in [(k, v) for (k, v) in parameters.params.items() if
                                    k not in parameters.requestedParams]:
-        warn("Framework",
-             f"Parameter {str(paramKey)} with value {str(paramValue)} was not requested by experiment")
+        warn("Framework", f"Parameter {paramKey} with value {paramValue} was not requested by experiment")
 
 
 def loadTmpResults():

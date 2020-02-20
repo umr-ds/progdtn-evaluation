@@ -3,32 +3,10 @@ import shutil
 
 import framework
 
-
 excluded_files = [
-    #DTN7
+    # DTN7
     "store_n",
-    # Serval
-    "blob",
-    "serval.log",
-    "keyring.dump",
-    "proc/",
-    "rhizome.db",
-    "serval.keyring",
-    # Forban
-    "forban/bin",
-    "forban/doc",
-    "forban/lib",
-    "forban/var/loot",
-    "forban/var/share",
-    "forban/cfg",
-    ".git",
-    "AUTHORS",
-    "FAQ",
-    "README",
-    # IBRDTN
-    "inbox"
 ]
-
 
 
 def prepare_log_file(input_file):
@@ -74,10 +52,9 @@ def collect_logs(session_dir):
             if _is_blacklisted(src_file_path):
                 continue
 
-            session_dir_trailing = '{}/'.format(session_dir)
-            new_file_name = src_file_path.replace(session_dir_trailing,
-                                                  '').replace('/', '_')
-            dst_file_path = '{}/{}'.format(os.getcwd(), new_file_name)
+            session_dir_trailing = f'{session_dir}/'
+            new_file_name = src_file_path.replace(session_dir_trailing, '').replace('/', '_')
+            dst_file_path = f'{os.getcwd()}/{new_file_name}'
 
             try:
                 shutil.move(src_file_path, dst_file_path)

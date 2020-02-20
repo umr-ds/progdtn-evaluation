@@ -1,1 +1,1 @@
-{"paramValues":{"size":[65536,1048576,5242880,26214400,52428800,104857600],"node_num":[1,5,11]},"capabilities":["core"],"repetitions":"5","seeds":1}
+{"paramValues":{"size":[65536,1048576,5242880,26214400,52428800,104857600],"routing":["epidemic"]},"capabilities":["core"],"repetitions":"5","seeds":1}
