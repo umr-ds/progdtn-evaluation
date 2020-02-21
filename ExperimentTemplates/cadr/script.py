@@ -28,9 +28,10 @@ def create_session(topo_path, _id):
 
     print(core_session.nodes)
 
-    #for node in core_session.nodes.values():
-    #    if isinstance(node, CoreNode):
-    #        core_session.services.add_services(node, node.type, ['pidstat', 'bwm-ng', "DTN7"])
+    for node in core_session.nodes.values():
+        if isinstance(node, CoreNode):
+            node.startup()
+            core_session.services.add_services(node, node.type, ['pidstat', 'bwm-ng', "DTN7"])
 
     core_session.instantiate()
 
