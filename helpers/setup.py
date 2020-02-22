@@ -6,5 +6,5 @@ setup(
     description="Helper scripts for cadr evaluation",
     author="Markus Sommer",
     author_email="msommer@informatik.uni-marburg.de",
-    packages=find_packages()
+    packages=find_packages(),
 )
