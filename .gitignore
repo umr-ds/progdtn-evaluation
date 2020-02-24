@@ -8,3 +8,4 @@ dotcore/servers.conf
 dotcore/prefs.conf
 .idea/
 *.log
+**/*.egg-info/

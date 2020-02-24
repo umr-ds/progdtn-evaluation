@@ -30,9 +30,9 @@ COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_data.js /root/context.js
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
-COPY --from=dtn7-builder /dtn7-go/helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
-COPY --from=dtn7-builder /dtn7-go/helpers/cadrhelpers/context_generator.py /usr/local/sbin/context_generator
+COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
+COPY helpers/cadrhelpers/context_generator.py /usr/local/sbin/context_generator
 
 # install python package for dependencies
-COPY --from=dtn7-builder /dtn7-go/helpers /root/helpers
+COPY helpers /root/helpers
 RUN pip3 install /root/helpers
