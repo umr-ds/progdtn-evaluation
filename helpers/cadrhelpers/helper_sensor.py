@@ -1,18 +1,13 @@
 #! /usr/bin/env python3
 
-import argparse
 from typing import Any, Dict
 from time import sleep
 from random import randint, choice
 
-from cadrhelpers.dtnclient import send_context
+from cadrhelpers.dtnclient import send_context, build_url
 
 REST_ADDRESS = "127.0.0.1"
 CONTEXT_PORT = 35043
-
-
-def build_url(address: str, port: int) -> str:
-    return f"http://{address}:{port}"
 
 
 def send_integer(url: str, name: str) -> None:
@@ -28,9 +23,9 @@ def send_random_context(url: str, context: Dict[str, Any]) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Interact with dtnd")
-    # parser.add_argument("context_file")
-    args = parser.parse_args()
+    with open("/tmp/seed", "rb") as f:
+        seed_bytes = f.read(4)
+        seed = int.from_bytes(bytes=seed_bytes, byteorder="little", signed=False)
 
     print("Starting context generator")
     # context_collection: Dict[str, Any] = load_context(path=args.context_file)
