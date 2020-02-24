@@ -18,11 +18,13 @@ from helpers import *
 
 
 def create_session(topo_path, _id):
+    print(type({{seed}}))
+
     coreemu = CoreEmu()
     core_session: Session = coreemu.create_session(_id=_id)
     core_session.set_state(EventTypes.CONFIGURATION_STATE)
 
-    ServiceManager.add_services('/root/.core/myservices')
+    ServiceManager.add_services("/root/.core/myservices")
 
     core_session.open_xml(topo_path)
 
@@ -31,7 +33,9 @@ def create_session(topo_path, _id):
     for node in core_session.nodes.values():
         if isinstance(node, CoreNode):
             node.startup()
-            core_session.services.add_services(node, node.type, ['pidstat', 'bwm-ng', "DTN7"])
+            core_session.services.add_services(
+                node, node.type, ["pidstat", "bwm-ng", "DTN7"]
+            )
 
     core_session.instantiate()
 
@@ -39,20 +43,28 @@ def create_session(topo_path, _id):
 
 
 if __name__ in ["__main__", "__builtin__"]:
+    seed: int = {{seed}}
+    print(f"Seed: {seed}")
+
+    # write seed to file so that core services can use it
+    with open("/tmp/seed", "wb") as f:
+        f.write(seed.to_bytes(4, byteorder="little", signed=False))
+
     framework.start()
     logging.basicConfig(level=logging.DEBUG)
 
     # Prepare experiment
     path = create_payload({{payload_size}})
     session = create_session(
-        "/dtn_routing/scenarios/wanderwege/wanderwege.xml", {{simInstanceId}})
+        "/dtn_routing/scenarios/wanderwege/wanderwege.xml", {{simInstanceId}}
+    )
     time.sleep(10)
 
     # Run the experiment
     software = DTN7(session)
-    #software.send_file("n15", path, "n40")
-    #software.wait_for_arrival("n40")
-    #time.sleep(10)
+    # software.send_file("n15", path, "n40")
+    # software.wait_for_arrival("n40")
+    # time.sleep(10)
 
     # When the experiment is finished, we set the session to
     # DATACOLLECT_STATE and collect the logs.
@@ -60,12 +72,12 @@ if __name__ in ["__main__", "__builtin__"]:
     # and manually make sure, that all remaining files of the experiments
     # are gone.
     # Finally, we wait another 10 seconds to make sure everyhing is clean.
-    session.set_state(EventTypes.DATACOLLECT_STATE)
-    time.sleep(2)
-    collect_logs(session.session_dir)
-    session.shutdown()
-    cleanup_payloads()
-    os.system("core-cleanup")
-    time.sleep(10)
+    # session.set_state(EventTypes.DATACOLLECT_STATE)
+    # time.sleep(2)
+    # collect_logs(session.session_dir)
+    # session.shutdown()
+    # cleanup_payloads()
+    # os.system("core-cleanup")
+    # time.sleep(10)
 
     framework.stop()
