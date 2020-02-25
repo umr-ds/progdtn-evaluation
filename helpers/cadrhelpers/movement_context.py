@@ -2,6 +2,8 @@ import multiprocessing
 import time
 import math
 
+import xml.etree.ElementTree as ElementTree
+
 from cadrhelpers.dtnclient import send_context, build_url
 from typing import List, Tuple, Dict
 from dataclasses import dataclass
@@ -148,6 +150,69 @@ def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     )
 
 
+@dataclass()
+class Node:
+    """Simulation node"""
+
+    id: int
+    name: str
+    type: str
+    x_pos: float
+    y_pos: float
+
+
+@dataclass()
+class Nodes:
+    """All the nodes in the simulation"""
+
+    visitors: List[Node]
+    sensors: List[Node]
+    backbone: List[Node]
+
+
+def parse_scenario_xml(path: str) -> Nodes:
+    """Parse the scenario's xml definition and separate the different types of nodes
+
+    Returns:
+        Three lists (visitors, sensors, backbone)
+    """
+    tree = ElementTree.parse(path)
+    root = tree.getroot()
+
+    visitors: List[Node] = []
+    sensors: List[Node] = []
+    backbone: List[Node] = []
+
+    for child in root:
+        if child.tag == "devices":
+            for node_data in child:
+                node = get_node_info(node_data)
+                if node.type == "visitor":
+                    visitors.append(node)
+                elif node.type == "sensor":
+                    sensors.append(node)
+                elif node.type == "backbone":
+                    backbone.append(node)
+
+    return Nodes(visitors=visitors, sensors=sensors, backbone=backbone)
+
+
+def get_node_info(element: ElementTree.Element) -> Node:
+    """Extract the info aof a node from the xml tree"""
+    node_id: int = int(element.attrib["id"])
+    node_name: str = element.attrib["name"]
+    node_type: str = element.attrib["type"]
+    x_pos: float = 0.0
+    y_pos: float = 0.0
+
+    for sub_element in element:
+        if sub_element.tag == "position":
+            x_pos = float(sub_element.attrib["x"])
+            y_pos = float(sub_element.attrib["y"])
+
+    return Node(id=node_id, name=node_name, type=node_type, x_pos=x_pos, y_pos=y_pos)
+
+
 if __name__ == "__main__":
     url = build_url(address="localhost", port=35043)
     ns2_movement = generate_movement(
@@ -155,4 +220,7 @@ if __name__ == "__main__":
         path="/home/msommer/devel/cadr-evaluation/scenarios/randomWaypoint/randomWaypoint.ns_movements",
         node_name="n11",
     )
-    ns2_movement._run()
+
+    nodes = parse_scenario_xml(
+        "/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml"
+    )
