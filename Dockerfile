@@ -18,6 +18,8 @@ RUN apt-get update \
     python-pip \
     python3-pip \
     python3-requests \
+    python3-daemon \
+    python3-toml \
     bwm-ng \
     sysstat \
     tcpdump \
@@ -31,7 +33,7 @@ COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
-COPY helpers/cadrhelpers/context_generator.py /usr/local/sbin/context_generator
+COPY helpers/cadrhelpers/helper_sensor.py /usr/local/sbin/helper_sensor
 
 # install python package for dependencies
 COPY helpers /root/helpers

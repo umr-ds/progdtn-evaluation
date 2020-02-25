@@ -4,16 +4,28 @@ import math
 
 from cadrhelpers.dtnclient import send_context, build_url
 from typing import List, Tuple, Dict
+from dataclasses import dataclass
 
 
+@dataclass()
 class NS2Movement:
+    """Single movement command"""
+
+    timestamp: int
+    x_dest: float
+    y_dest: float
+    speed: float
+
+
+class NS2Movements:
     """A node's movements as specified in a ns2 movement script
 
     Attributes:
         node_name: Self explanatory
         rest_url: URL of the context-REST-interface
         step: Current position in the list of movements
-        position: Current position in the form (x_pos, y_pos)
+        x_pos: X coordinate of current position
+        y_pos: Y coordinate of current position
         movements: List of movement commands in the form (timestamp, dest_x_pos, dest_y_pos, speed)
     """
 
@@ -21,13 +33,15 @@ class NS2Movement:
         self,
         rest_url: str,
         node_name: str,
-        start_position: Tuple[float, float],
-        movements: List[Tuple[int, float, float, float]],
+        start_x: float,
+        start_y: float,
+        movements: List[NS2Movement],
     ):
         self.node_name: str = node_name
         self.rest_url: str = rest_url
-        self.position: Tuple[float, float] = start_position
-        self.movements: List[Tuple[int, float, float, float]] = movements
+        self.x_pos = start_x
+        self.y_pos = start_y
+        self.movements: List[NS2Movement] = movements
         self.step: int = 0
 
     def run(self) -> None:
@@ -40,8 +54,8 @@ class NS2Movement:
     def _run(self) -> None:
         """Does the actual work"""
         # differentiate between node who start moving immediately and those who take a while to get going
-        if self.movements[0][0] != 0:
-            time.sleep(self.movements[0][0])
+        if self.movements[0].timestamp != 0:
+            time.sleep(self.movements[0].timestamp)
 
         vector = self.compute_vector()
         self.update_context(vector)
@@ -49,9 +63,9 @@ class NS2Movement:
 
         # main wait-and-update-loop
         while self.step < len(self.movements):
-            wait_time: int = self.movements[self.step][0] - self.movements[
+            wait_time: int = self.movements[self.step].timestamp - self.movements[
                 self.step - 1
-            ][0]
+            ].timestamp
             time.sleep(wait_time)
             vector = self.compute_vector()
             self.update_context(vector)
@@ -59,7 +73,8 @@ class NS2Movement:
 
     def move_step(self) -> None:
         """Update the node's internal position and step counter"""
-        self.position = (self.movements[self.step][1], self.movements[self.step][2])
+        self.x_pos = self.movements[self.step].x_dest
+        self.y_pos = self.movements[self.step].y_dest
         self.step += 1
 
     def update_context(self, vector: Tuple[float, float]) -> None:
@@ -71,8 +86,8 @@ class NS2Movement:
 
     def compute_vector(self) -> Tuple[float, float]:
         """Take the node's current position and destination/speed and compute the movement vector"""
-        x_move = self.movements[self.step][1] - self.position[0]
-        y_move = self.movements[self.step][2] - self.position[1]
+        x_move = self.movements[self.step].x_dest - self.x_pos
+        y_move = self.movements[self.step].y_dest - self.y_pos
 
         # normalise vector
         length: float = math.sqrt(math.pow(x_move, 2) + math.pow(y_move, 2))
@@ -80,8 +95,8 @@ class NS2Movement:
         y_move = y_move / length
 
         # multiply with speed
-        x_move = x_move * self.movements[self.step][3]
-        y_move = y_move * self.movements[self.step][3]
+        x_move = x_move * self.movements[self.step].speed
+        y_move = y_move * self.movements[self.step].speed
 
         return x_move, y_move
 
@@ -100,29 +115,35 @@ def filter_ns2(path: str, node_name: str) -> List[str]:
     return commands
 
 
-def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movement:
+def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     """Turns the ns2 text file into a NS2Movement object"""
     commands = filter_ns2(path=path, node_name=node_name)
-    start_position: Tuple[float, float] = (0.0, 0.0)
-    movements: List[Tuple[int, float, float, float]] = []
+    start_x: float = 0.0
+    start_y: float = 0.0
+    movements: List[NS2Movement] = []
 
     for command in commands:
         split: List[str] = command.split(" ")
         if "X_" in split:
-            start_position = (float(split[3]), start_position[1])
+            start_x = float(split[3])
         elif "Y_" in split:
-            start_position = (start_position[0], float(split[3]))
+            start_y = float(split[3])
         elif "setdest" in split:
             timestamp = int(float(split[2]))
             x_dest = float(split[5])
             y_dest = float(split[6])
             speed = float(split[7][:-1])
-            movements.append((timestamp, x_dest, y_dest, speed))
+            movements.append(
+                NS2Movement(
+                    timestamp=timestamp, x_dest=x_dest, y_dest=y_dest, speed=speed
+                )
+            )
 
-    return NS2Movement(
+    return NS2Movements(
         rest_url=rest_url,
         node_name=node_name,
-        start_position=start_position,
+        start_x=start_x,
+        start_y=start_y,
         movements=movements,
     )
 

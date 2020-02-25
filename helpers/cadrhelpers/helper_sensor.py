@@ -1,13 +1,19 @@
 #! /usr/bin/env python3
 
+import toml
+import argparse
+
 from typing import Any, Dict
-from time import sleep
 from random import randint, choice
 
 from cadrhelpers.dtnclient import send_context, build_url
+from cadrhelpers.movement_context import NS2Movements, generate_movement
+from cadrhelpers.traffic_generator import TrafficGenerator
 
 REST_ADDRESS = "127.0.0.1"
 CONTEXT_PORT = 35043
+BUNDLE_PORT = 35038
+NODE_NAME = "n2"
 
 
 def send_integer(url: str, name: str) -> None:
@@ -23,17 +29,28 @@ def send_random_context(url: str, context: Dict[str, Any]) -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate context data & traffic for sensor nodes")
+    parser.add_argument("path", help="Path to the config file")
+    args = parser.parse_args()
+
+    config_data = toml.load(args.path)
+
     with open("/tmp/seed", "rb") as f:
-        seed_bytes = f.read(4)
-        seed = int.from_bytes(bytes=seed_bytes, byteorder="little", signed=False)
+        seed = f.read(4)
 
-    print("Starting context generator")
-    # context_collection: Dict[str, Any] = load_context(path=args.context_file)
-    context_rest: str = build_url(address=REST_ADDRESS, port=CONTEXT_PORT)
+    context_url = build_url(address=REST_ADDRESS, port=CONTEXT_PORT)
+    bundle_url = build_url(address=REST_ADDRESS, port=BUNDLE_PORT)
 
-    # sleep(10)
+    movement_helper: NS2Movements = generate_movement(
+        rest_url=context_url,
+        path="/dtn_routing/scenarios/randomWaypoint/randomWaypoint.ns_movements",
+        node_name=NODE_NAME
+    )
+    movement_helper.run()
 
-    while True:
-        # send_random_context(url=context_rest, context=context_collection)
-        send_integer(url=context_rest, name="fitness")
-        sleep(randint(1, 20))
+    traffic_helper = TrafficGenerator(
+        rest_url=bundle_url,
+        seed=seed,
+        node_name=NODE_NAME
+    )
+    traffic_helper.run()
