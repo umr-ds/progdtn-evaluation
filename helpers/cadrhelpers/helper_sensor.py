@@ -36,6 +36,9 @@ if __name__ == "__main__":
     with open("/tmp/seed", "rb") as f:
         seed = f.read(4)
 
+    with open("/tmp/routing", "r") as f:
+        routing = f.read()
+
     context_url = build_url(
         address=config_data["REST"]["address"], port=config_data["REST"]["context_port"]
     )
@@ -48,7 +51,6 @@ if __name__ == "__main__":
         path=config_data["Scenario"]["movements"],
         node_name=config_data["Node"]["name"],
     )
-    movement_helper.run()
 
     nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
 
@@ -56,6 +58,12 @@ if __name__ == "__main__":
         rest_url=bundle_url,
         seed=seed,
         node_name=config_data["Node"]["name"],
+        x_pos=movement_helper.x_pos,
+        y_pos=movement_helper.y_pos,
         nodes=nodes,
+        context=routing == "context",
     )
+
+    # fork other helpers and daemonise
+    movement_helper.run()
     traffic_helper.run()

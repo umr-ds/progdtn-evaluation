@@ -50,6 +50,9 @@ if __name__ in ["__main__", "__builtin__"]:
     with open("/tmp/seed", "wb") as f:
         f.write(seed.to_bytes(4, byteorder="little", signed=False))
 
+    with open("/tmp/routing", "w") as f:
+        f.write({{routing}})
+
     framework.start()
     logging.basicConfig(level=logging.DEBUG)
 
