@@ -19,6 +19,7 @@ class NS2Movement:
     speed: float
 
 
+@dataclass()
 class NS2Movements:
     """A node's movements as specified in a ns2 movement script
 
@@ -31,20 +32,12 @@ class NS2Movements:
         movements: List of movement commands in the form (timestamp, dest_x_pos, dest_y_pos, speed)
     """
 
-    def __init__(
-        self,
-        rest_url: str,
-        node_name: str,
-        start_x: float,
-        start_y: float,
-        movements: List[NS2Movement],
-    ):
-        self.node_name: str = node_name
-        self.rest_url: str = rest_url
-        self.x_pos = start_x
-        self.y_pos = start_y
-        self.movements: List[NS2Movement] = movements
-        self.step: int = 0
+    node_name: str
+    rest_url: str
+    x_pos: float
+    y_pos: float
+    movements: List[NS2Movement]
+    step: int = 0
 
     def run(self) -> None:
         """Performs periodic context updates when movement changes
@@ -144,8 +137,8 @@ def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     return NS2Movements(
         rest_url=rest_url,
         node_name=node_name,
-        start_x=start_x,
-        start_y=start_y,
+        x_pos=start_x,
+        y_pos=start_y,
         movements=movements,
     )
 

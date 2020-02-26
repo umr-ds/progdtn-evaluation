@@ -2,6 +2,9 @@ import random
 import multiprocessing
 
 from hashlib import sha1
+from dataclasses import dataclass
+
+from cadrhelpers.movement_context import Nodes
 
 
 def initialise_rng(seed: bytes, node_name: str) -> None:
@@ -15,11 +18,12 @@ def initialise_rng(seed: bytes, node_name: str) -> None:
     random.seed(unique_seed)
 
 
+@dataclass()
 class TrafficGenerator:
-    def __init__(self, rest_url: str, seed: bytes, node_name: str):
-        self.rest_url: str = rest_url
-        self.seed: bytes = seed
-        self.node_name: str = node_name
+    rest_url: str
+    seed: bytes
+    node_name: str
+    nodes: Nodes
 
     def run(self) -> None:
         process = multiprocessing.Process(target=self._run)
