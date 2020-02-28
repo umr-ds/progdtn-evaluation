@@ -7,6 +7,7 @@ import subprocess
 from hashlib import sha1
 from dataclasses import dataclass
 from base64 import standard_b64encode
+from typing import Union, List
 
 import cadrhelpers.dtnclient as dtnclient
 from cadrhelpers.movement_context import Nodes, Node
@@ -26,6 +27,23 @@ def initialise_rng(seed: bytes, node_name: str) -> None:
     random.seed(unique_seed)
 
 
+def get_node_for_name(nodes: List[Node], node_name: str) -> Node:
+    ourself: Union[Node, None] = None
+
+    for node in nodes:
+        if node.name == node_name:
+            ourself = node
+
+    assert ourself is not None, "This node should really show up in the list of nodes"
+    return ourself
+
+
+def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
+    x_diff = math.pow(node_a.x_pos - node_b.x_pos, 2)
+    y_diff = math.pow(node_a.y_pos - node_b.y_pos, 2)
+    return math.sqrt(x_diff + y_diff)
+
+
 def generate_payload(size_min: int, size_max: int, in_bytes: bool) -> str:
     size: int = random.randint(size_min, size_max)
     if in_bytes:
@@ -43,8 +61,6 @@ class TrafficGenerator:
     rest_url: str
     seed: bytes
     node_name: str
-    x_pos: float
-    y_pos: float
     nodes: Nodes
     context: bool
 
@@ -95,18 +111,16 @@ class TrafficGenerator:
 
     def _find_closest_backbone(self) -> Node:
         assert self.nodes.backbone, "There needs to be at least 1 backbone node"
+
+        ourself = get_node_for_name(nodes=self.nodes.sensors, node_name=self.node_name)
+
         closest: Node = self.nodes.backbone[0]
-        closest_distance = self._compute_euclidean_distance(other=closest)
+        closest_distance = compute_euclidean_distance(node_a=ourself, node_b=closest)
 
         for backbone in self.nodes.backbone:
-            distance = self._compute_euclidean_distance(other=backbone)
+            distance = compute_euclidean_distance(node_a=ourself, node_b=closest)
             if distance < closest_distance:
                 closest = backbone
                 closest_distance = distance
 
         return closest
-
-    def _compute_euclidean_distance(self, other: Node) -> float:
-        x_diff = math.pow(self.x_pos - other.x_pos, 2)
-        y_diff = math.pow(self.y_pos - other.y_pos, 2)
-        return math.sqrt(x_diff + y_diff)

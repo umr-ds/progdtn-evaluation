@@ -9,3 +9,4 @@ context_port = 35043
 [Scenario]
 xml = "/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml"
 movements = "/home/msommer/devel/cadr-evaluation/scenarios/randomWaypoint/randomWaypoint.ns_movements"
+wifi_range = 275.0
