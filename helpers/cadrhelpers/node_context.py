@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from cadrhelpers.dtnclient import send_context
 from cadrhelpers.movement_context import Nodes
-from cadrhelpers.traffic_generator import compute_euclidean_distance, get_node_for_name
+from cadrhelpers.traffic_generator import compute_euclidean_distance
 
 
 @dataclass()
@@ -31,7 +31,7 @@ class SensorContext:
         """Finds (static) nodes within wifi range"""
         connectedness: int = 0
 
-        ourself = get_node_for_name(nodes=self.nodes.sensors, node_name=self.node_name)
+        ourself = self.nodes.get_node_for_name(node_name=self.node_name)
 
         static_nodes = self.nodes.sensors + self.nodes.backbone
 

@@ -1,11 +1,12 @@
 import multiprocessing
 import time
 import math
+import logging
 
 import xml.etree.ElementTree as ElementTree
 
 from cadrhelpers.dtnclient import send_context, build_url
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Union
 from dataclasses import dataclass
 
 
@@ -48,6 +49,8 @@ class NS2Movements:
 
     def _run(self) -> None:
         """Does the actual work"""
+        self.logger = logging.getLogger(__name__)
+
         # differentiate between node who start moving immediately and those who take a while to get going
         if self.movements[0].timestamp != 0:
             time.sleep(self.movements[0].timestamp)
@@ -161,6 +164,18 @@ class Nodes:
     visitors: List[Node]
     sensors: List[Node]
     backbone: List[Node]
+
+    def get_node_for_name(self, node_name: str) -> Node:
+        ourself: Union[Node, None] = None
+
+        for node in self.visitors + self.sensors + self.backbone:
+            if node.name == node_name:
+                ourself = node
+
+        assert (
+            ourself is not None
+        ), "This node should really show up in the list of nodes"
+        return ourself
 
 
 def parse_scenario_xml(path: str) -> Nodes:

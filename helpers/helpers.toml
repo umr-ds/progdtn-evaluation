@@ -1,5 +1,8 @@
 [Node]
-name = "n2"
+name = "n27"
+store_log = "/home/msommer/temp/dtn7/store_log.csv"
+log_file = "/home/msommer/temp/dtn7/helpers.log"
+log_level = "DEBUG"
 
 [REST]
 address = "127.0.0.1"
