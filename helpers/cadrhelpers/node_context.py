@@ -1,4 +1,5 @@
 import multiprocessing
+import logging
 
 from dataclasses import dataclass
 
@@ -14,6 +15,7 @@ class SensorContext:
     node_name: str
     wifi_range: float
     nodes: Nodes
+    logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self):
         process = multiprocessing.Process(target=self._run)
@@ -21,6 +23,7 @@ class SensorContext:
 
     def _run(self):
         connectedness = self._compute_connectedness()
+        self.logger.debug(f"Connectedness: {connectedness}")
         send_context(
             rest_url=self.rest_url,
             context_name="connectedness",

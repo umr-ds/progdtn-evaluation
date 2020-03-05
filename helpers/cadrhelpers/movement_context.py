@@ -39,6 +39,7 @@ class NS2Movements:
     y_pos: float
     movements: List[NS2Movement]
     step: int = 0
+    logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
         """Performs periodic context updates when movement changes
@@ -49,25 +50,33 @@ class NS2Movements:
 
     def _run(self) -> None:
         """Does the actual work"""
-        self.logger = logging.getLogger(__name__)
-
         # differentiate between node who start moving immediately and those who take a while to get going
         if self.movements[0].timestamp != 0:
+            self.logger.debug(
+                f"No inital movement, waiting for {self.movements[0].timestamp} seconds"
+            )
             time.sleep(self.movements[0].timestamp)
 
         vector = self.compute_vector()
+        self.logger.debug(f"New movement vector: {vector}")
         self.update_context(vector)
         self.move_step()
+        self.logger.debug(f"Position at end of movement: ({self.x_pos}, {self.y_pos})")
 
         # main wait-and-update-loop
         while self.step < len(self.movements):
             wait_time: int = self.movements[self.step].timestamp - self.movements[
                 self.step - 1
             ].timestamp
+            self.logger.debug(f"Next change in movement in {wait_time} seconds")
             time.sleep(wait_time)
             vector = self.compute_vector()
+            self.logger.debug(f"New movement vector: {vector}")
             self.update_context(vector)
             self.move_step()
+            self.logger.debug(
+                f"Position at end of movement: ({self.x_pos}, {self.y_pos})"
+            )
 
     def move_step(self) -> None:
         """Update the node's internal position and step counter"""
@@ -78,12 +87,14 @@ class NS2Movements:
     def update_context(self, vector: Tuple[float, float]) -> None:
         """Update node context in dtnd"""
         context: Dict[str, float] = {"x": vector[0], "y": vector[1]}
+        self.logger.debug(f"Sending movement vector to dtnd: {context}")
         send_context(
             rest_url=self.rest_url, context_name="movement", node_context=context
         )
 
     def compute_vector(self) -> Tuple[float, float]:
         """Take the node's current position and destination/speed and compute the movement vector"""
+        # subtract current position vector from position vector of destination to get direction
         x_move = self.movements[self.step].x_dest - self.x_pos
         y_move = self.movements[self.step].y_dest - self.y_pos
 

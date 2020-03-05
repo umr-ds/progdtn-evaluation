@@ -29,9 +29,9 @@ class TrafficGenerator:
     node_name: str
     nodes: Nodes
     context: bool
+    logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
-        self.logger = logging.getLogger(__name__)
         process = multiprocessing.Process(target=self._run)
         process.start()
 
@@ -41,8 +41,9 @@ class TrafficGenerator:
         self.logger.debug(f"Closest backbone: {closest_backbone}")
 
         while True:
-            # wait 1 and 10 minutes and then send a bundle
+            # wait between 1 and 10 minutes and then send a bundle
             sleep_time = random.randint(60, 600)
+            self.logger.debug(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
             bundle_type = random.choice(["simple"])

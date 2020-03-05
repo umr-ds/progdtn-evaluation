@@ -3,7 +3,6 @@
 import toml
 import argparse
 import time
-import daemon
 import os
 import logging
 
@@ -64,13 +63,6 @@ if __name__ == "__main__":
     nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
     this_node = nodes.get_node_for_name(node_name=config_data["Node"]["name"])
 
-    if this_node.type == "visitor":
-        movement_helper: m_c.NS2Movements = m_c.generate_movement(
-            rest_url=context_url,
-            path=config_data["Scenario"]["movements"],
-            node_name=config_data["Node"]["name"],
-        )
-
     if this_node.type == "sensor":
         traffic_helper = TrafficGenerator(
             rest_url=bundle_url,
@@ -79,22 +71,26 @@ if __name__ == "__main__":
             nodes=nodes,
             context=context,
         )
-
-    if context:
-        context_generator = SensorContext(
-            rest_url=context_url,
-            node_name=config_data["Node"]["name"],
-            wifi_range=config_data["Scenario"]["wifi_range"],
-            nodes=nodes,
-        )
-
-    # fork other helpers and daemonise
-    if this_node.type == "sensor":
         traffic_helper.run()
+
     if context:
-        context_generator.run()
-    if this_node.type == "visitor":
-        movement_helper.run()
+        if this_node.type == "sensor":
+            context_generator = SensorContext(
+                rest_url=context_url,
+                node_name=config_data["Node"]["name"],
+                wifi_range=config_data["Scenario"]["wifi_range"],
+                nodes=nodes,
+            )
+            context_generator.run()
+
+        if this_node.type == "visitor":
+            movement_helper: m_c.NS2Movements = m_c.generate_movement(
+                rest_url=context_url,
+                path=config_data["Scenario"]["movements"],
+                node_name=config_data["Node"]["name"],
+            )
+            movement_helper.run()
+
     run(
         rest_url=bundle_url,
         logging_file=config_data["Node"]["store_log"],
