@@ -47,13 +47,12 @@ class TrafficGenerator:
             self.logger.debug(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
-            bundle_type = random.choice(["simple"])
+            bundle_type = random.choice(["simple", "bulk"])
             self.logger.debug(f"Sending {bundle_type} bundle")
             if bundle_type == "simple":
                 payload = self.generate_payload(32, 128, False)
             else:
                 # Between 1 and 10 MByte
-                # FIXME: Process dies when trying large payloads
                 payload = self.generate_payload(1000000, 100000000, True)
 
             if self.context:
@@ -122,5 +121,7 @@ class TrafficGenerator:
 
     def send_bundle(self, payload: str):
         self.logger.debug("Sending bundle without context")
-        command = f'dtncat send "http://127.0.0.1:8080" "{DESTINATION}" <<< {payload}'
+        with open(f"/tmp/{self.node_name}.bin", "w") as f:
+            f.write(payload)
+        command = f'cat /tmp/{self.node_name}.bin | dtncat send "http://127.0.0.1:8080" "{DESTINATION}"'
         subprocess.call(command, shell=True)
