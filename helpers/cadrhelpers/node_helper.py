@@ -16,7 +16,7 @@ from cadrhelpers.node_context import SensorContext
 def run(rest_url: str, logging_file: str, node_name: str) -> None:
     with open(logging_file, "w", buffering=1) as f:
         while True:
-            time.sleep(10)
+            time.sleep(60)
             now = int(time.time())
             store_size = get_size(rest_url=rest_url, p=False)
             logging.debug(f"Store size: {store_size}")

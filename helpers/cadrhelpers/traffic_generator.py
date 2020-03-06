@@ -6,7 +6,6 @@ import subprocess
 import logging
 
 from hashlib import sha1
-from dataclasses import dataclass
 from base64 import standard_b64encode
 
 import cadrhelpers.dtnclient as dtnclient
@@ -22,14 +21,16 @@ def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
     return math.sqrt(x_diff + y_diff)
 
 
-@dataclass()
 class TrafficGenerator:
-    rest_url: str
-    seed: bytes
-    node_name: str
-    nodes: Nodes
-    context: bool
-    logger: logging.Logger = logging.getLogger(__name__)
+    def __init__(
+        self, rest_url: str, seed: bytes, node_name: str, nodes: Nodes, context: bool
+    ):
+        self.rest_url: str = rest_url
+        self.seed: bytes = seed
+        self.node_name: str = node_name
+        self.nodes: Nodes = nodes
+        self.context: bool = context
+        self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
         process = multiprocessing.Process(target=self._run)

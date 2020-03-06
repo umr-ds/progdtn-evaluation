@@ -1,21 +1,18 @@
 import multiprocessing
 import logging
 
-from dataclasses import dataclass
-
 from cadrhelpers.dtnclient import send_context
 from cadrhelpers.movement_context import Nodes
 from cadrhelpers.traffic_generator import compute_euclidean_distance
 
 
-@dataclass()
 class SensorContext:
-
-    rest_url: str
-    node_name: str
-    wifi_range: float
-    nodes: Nodes
-    logger: logging.Logger = logging.getLogger(__name__)
+    def __init__(self, rest_url: str, node_name: str, wifi_range: float, nodes: Nodes):
+        self.rest_url: str = rest_url
+        self.node_name: str = node_name
+        self.wifi_range: float = wifi_range
+        self.nodes: Nodes = nodes
+        self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self):
         process = multiprocessing.Process(target=self._run)

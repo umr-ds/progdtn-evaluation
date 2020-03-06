@@ -7,20 +7,18 @@ import xml.etree.ElementTree as ElementTree
 
 from cadrhelpers.dtnclient import send_context, build_url
 from typing import List, Tuple, Dict, Union
-from dataclasses import dataclass
 
 
-@dataclass()
 class NS2Movement:
     """Single movement command"""
 
-    timestamp: int
-    x_dest: float
-    y_dest: float
-    speed: float
+    def __init__(self, timestamp: int, x_dest: float, y_dest: float, speed: float):
+        self.timestamp: int = timestamp
+        self.x_dest: float = x_dest
+        self.y_dest: float = y_dest
+        self.speed: float = speed
 
 
-@dataclass()
 class NS2Movements:
     """A node's movements as specified in a ns2 movement script
 
@@ -33,13 +31,21 @@ class NS2Movements:
         movements: List of movement commands in the form (timestamp, dest_x_pos, dest_y_pos, speed)
     """
 
-    node_name: str
-    rest_url: str
-    x_pos: float
-    y_pos: float
-    movements: List[NS2Movement]
-    step: int = 0
-    logger: logging.Logger = logging.getLogger(__name__)
+    def __init__(
+        self,
+        node_name: str,
+        rest_url: str,
+        x_pos: float,
+        y_pos: float,
+        movements: List[NS2Movement],
+    ):
+        self.node_name: str = node_name
+        self.rest_url: str = rest_url
+        self.x_pos: float = x_pos
+        self.y_pos: float = y_pos
+        self.movements: List[NS2Movement] = movements
+        self.step: int = 0
+        self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
         """Performs periodic context updates when movement changes
@@ -157,24 +163,24 @@ def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     )
 
 
-@dataclass()
 class Node:
     """Simulation node"""
 
-    id: int
-    name: str
-    type: str
-    x_pos: float
-    y_pos: float
+    def __init__(self, id: int, name: str, type: str, x_pos: float, y_pos: float):
+        self.id: int = id
+        self.name: str = name
+        self.type: str = type
+        self.x_pos: float = x_pos
+        self.y_pos: float = y_pos
 
 
-@dataclass()
 class Nodes:
     """All the nodes in the simulation"""
 
-    visitors: List[Node]
-    sensors: List[Node]
-    backbone: List[Node]
+    def __init__(self, visitors: List[Node], sensors: List[Node], backbone: List[Node]):
+        self.visitors: List[Node] = visitors
+        self.sensors: List[Node] = sensors
+        self.backbone: List[Node] = backbone
 
     def get_node_for_name(self, node_name: str) -> Node:
         ourself: Union[Node, None] = None
