@@ -33,7 +33,7 @@ COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
-COPY helpers/cadrhelpers/helper_sensor.py /usr/local/sbin/helper_sensor
+COPY helpers/cadrhelpers/node_helper.py /usr/local/sbin/node_helper
 
 # install python package for dependencies
 COPY helpers /root/helpers

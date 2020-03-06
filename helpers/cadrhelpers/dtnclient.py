@@ -118,11 +118,12 @@ def get_pending(rest_url: str) -> None:
             print(bundle)
 
 
-def get_size(rest_url: str) -> int:
+def get_size(rest_url: str, p: bool = True) -> int:
     """Get size of stored bundle buffer
 
     Args:
-        rest_url (str): URL of the REST-interface
+        rest_url: URL of the REST-interface
+        p: Whether the result should be printed to stdout
 
     Returns:
         Size of store if request was successful, -1 otherwise
@@ -130,9 +131,11 @@ def get_size(rest_url: str) -> int:
 
     response: requests.Response = requests.get(f"{rest_url}/size")
     response_text = response.text
-    if response.status_code != 200:
-        print(f"Status: {response.status_code}")
-    print(response_text)
+    if p:
+        if response.status_code != 200:
+            print(f"Status: {response.status_code}")
+        print(response_text)
+
     if response.status_code != 200:
         return -1
     else:

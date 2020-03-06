@@ -2,17 +2,17 @@ from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService
 
 
-class SensorHelperService(CoreService):
+class NodeHelperService(CoreService):
 
-    name = "SensorHelper"
-    executables = ("helper_sensor",)
+    name = "NodeHelper"
+    executables = ("node_helper",)
     dependencies = ("DTN7",)
-    configs = ("sensor.toml",)
-    startup = (f'bash -c "nohup helper_sensor {configs[0]}"',)
+    configs = ("helper.toml",)
+    startup = (f'bash -c "nohup node_helper {configs[0]}"',)
 
     @classmethod
     def generate_config(cls, node: CoreNode, filename: str):
-        if filename == "sensor.toml":
+        if filename == "helper.toml":
             return f"""
 [Node]
 name = "{node.name}"
@@ -26,7 +26,7 @@ bundle_port = 35038
 context_port = 35043
 
 [Scenario]
-xml = "/dtn-routing/scenarios/wanderwege/wanderwege.xml"
-movements = "/dtn-routing/scenarios/randomWaypoint/randomWaypoint.ns_movements"
+xml = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+movements = "/dtn_routing/scenarios/randomWaypoint/randomWaypoint.ns_movements"
 wifi_range = 275.0
 """

@@ -18,14 +18,14 @@ def run(rest_url: str, logging_file: str, node_name: str) -> None:
         while True:
             time.sleep(10)
             now = int(time.time())
-            store_size = get_size(rest_url=rest_url)
+            store_size = get_size(rest_url=rest_url, p=False)
             logging.debug(f"Store size: {store_size}")
             f.write(f"{now},{node_name},{store_size}\n")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Generate context data & traffic for sensor nodes"
+        description="Will generate metadata and/or traffic depending on node type"
     )
     parser.add_argument("path", help="Path to the config file")
     args = parser.parse_args()
