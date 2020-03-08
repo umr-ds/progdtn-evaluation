@@ -7,9 +7,11 @@ import logging
 
 from hashlib import sha1
 from base64 import standard_b64encode
+from typing import Tuple
 
 import cadrhelpers.dtnclient as dtnclient
 from cadrhelpers.movement_context import Nodes, Node
+from cadrhelpers.dtnclient import send_context
 
 
 DESTINATION = "dtn:backbone"
@@ -23,9 +25,16 @@ def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
 
 class TrafficGenerator:
     def __init__(
-        self, rest_url: str, seed: bytes, node_name: str, nodes: Nodes, context: bool
+        self,
+        bundle_url: str,
+        context_url: str,
+        seed: bytes,
+        node_name: str,
+        nodes: Nodes,
+        context: bool,
     ):
-        self.rest_url: str = rest_url
+        self.bundle_url: str = bundle_url
+        self.context_url: str = context_url
         self.seed: bytes = seed
         self.node_name: str = node_name
         self.nodes: Nodes = nodes
@@ -38,7 +47,12 @@ class TrafficGenerator:
 
     def _run(self) -> None:
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
-        closest_backbone = self.find_closest_backbone()
+        closest_backbone, closest_distance = self.find_closest_backbone()
+        send_context(
+            rest_url=self.context_url,
+            context_name="backbone",
+            node_context={"distance": str(closest_distance)},
+        )
         self.logger.debug(f"Closest backbone: {closest_backbone}")
 
         while True:
@@ -70,19 +84,20 @@ class TrafficGenerator:
         self.logger.debug("Sending bundle with context")
         timestamp = int(time.time())
         context = {
-            "timestamp": timestamp,
-            "bundle_type": bundle_type,
-            "destination": {"x": closest_backbone.x_pos, "y": closest_backbone.y_pos},
+            "timestamp": str(timestamp),
+            "bundle_type": str(bundle_type),
+            "x_dest": str(closest_backbone.x_pos),
+            "y_dest": str(closest_backbone.y_pos),
         }
         self.logger.debug(f"Bundle context: {context}")
         dtnclient.send_bundle(
-            rest_url=self.rest_url,
+            rest_url=self.bundle_url,
             bundle_recipient=DESTINATION,
             bundle_payload=payload,
             bundle_context=context,
         )
 
-    def find_closest_backbone(self) -> Node:
+    def find_closest_backbone(self) -> Tuple[Node, float]:
         assert self.nodes.backbone, "There needs to be at least 1 backbone node"
 
         ourself = self.nodes.get_node_for_name(node_name=self.node_name)
@@ -96,7 +111,7 @@ class TrafficGenerator:
                 closest = backbone
                 closest_distance = distance
 
-        return closest
+        return closest, closest_distance
 
     def initialise_rng(self, seed: bytes, node_name: str) -> None:
         """While we want to initialise each node's RNG deterministically so that experiments can be repeated,

@@ -8,7 +8,7 @@ import logging
 
 import cadrhelpers.movement_context as m_c
 
-from cadrhelpers.dtnclient import build_url, get_size
+from cadrhelpers.dtnclient import build_url, get_size, send_context
 from cadrhelpers.traffic_generator import TrafficGenerator
 from cadrhelpers.node_context import SensorContext
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     if os.path.isfile("/tmp/routing"):
         with open("/tmp/routing", "r") as f:
-            routing = f.read()
+            routing = f.read().strip()
     else:
         routing = "epidemic"
     logging.info(f"Routing Algorithm: {routing}")
@@ -65,7 +65,8 @@ if __name__ == "__main__":
 
     if this_node.type == "sensor":
         traffic_helper = TrafficGenerator(
-            rest_url=bundle_url,
+            bundle_url=bundle_url,
+            context_url=context_url,
             seed=seed,
             node_name=config_data["Node"]["name"],
             nodes=nodes,
@@ -74,6 +75,10 @@ if __name__ == "__main__":
         traffic_helper.run()
 
     if context:
+        node_type = {"node_type": this_node.type}
+        logging.debug(f"Sending node type: {node_type}")
+        send_context(rest_url=context_url, context_name="role", node_context=node_type)
+
         if this_node.type == "sensor":
             context_generator = SensorContext(
                 rest_url=context_url,

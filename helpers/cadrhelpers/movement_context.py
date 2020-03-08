@@ -173,6 +173,9 @@ class Node:
         self.x_pos: float = x_pos
         self.y_pos: float = y_pos
 
+    def __repr__(self) -> str:
+        return f"Node(id={self.id}, name='{self.name}', type='{self.type}', x_pos={self.x_pos}, y_pos={self.y_pos})"
+
 
 class Nodes:
     """All the nodes in the simulation"""

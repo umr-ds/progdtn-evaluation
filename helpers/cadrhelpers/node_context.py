@@ -24,7 +24,7 @@ class SensorContext:
         send_context(
             rest_url=self.rest_url,
             context_name="connectedness",
-            node_context={"value": connectedness},
+            node_context={"value": str(connectedness)},
         )
 
     def _compute_connectedness(self) -> int:

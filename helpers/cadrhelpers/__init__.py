@@ -1,6 +1,6 @@
 __all__ = [
     "dtnclient",
-    "helper_sensor",
+    "node_helper",
     "movement_context",
     "traffic_generator",
     "node_context",
