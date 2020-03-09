@@ -34,6 +34,7 @@ RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
 COPY helpers/cadrhelpers/node_helper.py /usr/local/sbin/node_helper
+COPY helpers/cadrhelpers/log_saver.py /usr/local/sbin/log_saver
 
 # install python package for dependencies
 COPY helpers /root/helpers
