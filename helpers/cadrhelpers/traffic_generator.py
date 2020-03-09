@@ -48,12 +48,14 @@ class TrafficGenerator:
     def _run(self) -> None:
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
         closest_backbone, closest_distance = self.find_closest_backbone()
-        send_context(
-            rest_url=self.context_url,
-            context_name="backbone",
-            node_context={"distance": str(closest_distance)},
-        )
         self.logger.debug(f"Closest backbone: {closest_backbone}")
+
+        if self.context:
+            send_context(
+                rest_url=self.context_url,
+                context_name="backbone",
+                node_context={"distance": str(closest_distance)},
+            )
 
         while True:
             # wait between 1 and 10 minutes and then send a bundle
