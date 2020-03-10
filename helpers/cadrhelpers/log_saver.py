@@ -3,7 +3,7 @@
 import os
 import shutil
 
-DATA_DIRECTORY = "/dtn_routing/data"
+DATA_DIRECTORY = "/research_data/data"
 
 
 def save_instance_logs(save_path: str, core_directory: str) -> None:

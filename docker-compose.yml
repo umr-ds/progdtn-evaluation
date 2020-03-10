@@ -9,6 +9,7 @@ services:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - ./dotcore:/root/.core
             - .:/dtn_routing
+            - /research_data/sommer2020cadr:/research_data
         tty: true
         privileged: true
         cap_add:
@@ -17,7 +18,7 @@ services:
         tmpfs:
             - /tmp:exec,mode=777,size=200G
         environment:
-            - CORE_PARAMS=/dtn_routing/scenarios/default.imn
+            - CORE_PARAMS=/dtn_routing/scenarios/wanderwege/wanderwege.xml
             - DISPLAY
             - BACKEND
             - ALGORITHMS
