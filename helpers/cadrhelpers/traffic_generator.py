@@ -63,11 +63,12 @@ class TrafficGenerator:
             self.logger.debug(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
-            bundle_type = random.choice(["simple", "bulk"])
+            bundle_type = random.choice(["simple"])
             self.logger.debug(f"Sending {bundle_type} bundle")
             if bundle_type == "simple":
                 payload = self.generate_payload(32, 128, False)
             else:
+                # TODO: bulk bundles turned out to be not really feasible...
                 # Between 1 and 10 MByte
                 payload = self.generate_payload(1000000, 100000000, True)
 

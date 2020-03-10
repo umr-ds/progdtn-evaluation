@@ -13,14 +13,15 @@ from cadrhelpers.traffic_generator import TrafficGenerator
 from cadrhelpers.node_context import SensorContext
 
 
-def run(rest_url: str, logging_file: str, node_name: str) -> None:
+def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
     with open(logging_file, "w", buffering=1) as f:
+        f.write("routing,node,timestamp,size")
         while True:
             time.sleep(60)
             now = int(time.time())
             store_size = get_size(rest_url=rest_url, p=False)
             logging.debug(f"Store size: {store_size}")
-            f.write(f"{now},{node_name},{store_size}\n")
+            f.write(f"{routing},{node_name},{now},{store_size}\n")
 
 
 if __name__ == "__main__":
@@ -100,4 +101,5 @@ if __name__ == "__main__":
         rest_url=bundle_url,
         logging_file=config_data["Node"]["store_log"],
         node_name=config_data["Node"]["name"],
+        routing=routing,
     )
