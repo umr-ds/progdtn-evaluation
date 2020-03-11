@@ -18,7 +18,7 @@ class NodeHelperService(CoreService):
 name = "{node.name}"
 store_log = "{node.nodedir}/store_log.csv"
 log_file = "{node.nodedir}/helpers.log"
-log_level = "DEBUG"
+log_level = "INFO"
 
 [REST]
 address = "127.0.0.1"

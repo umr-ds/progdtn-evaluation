@@ -14,13 +14,20 @@ from cadrhelpers.node_context import SensorContext
 
 
 def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
+    logging.info("Starting store size logging")
+
     with open(logging_file, "w", buffering=1) as f:
         f.write("routing,node,timestamp,size\n")
+        now = int(time.time())
+        store_size = get_size(rest_url=rest_url, p=False)
+        logging.info(f"Initial store size: {store_size}")
+        f.write(f"{routing},{node_name},{now},{store_size}\n")
+
         while True:
             time.sleep(60)
             now = int(time.time())
             store_size = get_size(rest_url=rest_url, p=False)
-            logging.debug(f"Store size: {store_size}")
+            logging.info(f"Store size: {store_size}")
             f.write(f"{routing},{node_name},{now},{store_size}\n")
 
 
@@ -63,8 +70,10 @@ if __name__ == "__main__":
 
     nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
     this_node = nodes.get_node_for_name(node_name=config_data["Node"]["name"])
+    logging.info(f"This node's type: {this_node.type}")
 
     if this_node.type == "sensor":
+        logging.info("Initialising Traffic Generator")
         traffic_helper = TrafficGenerator(
             bundle_url=bundle_url,
             context_url=context_url,
@@ -74,13 +83,15 @@ if __name__ == "__main__":
             context=context,
         )
         traffic_helper.run()
+        logging.info("Initialised Traffic Generator")
 
     if context:
         node_type = {"node_type": this_node.type}
-        logging.debug(f"Sending node type: {node_type}")
+        logging.info(f"Sending node type: {node_type}")
         send_context(rest_url=context_url, context_name="role", node_context=node_type)
 
         if this_node.type == "sensor":
+            logging.info("Initialising SensorContext")
             context_generator = SensorContext(
                 rest_url=context_url,
                 node_name=config_data["Node"]["name"],
@@ -88,15 +99,19 @@ if __name__ == "__main__":
                 nodes=nodes,
             )
             context_generator.run()
+            logging.info("Initialised SensorContext")
 
         if this_node.type == "visitor":
+            logging.info("Initialising Movement Generator")
             movement_helper: m_c.NS2Movements = m_c.generate_movement(
                 rest_url=context_url,
                 path=config_data["Scenario"]["movements"],
                 node_name=config_data["Node"]["name"],
             )
             movement_helper.run()
+            logging.info("Initialised Movement Generator")
 
+    logging.info("Daemonising")
     run(
         rest_url=bundle_url,
         logging_file=config_data["Node"]["store_log"],

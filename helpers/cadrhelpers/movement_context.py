@@ -51,36 +51,38 @@ class NS2Movements:
         """Performs periodic context updates when movement changes
         Spawns a new process
         """
+        self.logger.info("Starting NS2 movement context generator")
         process = multiprocessing.Process(target=self._run)
         process.start()
+        self.logger.info("Movement context running")
 
     def _run(self) -> None:
         """Does the actual work"""
         # differentiate between node who start moving immediately and those who take a while to get going
         if self.movements[0].timestamp != 0:
-            self.logger.debug(
+            self.logger.info(
                 f"No inital movement, waiting for {self.movements[0].timestamp} seconds"
             )
             time.sleep(self.movements[0].timestamp)
 
         vector = self.compute_vector()
-        self.logger.debug(f"New movement vector: {vector}")
+        self.logger.info(f"New movement vector: {vector}")
         self.update_context(vector)
         self.move_step()
-        self.logger.debug(f"Position at end of movement: ({self.x_pos}, {self.y_pos})")
+        self.logger.info(f"Position at end of movement: ({self.x_pos}, {self.y_pos})")
 
         # main wait-and-update-loop
         while self.step < len(self.movements):
             wait_time: int = self.movements[self.step].timestamp - self.movements[
                 self.step - 1
             ].timestamp
-            self.logger.debug(f"Next change in movement in {wait_time} seconds")
+            self.logger.info(f"Next change in movement in {wait_time} seconds")
             time.sleep(wait_time)
             vector = self.compute_vector()
-            self.logger.debug(f"New movement vector: {vector}")
+            self.logger.info(f"New movement vector: {vector}")
             self.update_context(vector)
             self.move_step()
-            self.logger.debug(
+            self.logger.info(
                 f"Position at end of movement: ({self.x_pos}, {self.y_pos})"
             )
 
@@ -93,7 +95,7 @@ class NS2Movements:
     def update_context(self, vector: Tuple[float, float]) -> None:
         """Update node context in dtnd"""
         context: Dict[str, float] = {"x": vector[0], "y": vector[1]}
-        self.logger.debug(f"Sending movement vector to dtnd: {context}")
+        self.logger.info(f"Sending movement vector to dtnd: {context}")
         send_context(
             rest_url=self.rest_url, context_name="movement", node_context=context
         )

@@ -42,13 +42,15 @@ class TrafficGenerator:
         self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
+        self.logger.info("Starting traffic generator")
         process = multiprocessing.Process(target=self._run)
         process.start()
+        self.logger.info("Traffic generator running")
 
     def _run(self) -> None:
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
         closest_backbone, closest_distance = self.find_closest_backbone()
-        self.logger.debug(f"Closest backbone: {closest_backbone}")
+        self.logger.info(f"Closest backbone: {closest_backbone}")
 
         if self.context:
             send_context(
@@ -60,11 +62,11 @@ class TrafficGenerator:
         while True:
             # wait between 1 and 10 minutes and then send a bundle
             sleep_time = random.randint(60, 600)
-            self.logger.debug(f"Waiting for {sleep_time} seconds")
+            self.logger.info(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
             bundle_type = random.choice(["simple"])
-            self.logger.debug(f"Sending {bundle_type} bundle")
+            self.logger.info(f"Sending {bundle_type} bundle")
             if bundle_type == "simple":
                 payload = self.generate_payload(32, 128, False)
             else:
@@ -84,7 +86,7 @@ class TrafficGenerator:
     def send_context_bundle(
         self, payload: str, bundle_type: str, closest_backbone: Node
     ):
-        self.logger.debug("Sending bundle with context")
+        self.logger.info("Sending bundle with context")
         timestamp = int(time.time())
         context = {
             "timestamp": str(timestamp),
@@ -92,7 +94,7 @@ class TrafficGenerator:
             "x_dest": str(closest_backbone.x_pos),
             "y_dest": str(closest_backbone.y_pos),
         }
-        self.logger.debug(f"Bundle context: {context}")
+        self.logger.info(f"Bundle context: {context}")
         dtnclient.send_bundle(
             rest_url=self.bundle_url,
             bundle_recipient=DESTINATION,
@@ -124,21 +126,21 @@ class TrafficGenerator:
         """
         name_binary = bytes(node_name, encoding="utf8")
         unique_seed: bytes = sha1(seed + name_binary).digest()
-        self.logger.debug(f"RNG seed: {unique_seed}")
+        self.logger.info(f"RNG seed: {unique_seed}")
         random.seed(unique_seed)
 
     def generate_payload(self, size_min: int, size_max: int, in_bytes: bool) -> str:
         size: int = random.randint(size_min, size_max)
         if in_bytes:
             size *= 8
-        self.logger.debug(f"Generating payload of size {size}")
+        self.logger.info(f"Generating payload of size {size}")
         payload: bytes = random.getrandbits(size).to_bytes(
             (int(size / 8)) + 1, byteorder="little", signed=False
         )
         return str(standard_b64encode(payload), "utf-8")
 
     def send_bundle(self, payload: str):
-        self.logger.debug("Sending bundle without context")
+        self.logger.info("Sending bundle without context")
         with open(f"/tmp/{self.node_name}.bin", "w") as f:
             f.write(payload)
         command = f'cat /tmp/{self.node_name}.bin | dtncat send "http://127.0.0.1:8080" "{DESTINATION}"'

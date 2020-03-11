@@ -15,20 +15,23 @@ class SensorContext:
         self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self):
-        process = multiprocessing.Process(target=self._run)
-        process.start()
+        self.logger.info("Starting SensorContext generator")
+        # process = multiprocessing.Process(target=self._run)
+        # process.start()
+        # self.logger.info("SensorContext running")
+        self._run()
 
     def _run(self):
-        connectedness = self._compute_connectedness()
-        self.logger.debug(f"Connectedness: {connectedness}")
+        connectedness = self.compute_connectedness()
         send_context(
             rest_url=self.rest_url,
             context_name="connectedness",
             node_context={"value": str(connectedness)},
         )
 
-    def _compute_connectedness(self) -> int:
+    def compute_connectedness(self) -> int:
         """Finds (static) nodes within wifi range"""
+        logging.info("Computing connectedness")
         connectedness: int = 0
 
         ourself = self.nodes.get_node_for_name(node_name=self.node_name)
@@ -40,4 +43,5 @@ class SensorContext:
             if distance <= self.wifi_range:
                 connectedness += 1
 
+        self.logger.info(f"Connectedness: {connectedness}")
         return connectedness
