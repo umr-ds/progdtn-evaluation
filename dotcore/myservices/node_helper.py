@@ -8,7 +8,7 @@ class NodeHelperService(CoreService):
     executables = ("node_helper",)
     dependencies = ("DTN7",)
     configs = ("helper.toml",)
-    startup = (f'bash -c "nohup node_helper {configs[0]} &"',)
+    startup = (f'bash -c "nohup node_helper {configs[0]} &> helpers_run.log &"',)
 
     @classmethod
     def generate_config(cls, node: CoreNode, filename: str):
