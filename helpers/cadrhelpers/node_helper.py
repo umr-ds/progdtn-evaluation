@@ -15,7 +15,7 @@ from cadrhelpers.node_context import SensorContext
 
 def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
     with open(logging_file, "w", buffering=1) as f:
-        f.write("routing,node,timestamp,size")
+        f.write("routing,node,timestamp,size\n")
         while True:
             time.sleep(60)
             now = int(time.time())
