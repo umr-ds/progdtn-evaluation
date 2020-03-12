@@ -5,6 +5,8 @@ from typing import List
 import pandas
 from pandas import DataFrame
 
+from cadrhelpers.movement_context import Nodes, parse_scenario_xml
+
 
 def check_node_crash(simulation_directory: str, node_name: str) -> bool:
     """Check the node's dtnd_run.log to see if dtnd crashed during the simulation.
@@ -43,6 +45,21 @@ def load_store_sizes(data_path: str) -> DataFrame:
     return pandas.concat(data)
 
 
+def node_types(scenario_path: str, data_path: str) -> None:
+    """Reads node definitions from scenario_path and writes a csv of the node<->type mapping to data path"""
+    nodes = parse_scenario_xml(path=scenario_path)
+    with open(data_path, "w") as f:
+        all_nodes = nodes.backbone + nodes.sensors + nodes.visitors
+        f.write("node,type\n")
+        for node in all_nodes:
+            print(f"Node {node.name} is {node.type}")
+            f.write(f"{node.name},{node.type}\n")
+
+
 if __name__ == "__main__":
-    data = load_store_sizes("/research_data/sommer2020cadr/data")
-    print(data)
+    # data = load_store_sizes("/research_data/sommer2020cadr/data")
+    # data.to_csv("/research_data/sommer2020cadr/combined.csv")
+    node_types(
+        scenario_path="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml",
+        data_path="/research_data/sommer2020cadr/node_types.csv"
+    )

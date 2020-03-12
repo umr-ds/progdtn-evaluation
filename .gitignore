@@ -9,3 +9,4 @@ dotcore/prefs.conf
 .idea/
 *.log
 **/*.egg-info/
+**/.ipynb_checkpoints/
