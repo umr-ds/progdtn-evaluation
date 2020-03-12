@@ -1,11 +1,11 @@
 import os
 
-from typing import List
+from typing import List, Dict
 
-import pandas
+import pandas as pd
 from pandas import DataFrame
 
-from cadrhelpers.movement_context import Nodes, parse_scenario_xml
+from cadrhelpers.movement_context import parse_scenario_xml
 
 
 def check_node_crash(simulation_directory: str, node_name: str) -> bool:
@@ -25,7 +25,10 @@ def check_node_crash(simulation_directory: str, node_name: str) -> bool:
 
 
 def load_store_sizes(data_path: str) -> DataFrame:
-    """Read in all the data store CSVs and merge them into a single large DataFrame"""
+    """Read in all the data store CSVs and merge them into a single large DataFrame
+
+    Also filter out data from crashed nodes
+    """
     data: List[DataFrame] = []
     for root, subdirs, _ in os.walk(data_path):
         for directory in subdirs:
@@ -35,31 +38,50 @@ def load_store_sizes(data_path: str) -> DataFrame:
                 for file in files:
                     if "store_log.csv" in file:
                         node_name: str = file.split("_")[0]
-                        node_crashed = check_node_crash(
-                            simulation_directory=simulation_directory,
-                            node_name=node_name,
-                        )
-                        if not node_crashed:
-                            frame = pandas.read_csv(os.path.join(root, directory, file))
-                            data.append(frame)
-    return pandas.concat(data)
+                        # node_crashed = check_node_crash(
+                        #     simulation_directory=simulation_directory,
+                        #     node_name=node_name,
+                        # )
+                        # if not node_crashed:
+                        frame = pd.read_csv(os.path.join(root, directory, file))
+                        data.append(frame)
+    return pd.concat(data)
 
 
-def node_types(scenario_path: str, data_path: str) -> None:
+def final_value(data: DataFrame) -> DataFrame:
+    """Extracts the final measurement for each node"""
+    filtered: List[DataFrame] = []
+    for node in data["node"].unique():
+        node_data = data.loc[data["node"] == node]
+        sorted_data = node_data.sort_values(by=["timestamp"])
+        final_measurement = sorted_data.tail(1)
+        filtered.append(final_measurement)
+    return pd.concat(filtered)
+
+
+def node_types(scenario_path: str) -> Dict[str, str]:
     """Reads node definitions from scenario_path and writes a csv of the node<->type mapping to data path"""
+    types: Dict[str, str] = {}
     nodes = parse_scenario_xml(path=scenario_path)
-    with open(data_path, "w") as f:
-        all_nodes = nodes.backbone + nodes.sensors + nodes.visitors
-        f.write("node,type\n")
-        for node in all_nodes:
-            print(f"Node {node.name} is {node.type}")
-            f.write(f"{node.name},{node.type}\n")
+    all_nodes = nodes.backbone + nodes.sensors + nodes.visitors
+    for node in all_nodes:
+        print(f"Node {node.name} is {node.type}")
+        types[node.name] = node.type
+    return types
+
+
+def add_node_type(data: DataFrame, node_types: Dict[str, str]) -> DataFrame:
+    type_column: List[str] = []
+    for node in data["node"]:
+        type_column.append(node_types[node])
+    data["node_type"] = type_column
+    return data
 
 
 if __name__ == "__main__":
-    # data = load_store_sizes("/research_data/sommer2020cadr/data")
-    # data.to_csv("/research_data/sommer2020cadr/combined.csv")
-    node_types(
+    data = load_store_sizes("/research_data/sommer2020cadr/data")
+    types = node_types(
         scenario_path="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml",
-        data_path="/research_data/sommer2020cadr/node_types.csv"
     )
+    data_with_types = add_node_type(data=data, node_types=types)
+    data_with_types.to_csv("/research_data/sommer2020cadr/combined.csv")
