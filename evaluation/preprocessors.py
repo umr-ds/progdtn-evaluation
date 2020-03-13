@@ -65,7 +65,7 @@ def node_types(scenario_path: str) -> Dict[str, str]:
     nodes = parse_scenario_xml(path=scenario_path)
     all_nodes = nodes.backbone + nodes.sensors + nodes.visitors
     for node in all_nodes:
-        print(f"Node {node.name} is {node.type}")
+        print(f"Node {node.name} is a {node.type}")
         types[node.name] = node.type
     return types
 
