@@ -1,8 +1,10 @@
 import os
 import pickle
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from dataclasses import dataclass
+
+from preprocessors import node_types
 
 
 @dataclass()
@@ -65,8 +67,61 @@ def parse_simulation_run(path: str) -> Dict[str, List[Occurrence]]:
     return bundles
 
 
+def compute_bundle_runtimes(
+    routing: str, bundles: Dict[str, List[Occurrence]], nodes: Dict[str, str]
+):
+    print("Computing bundle runtimes")
+    # bundle_id and originating node of bundles that were not delivered successfully
+    missing_bundles: List[Tuple[str, str]] = []
+
+    with open(f"/research_data/sommer2020cadr/bundle_runtimes_{routing}.csv", "w") as f:
+        f.write("routing,bundle,arrived_at,runtime\n")
+        for bundle, occurrences in bundles.items():
+            print(f"Computing runtime for bundle {bundle}")
+            start_time = occurrences[0].timestamp
+            arrived = False
+            for occurence in occurrences[1:]:
+                if nodes[occurence.node] == "backbone":
+                    # the first time a bundle is seen on a backbone node, we consider it received
+                    print(f"Bundle arrived at node {occurence.node}")
+                    receive_time = occurence.timestamp - start_time
+                    print(f"Runtime was {receive_time}")
+                    f.write(f"{routing},{bundle},{occurence.node},{receive_time}\n")
+                    arrived = True
+                    break
+            if not arrived:
+                print("Bundle did not make it to backbone")
+                missing_bundles.append((bundle, occurrences[0].node))
+
+    with open(f"/research_data/sommer2020cadr/missing_bundles_{routing}.csv", "w") as f:
+        f.write("bundle,origin\n")
+        for bundle, origin in missing_bundles:
+            f.write(f"{bundle},{origin}\n")
+
+
 if __name__ == "__main__":
-    bundles = parse_simulation_run("/research_data/sommer2020cadr/data/prophet")
-    with open("/research_data/sommer2020cadr/occurrences_prophet.pickle", "wb") as f:
-        print("Writing data to disk")
-        pickle.dump(bundles, f)
+    # bundles = parse_simulation_run("/research_data/sommer2020cadr/data/prophet")
+    # with open("/research_data/sommer2020cadr/occurrences_prophet.pickle", "wb") as f:
+    #     print("Writing data to disk")
+    #     pickle.dump(bundles, f)
+
+    # print("Loading node types")
+    # types = node_types(
+    #     scenario_path="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml",
+    # )
+    # routing = "spray"
+    # with open(f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb") as f:
+    #     print("Loading bundles occurrences")
+    #     bundles = pickle.load(f)
+    #     compute_bundle_runtimes(routing=routing, bundles=bundles, nodes=types)
+
+    with open("/research_data/sommer2020cadr/bundles.csv", "w") as bundles:
+        bundles.write("routing,bundles\n")
+        routings = ["context", "epidemic", "prophet", "spray"]
+        for routing in routings:
+            with open(
+                f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb"
+            ) as f:
+                b: Dict[str, List[Occurrence]] = pickle.load(f)
+                print(b.keys())
+                bundles.write(f"{routing},{len(b.keys())}\n")
