@@ -67,6 +67,29 @@ def parse_simulation_run(path: str) -> Dict[str, List[Occurrence]]:
     return bundles
 
 
+def filter_meta_bundles(
+    bundles: Dict[str, List[Occurrence]], log_path: str
+) -> Dict[str, List[Occurrence]]:
+    """As it turns out, if you just parse the logs  you will also get all the metadata bundles.
+
+    While it may be useful to compare the total number of bundles sent, you can't use these to compute delivery times
+    and such.
+    """
+    for _, _, files in os.walk(log_path):
+        for file in files:
+            if "dtnd_run.log" in file:
+                with open(os.path.join(log_path, file), "r") as f:
+                    for line in f:
+                        if 'bundle="' in line:
+                            if "metadata" in line:
+                                bundle = get_bundle_id(parts=line.split(" "))
+                                occurrences = bundles.get(bundle)
+                                if occurrences is not None:
+                                    del bundles[bundle]
+
+    return bundles
+
+
 def compute_bundle_runtimes(
     routing: str, bundles: Dict[str, List[Occurrence]], nodes: Dict[str, str]
 ):
