@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from preprocessors import node_types
 
 
+routings = ["context", "epidemic", "prophet", "spray"]
+
+
 @dataclass()
 class Occurrence:
     bundle: str
@@ -128,23 +131,35 @@ if __name__ == "__main__":
     #     print("Writing data to disk")
     #     pickle.dump(bundles, f)
 
-    # print("Loading node types")
-    # types = node_types(
-    #     scenario_path="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml",
-    # )
-    # routing = "spray"
-    # with open(f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb") as f:
-    #     print("Loading bundles occurrences")
-    #     bundles = pickle.load(f)
-    #     compute_bundle_runtimes(routing=routing, bundles=bundles, nodes=types)
+    print("Loading node types")
+    types = node_types(
+        scenario_path="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml",
+    )
+    for routing in routings:
+        with open(
+            f"/research_data/sommer2020cadr/filtered_{routing}.pickle", "rb"
+        ) as f:
+            print("Loading bundles occurrences")
+            bundles = pickle.load(f)
+            compute_bundle_runtimes(routing=routing, bundles=bundles, nodes=types)
 
-    with open("/research_data/sommer2020cadr/bundles.csv", "w") as bundles:
-        bundles.write("routing,bundles\n")
-        routings = ["context", "epidemic", "prophet", "spray"]
-        for routing in routings:
-            with open(
-                f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb"
-            ) as f:
-                b: Dict[str, List[Occurrence]] = pickle.load(f)
-                print(b.keys())
-                bundles.write(f"{routing},{len(b.keys())}\n")
+    # with open("/research_data/sommer2020cadr/bundles.csv", "w") as bundles:
+    #     bundles.write("routing,bundles\n")
+    #     for routing in routings:
+    #         with open(
+    #             f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb"
+    #         ) as f:
+    #             b: Dict[str, List[Occurrence]] = pickle.load(f)
+    #             filtered = filter_meta_bundles(bundles=b, log_path=f"/research_data/sommer2020cadr/data/{routing}")
+    #         with open(f"/research_data/sommer2020cadr/filtered_{routing}.pickle", "wb") as f:
+    #             pickle.dump(filtered, f)
+
+    # with open("/research_data/sommer2020cadr/bundles.csv", "w") as bundles:
+    #     bundles.write("routing,bundles\n")
+    #     for routing in routings:
+    #         with open(
+    #             f"/research_data/sommer2020cadr/occurrences_{routing}.pickle", "rb"
+    #         ) as f:
+    #             b: Dict[str, List[Occurrence]] = pickle.load(f)
+    #             print(b.keys())
+    #             bundles.write(f"{routing},{len(b.keys())}\n")
