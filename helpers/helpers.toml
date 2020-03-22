@@ -1,5 +1,5 @@
 [Node]
-name = "n27"
+name = "n2"
 store_log = "/home/msommer/temp/dtn7/store_log.csv"
 log_file = "/home/msommer/temp/dtn7/helpers.log"
 log_level = "DEBUG"

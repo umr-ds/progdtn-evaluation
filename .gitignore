@@ -10,3 +10,4 @@ dotcore/prefs.conf
 *.log
 **/*.egg-info/
 **/.ipynb_checkpoints/
+*.pdf
