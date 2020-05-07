@@ -11,3 +11,4 @@ dotcore/prefs.conf
 **/*.egg-info/
 **/.ipynb_checkpoints/
 *.pdf
+/evaluation/figures
