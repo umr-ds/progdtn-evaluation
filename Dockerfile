@@ -1,5 +1,5 @@
 ### Build dtnd & dtncat
-FROM golang:1.13 AS dtn7-builder
+FROM golang:1.14.2 AS dtn7-builder
 
 COPY dtn7-go /dtn7-go
 WORKDIR /dtn7-go
@@ -7,15 +7,18 @@ RUN go build -o /dtncat ./cmd/dtncat \
 && go build -o /dtnd ./cmd/dtnd
 
 ### Setup core worker container
-FROM maciresearch/core_worker:6.1.0-1
+FROM maciresearch/core_worker:6.3.0-2
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
-LABEL version="0.4"
+LABEL url="https://github.com/umr-ds/cadr-evaluation"
+LABEL version="0.4.1"
+
+# update system
+RUN apt update && apt dist-upgrade && apt clean
 
 # install dependencies 
-RUN apt-get update \
-    && apt-get install -y \
-    python-pip \
+RUN apt update \
+    && apt install -y \
     python3-pip \
     python3-requests \
     python3-daemon \
@@ -23,7 +26,7 @@ RUN apt-get update \
     bwm-ng \
     sysstat \
     tcpdump \
-    && apt-get clean
+    && apt clean
 
 # install core-dtn7 integration
 COPY --from=dtn7-builder /dtncat /usr/local/sbin/dtncat
