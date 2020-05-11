@@ -114,6 +114,7 @@ def transform_to_ns(
                 current_time += compute_travel_time(
                     distance=distance, speed=speed, wait_time=wait_time
                 )
+                current_time = round(current_time, 0)
                 current_point = next_point
 
             print(f"Course-completion time for n{node}:")
