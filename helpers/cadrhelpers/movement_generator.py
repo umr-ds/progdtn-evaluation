@@ -16,6 +16,8 @@ LOCOMOTION = {
     "powerwalk": {"low": 1.9, "high": 2.5},
     "jog": {"low": 3.0, "high": 3.6},
 }
+# define the fastest method of locomotion
+LOCOMOTION["fastest"] = LOCOMOTION["jog"]
 
 
 @dataclass()
@@ -57,13 +59,21 @@ def compute_distance(
 
 
 def node_speed(
-    locomotion: str, ludicrous_speed: bool = False, precision: int = 2
+    locomotion: str,
+    fast_mode: bool = False,
+    ludicrous_speed: bool = False,
+    precision: int = 2,
 ) -> float:
-    speed = random.uniform(
-        LOCOMOTION[locomotion]["low"], LOCOMOTION[locomotion]["high"]
-    )
+    if fast_mode:
+        speed = LOCOMOTION["fastest"]["high"]
+    else:
+        speed = random.uniform(
+            LOCOMOTION[locomotion]["low"], LOCOMOTION[locomotion]["high"]
+        )
+
     if ludicrous_speed:
         speed *= 10
+
     return round(speed, precision)
 
 
@@ -71,6 +81,7 @@ def transform_to_ns(
     waypoints: Dict[str, List[Point]],
     output_file: str,
     wait_time: float = 2.0,
+    fast_mode: bool = False,
     ludicrous_speed: bool = False,
 ) -> None:
     with open(output_file, "w") as f:
@@ -87,7 +98,9 @@ def transform_to_ns(
             current_time: float = 1.0
             for next_point in node_movements[1:]:
                 speed = node_speed(
-                    locomotion=node_locomotion, ludicrous_speed=ludicrous_speed
+                    locomotion=node_locomotion,
+                    fast_mode=fast_mode,
+                    ludicrous_speed=ludicrous_speed,
                 )
                 f.write(
                     f'$ns_ at {current_time} "$node_({node}) setdest {next_point.x} {next_point.y} {speed}"\n'
@@ -117,10 +130,14 @@ if __name__ == "__main__":
     parser.add_argument("input", help="path to the waypoint file")
     parser.add_argument("output", help="path for resulting ns2-file")
     parser.add_argument(
-        "-s",
         "--ludicrous_speed",
         action="store_true",
         help="make everyone move with 10 times their normal speed",
+    )
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        default="Have all nodes run with the maximum speed, so that you can make sure that you trace takes long enough",
     )
     parser.add_argument(
         "-w",
@@ -144,5 +161,6 @@ if __name__ == "__main__":
         waypoints=waypoints,
         output_file=args.output,
         wait_time=args.wait_time,
+        fast_mode=args.fast,
         ludicrous_speed=args.ludicrous_speed,
     )
