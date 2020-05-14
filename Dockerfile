@@ -7,14 +7,14 @@ RUN go build -o /dtncat ./cmd/dtncat \
 && go build -o /dtnd ./cmd/dtnd
 
 ### Setup core worker container
-FROM maciresearch/core_worker:6.3.0-2
+FROM maciresearch/core_worker:6.4.0-1
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
 LABEL url="https://github.com/umr-ds/cadr-evaluation"
 LABEL version="0.4.1"
 
 # update system
-RUN apt update && apt dist-upgrade && apt clean
+RUN apt update && apt dist-upgrade -y && apt clean
 
 # install dependencies 
 RUN apt update \
