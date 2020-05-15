@@ -3,15 +3,15 @@ FROM golang:1.14.2 AS dtn7-builder
 
 COPY dtn7-go /dtn7-go
 WORKDIR /dtn7-go
-RUN go build -o /dtncat ./cmd/dtncat \
-&& go build -o /dtnd ./cmd/dtnd
+RUN go build ./cmd/dtn-tool
+RUN go build ./cmd/dtnd
 
 ### Setup core worker container
-FROM maciresearch/core_worker:6.4.0-1
+FROM maciresearch/core_worker:6.4.0-2
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
 LABEL url="https://github.com/umr-ds/cadr-evaluation"
-LABEL version="0.4.1"
+LABEL version="0.4.2"
 
 # update system
 RUN apt update && apt dist-upgrade -y && apt clean
@@ -29,9 +29,9 @@ RUN apt update \
     && apt clean
 
 # install core-dtn7 integration
-COPY --from=dtn7-builder /dtncat /usr/local/sbin/dtncat
-COPY --from=dtn7-builder /dtnd /usr/local/sbin/dtnd
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_data.js /root/context.js
+COPY --from=dtn7-builder /dtn7-go/dtn-tool /usr/local/sbin/dtn-tool
+COPY --from=dtn7-builder /dtn7-go/dtnd /usr/local/sbin/dtnd
+# COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_data.js /root/context.js
 COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
