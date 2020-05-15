@@ -1,662 +1,48 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<scenario name="/dtn_routing/scenarios/wanderwege/wanderwege.xml">
+<scenario name="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml">
   <networks>
-    <network id="1" name="wlan1" model="basic_range" mobility="ns2script" type="WIRELESS_LAN">
-      <position x="1107" y="540" lat="47.571745926385084" lon="-122.11036636700786" alt="2.0"/>
+    <network id="1" name="wlan1" type="WIRELESS_LAN">
+      <position x="1127" y="679" lat="47.57505195240611" lon="-122.12219798674798" alt="2.0"/>
     </network>
   </networks>
   <devices>
-    <device id="2" name="n2" type="visitor">
-      <position x="404" y="891" lat="47.56711691759345" lon="-122.12446426994573" alt="2.0"/>
+    <device id="2" name="n2" type="PC" class="" image="">
+      <position x="161" y="281" lat="47.57746387607703" lon="-122.13087571239255" alt="2.0"/>
       <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
+        <service name="DefaultRoute"/>
       </services>
     </device>
-    <device id="3" name="n3" type="visitor">
-      <position x="2183" y="801" lat="47.5680552158593" lon="-122.0889704476183" alt="2.0"/>
+    <device id="3" name="n3" type="PC" class="" image="">
+      <position x="31" y="1324" lat="47.57114294571393" lon="-122.13204352226191" alt="2.0"/>
       <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
+        <service name="DefaultRoute"/>
       </services>
     </device>
-    <device id="4" name="n4" type="visitor">
-      <position x="1149" y="1320" lat="47.56121303811808" lon="-122.10970722300898" alt="2.0"/>
+    <device id="4" name="n4" type="PC" class="" image="">
+      <position x="2557" y="58" lat="47.57881523198222" lon="-122.10935207818505" alt="2.0"/>
       <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
+        <service name="DefaultRoute"/>
       </services>
     </device>
-    <device id="5" name="n5" type="visitor">
-      <position x="1778" y="248" lat="47.57558198609074" lon="-122.09691787311178" alt="2.0"/>
+    <device id="5" name="n5" type="PC" class="" image="">
+      <position x="1237" y="1323" lat="47.57114900641526" lon="-122.12120983993545" alt="2.0"/>
       <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="6" name="n6" type="visitor">
-      <position x="986" y="65" lat="47.578174913797355" lon="-122.1126710008899" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="7" name="n7" type="visitor">
-      <position x="1335" y="441" lat="47.5730466084159" lon="-122.10579695364336" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="8" name="n8" type="visitor">
-      <position x="115" y="818" lat="47.56814593071095" lon="-122.13021058732274" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="9" name="n9" type="visitor">
-      <position x="545" y="962" lat="47.56613724623091" lon="-122.12166876990108" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="10" name="n10" type="visitor">
-      <position x="1846" y="742" lat="47.56890461972763" lon="-122.09567654081883" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="11" name="n11" type="visitor">
-      <position x="400" y="1257" lat="47.56217819946756" lon="-122.12462632826617" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="12" name="n12" type="backbone">
-      <position x="398" y="478" lat="47.572691437743146" lon="-122.12449101971856" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="13" name="n13" type="backbone">
-      <position x="1469" y="232" lat="47.57584626687845" lon="-122.1030765593012" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="14" name="n14" type="backbone">
-      <position x="937" y="920" lat="47.56664392766571" lon="-122.11384294592692" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="15" name="n15" type="backbone">
-      <position x="840" y="1282" lat="47.56177352123836" lon="-122.11585930412963" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="16" name="n16" type="backbone">
-      <position x="1541" y="716" lat="47.56930329100027" lon="-122.10175236767597" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="17" name="n17" type="backbone">
-      <position x="1828" y="1250" lat="47.56205182537416" lon="-122.09615341762404" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="18" name="n18" type="backbone">
-      <position x="2408" y="1068" lat="47.56441625147623" lon="-122.08454673416672" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="19" name="n19" type="backbone">
-      <position x="2184" y="573" lat="47.57113198268011" lon="-122.0888971419035" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="20" name="n20" type="backbone">
-      <position x="322" y="1055" lat="47.564916136995954" lon="-122.12613615385216" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="21" name="n21" type="backbone">
-      <position x="2019" y="228" lat="47.5758139477491" lon="-122.09210696580635" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="22" name="n22" type="sensor">
-      <position x="1323" y="787" lat="47.56837908378655" lon="-122.10611572122507" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="23" name="n23" type="sensor">
-      <position x="1743" y="583" lat="47.571066551112416" lon="-122.09769354471113" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="24" name="n24" type="sensor">
-      <position x="1647" y="1051" lat="47.56476578119704" lon="-122.09971614551523" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="25" name="n25" type="sensor">
-      <position x="1160" y="1020" lat="47.56525994862517" lon="-122.109419289393" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="26" name="n26" type="sensor">
-      <position x="667" y="446" lat="47.57308221617204" lon="-122.11911938981483" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="27" name="n27" type="sensor">
-      <position x="1305" y="192" lat="47.57641161047062" lon="-122.10633803871897" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="28" name="n28" type="sensor">
-      <position x="1826" y="408" lat="47.57341519671123" lon="-122.09599777860464" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="29" name="n29" type="sensor">
-      <position x="2331" y="283" lat="47.57502228630963" lon="-122.08589767914356" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="30" name="n30" type="sensor">
-      <position x="2492" y="70" lat="47.57787113935008" lon="-122.08263670403454" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="31" name="n31" type="sensor">
-      <position x="2453" y="835" lat="47.5675534852436" lon="-122.0835946498565" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="32" name="n32" type="sensor">
-      <position x="2090" y="1248" lat="47.56203753014545" lon="-122.0909292551096" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="33" name="n33" type="sensor">
-      <position x="1560" y="1298" lat="47.56144603372884" lon="-122.10150782854853" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="34" name="n34" type="sensor">
-      <position x="679" y="1260" lat="47.56209512108721" lon="-122.11906431329326" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="35" name="n35" type="sensor">
-      <position x="709" y="828" lat="47.56792054049883" lon="-122.11836835018637" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="36" name="n36" type="sensor">
-      <position x="342" y="732" lat="47.56927212084227" lon="-122.12566482958961" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="37" name="n37" type="sensor">
-      <position x="266" y="299" lat="47.57512718074666" lon="-122.12708321562154" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="38" name="n38" type="sensor">
-      <position x="802" y="244" lat="47.57578757393189" lon="-122.11638134560124" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="39" name="n39" type="sensor">
-      <position x="844" y="596" lat="47.571030745691225" lon="-122.11562372404455" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="40" name="n40" type="sensor">
-      <position x="159" y="571" lat="47.571472645777" lon="-122.12927796383586" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="41" name="n41" type="sensor">
-      <position x="103" y="1114" lat="47.56415309294043" lon="-122.13051598451909" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="42" name="n42" type="sensor">
-      <position x="876" y="1083" lat="47.56445357005149" lon="-122.11509631510087" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="43" name="n43" type="sensor">
-      <position x="1110" y="748" lat="47.56893842670546" lon="-122.11035408430465" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="44" name="n44" type="sensor">
-      <position x="1562" y="392" lat="47.57367249681288" lon="-122.10125880501633" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="45" name="n45" type="sensor">
-      <position x="1608" y="78" lat="47.57790283340143" lon="-122.100268870087" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="46" name="n46" type="sensor">
-      <position x="1996" y="89" lat="47.577693421974764" lon="-122.09253324167855" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="47" name="n47" type="sensor">
-      <position x="2167" y="385" lat="47.57367178786925" lon="-122.08919214869684" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="48" name="n48" type="sensor">
-      <position x="2205" y="953" lat="47.566000446273" lon="-122.08856735553908" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="49" name="n49" type="sensor">
-      <position x="2417" y="1231" lat="47.56221508773239" lon="-122.08440561990366" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="50" name="n50" type="sensor">
-      <position x="2379" y="593" lat="47.5708311215304" lon="-122.08501331317629" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
-      </services>
-    </device>
-    <device id="51" name="n51" type="sensor">
-      <position x="1675" y="809" lat="47.56802726773394" lon="-122.09910185624985" alt="2.0"/>
-      <services>
-        <service name="bwm-ng"/>
-        <service name="pidstat"/>
-        <service name="DTN7"/>
-        <service name="NodeHelper"/>
+        <service name="DefaultRoute"/>
       </services>
     </device>
   </devices>
   <links>
     <link node_one="1" node_two="2">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:1e" ip4="10.0.0.1" ip4_mask="16" ip6="2001::1" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.0.20" ip4_mask="16" ip6="2001::20" ip6_mask="64"/>
     </link>
     <link node_one="1" node_two="3">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:1f" ip4="10.0.0.2" ip4_mask="16" ip6="2001::2" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:07" ip4="10.0.0.21" ip4_mask="16" ip6="2001::21" ip6_mask="64"/>
     </link>
     <link node_one="1" node_two="4">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:20" ip4="10.0.0.3" ip4_mask="16" ip6="2001::3" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.0.22" ip4_mask="16" ip6="2001::22" ip6_mask="64"/>
     </link>
     <link node_one="1" node_two="5">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:21" ip4="10.0.0.4" ip4_mask="16" ip6="2001::4" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="6">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:22" ip4="10.0.0.5" ip4_mask="16" ip6="2001::5" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="7">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:23" ip4="10.0.0.6" ip4_mask="16" ip6="2001::6" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="8">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:24" ip4="10.0.0.7" ip4_mask="16" ip6="2001::7" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="9">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:25" ip4="10.0.0.8" ip4_mask="16" ip6="2001::8" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="10">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:26" ip4="10.0.0.9" ip4_mask="16" ip6="2001::9" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="11">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:27" ip4="10.0.0.10" ip4_mask="16" ip6="2001::10" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="12">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:28" ip4="10.0.0.11" ip4_mask="16" ip6="2001::11" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="13">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:29" ip4="10.0.0.12" ip4_mask="16" ip6="2001::12" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="14">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2a" ip4="10.0.0.13" ip4_mask="16" ip6="2001::13" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="15">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2b" ip4="10.0.0.14" ip4_mask="16" ip6="2001::14" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="16">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2c" ip4="10.0.0.15" ip4_mask="16" ip6="2001::15" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="17">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2d" ip4="10.0.0.16" ip4_mask="16" ip6="2001::16" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="18">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2e" ip4="10.0.0.17" ip4_mask="16" ip6="2001::17" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="19">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:2f" ip4="10.0.0.18" ip4_mask="16" ip6="2001::18" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="20">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:30" ip4="10.0.0.19" ip4_mask="16" ip6="2001::19" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="21">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:31" ip4="10.0.0.20" ip4_mask="16" ip6="2001::20" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="22">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:32" ip4="10.0.0.21" ip4_mask="16" ip6="2001::21" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="23">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:33" ip4="10.0.0.22" ip4_mask="16" ip6="2001::22" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="24">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:34" ip4="10.0.0.23" ip4_mask="16" ip6="2001::23" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="25">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:35" ip4="10.0.0.24" ip4_mask="16" ip6="2001::24" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="26">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:36" ip4="10.0.0.25" ip4_mask="16" ip6="2001::25" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="27">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:37" ip4="10.0.0.26" ip4_mask="16" ip6="2001::26" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="28">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:38" ip4="10.0.0.27" ip4_mask="16" ip6="2001::27" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="29">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:39" ip4="10.0.0.28" ip4_mask="16" ip6="2001::28" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="30">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3a" ip4="10.0.0.29" ip4_mask="16" ip6="2001::29" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="31">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3b" ip4="10.0.0.30" ip4_mask="16" ip6="2001::30" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="32">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3c" ip4="10.0.0.31" ip4_mask="16" ip6="2001::31" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="33">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3d" ip4="10.0.0.32" ip4_mask="16" ip6="2001::32" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="34">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3e" ip4="10.0.0.33" ip4_mask="16" ip6="2001::33" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="35">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:3f" ip4="10.0.0.34" ip4_mask="16" ip6="2001::34" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="36">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:40" ip4="10.0.0.35" ip4_mask="16" ip6="2001::35" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="37">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:41" ip4="10.0.0.36" ip4_mask="16" ip6="2001::36" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="38">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:42" ip4="10.0.0.37" ip4_mask="16" ip6="2001::37" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="39">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:43" ip4="10.0.0.38" ip4_mask="16" ip6="2001::38" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="40">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:44" ip4="10.0.0.39" ip4_mask="16" ip6="2001::39" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="41">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:45" ip4="10.0.0.40" ip4_mask="16" ip6="2001::40" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="42">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:46" ip4="10.0.0.41" ip4_mask="16" ip6="2001::41" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="43">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:47" ip4="10.0.0.42" ip4_mask="16" ip6="2001::42" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="44">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:48" ip4="10.0.0.43" ip4_mask="16" ip6="2001::43" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="45">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:49" ip4="10.0.0.44" ip4_mask="16" ip6="2001::44" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="46">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4a" ip4="10.0.0.45" ip4_mask="16" ip6="2001::45" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="47">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4b" ip4="10.0.0.46" ip4_mask="16" ip6="2001::46" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="48">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4c" ip4="10.0.0.47" ip4_mask="16" ip6="2001::47" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="49">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4d" ip4="10.0.0.48" ip4_mask="16" ip6="2001::48" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="50">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4e" ip4="10.0.0.49" ip4_mask="16" ip6="2001::49" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
-    </link>
-    <link node_one="1" node_two="51">
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:4f" ip4="10.0.0.50" ip4_mask="16" ip6="2001::50" ip6_mask="64"/>
-      <options delay="5000" bandwidth="54000000" per="0.0" dup="0" jitter="0" type="1" unidirectional="0"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.23" ip4_mask="16" ip6="2001::23" ip6_mask="64"/>
     </link>
   </links>
   <mobility_configurations>
@@ -668,8 +54,8 @@
       <configuration name="error" value="0"/>
     </mobility_configuration>
     <mobility_configuration node="1" model="ns2script">
-      <configuration name="file" value="/dtn_routing/scenarios/randomWaypoint/randomWaypoint.ns_movements"/>
-      <configuration name="refresh_ms" value="50"/>
+      <configuration name="file" value="/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.ns_movements"/>
+      <configuration name="refresh_ms" value="1000"/>
       <configuration name="loop" value="1"/>
       <configuration name="autostart" value=""/>
       <configuration name="map" value=""/>
@@ -678,7 +64,18 @@
       <configuration name="script_stop" value=""/>
     </mobility_configuration>
   </mobility_configurations>
-  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="150.0"/>
+  <emane_global_configuration>
+    <emulator/>
+    <core>
+      <configuration name="platform_id_start" value="1"/>
+      <configuration name="nem_id_start" value="1"/>
+      <configuration name="link_enabled" value="1"/>
+      <configuration name="loss_threshold" value="30"/>
+      <configuration name="link_interval" value="1"/>
+      <configuration name="link_timeout" value="4"/>
+    </core>
+  </emane_global_configuration>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="100.0"/>
   <session_options>
     <configuration name="controlnet" value=""/>
     <configuration name="controlnet0" value=""/>
@@ -692,7 +89,7 @@
     <configuration name="sdturl" value="tcp://127.0.0.1:50000/"/>
   </session_options>
   <session_metadata>
-    <configuration name="canvas c1" value="{name {Canvas1}} {wallpaper-style {upperleft}} {wallpaper {/dtn_routing/scenarios/wanderwege/map.png}} {refpt {0 0 47.5791667 -122.132322 2.0}} {scale {150.0}} {size {2560 1357}}"/>
+    <configuration name="canvas c1" value="{name {Canvas1}} {wallpaper-style {upperleft}} {wallpaper {/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/map.png}} {refpt {0 0 47.5791667 -122.132322 2.0}} {scale {100.0}} {size {2560 1357}}"/>
     <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=no background_images=no annotations=yes grid=no traffic_start=0"/>
   </session_metadata>
   <default_services>
