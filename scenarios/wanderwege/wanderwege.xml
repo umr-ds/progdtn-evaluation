@@ -30,6 +30,12 @@
         <service name="DefaultRoute"/>
       </services>
     </device>
+    <device id="6" name="n6" type="PC" class="" image="">
+      <position x="2238" y="1324" lat="47.57114294571393" lon="-122.11221770394141" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+      </services>
+    </device>
   </devices>
   <links>
     <link node_one="1" node_two="2">
@@ -43,6 +49,9 @@
     </link>
     <link node_one="1" node_two="5">
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.23" ip4_mask="16" ip6="2001::23" ip6_mask="64"/>
+    </link>
+    <link node_one="1" node_two="6">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.24" ip4_mask="16" ip6="2001::24" ip6_mask="64"/>
     </link>
   </links>
   <mobility_configurations>
