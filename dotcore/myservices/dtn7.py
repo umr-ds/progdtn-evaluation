@@ -3,11 +3,11 @@ from core.services.coreservices import CoreService, ServiceMode
 
 
 class Dtn7Service(CoreService):
-    name = "DTN7"
-    group = "DTN"
-    executables = ("dtnd", "dtncat", "dtnclient")
-    dependencies = ("bwm-ng", "pidstat")
-    configs = ("dtnd.toml", "context.js")
+    name = "dt7"
+    group = "dtn"
+    executables = ("dtnd", "dtn-tool")
+    dependencies = ()
+    configs = ("dtnd.toml",)
     startup = (f'bash -c "nohup dtnd {configs[0]} &> dtnd_run.log &"',)
     validation_timer = 1  # Wait 1 second before validating service.
     validation_period = 1  # Retry after 1 second if validation was not successful.
@@ -26,6 +26,7 @@ class Dtn7Service(CoreService):
 [core]
 store = "store_{node.name}"
 node-id = "dtn://{node.name}/"
+inspect-all-bundles = true
 
 [logging]
 level = "debug"
@@ -34,21 +35,21 @@ format = "text"
 
 [discovery]
 ipv4 = true
-interval = 2
+ipv6 = true
+interval = 30
 
-[simple-rest]
-node = "dtn://{node.name}/"
-listen = "127.0.0.1:8080"
-
-[context-rest]
-listen = "127.0.0.1:35038"
+[agents]
+[agents.webserver]
+address = "localhost:8080"
+websocket = true
+rest = true
 
 [[listen]]
-protocol = "mtcp"
-endpoint = ":35037"
+protocol = "tcpcl"
+endpoint = ":4556"
 
 [routing]
-algorithm = "context"
+algorithm = "epidemic"
 
 [routing.contextconf]
 scriptpath = "{node.nodedir}/context.js"
