@@ -16,6 +16,7 @@ class NodeHelperService(CoreService):
             return f"""
 [Node]
 name = "{node.name}"
+endpoint_id = "dtn://{node.name}/"
 store_log = "{node.nodedir}/store_log.csv"
 log_file = "{node.nodedir}/helpers.log"
 log_level = "INFO"

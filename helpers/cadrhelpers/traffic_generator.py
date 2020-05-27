@@ -2,9 +2,9 @@ import random
 import multiprocessing
 import math
 import time
-import subprocess
 import logging
 
+from dataclasses import dataclass
 from hashlib import sha1
 from base64 import standard_b64encode
 from typing import Tuple
@@ -23,23 +23,18 @@ def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
     return math.sqrt(x_diff + y_diff)
 
 
+@dataclass()
 class TrafficGenerator:
-    def __init__(
-        self,
-        bundle_url: str,
-        context_url: str,
-        seed: bytes,
-        node_name: str,
-        nodes: Nodes,
-        context: bool,
-    ):
-        self.bundle_url: str = bundle_url
-        self.context_url: str = context_url
-        self.seed: bytes = seed
-        self.node_name: str = node_name
-        self.nodes: Nodes = nodes
-        self.context: bool = context
-        self.logger: logging.Logger = logging.getLogger(__name__)
+
+    agent_url: str
+    routing_url: str
+    seed: bytes
+    node_name: str
+    endpoint_id: str
+    nodes: Nodes
+    context: bool
+    uuid: str = ""
+    logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
         self.logger.info("Starting traffic generator")
@@ -52,9 +47,13 @@ class TrafficGenerator:
         closest_backbone, closest_distance = self.find_closest_backbone()
         self.logger.info(f"Closest backbone: {closest_backbone}")
 
+        self.uuid = dtnclient.register(
+            rest_url=self.agent_url, endpoint_id=self.endpoint_id
+        )["uuid"]
+
         if self.context:
             send_context(
-                rest_url=self.context_url,
+                rest_url=self.routing_url,
                 context_name="backbone",
                 node_context={"distance": str(closest_distance)},
             )
@@ -83,6 +82,16 @@ class TrafficGenerator:
             else:
                 self.send_bundle(payload=payload)
 
+    def send_bundle(self, payload: str):
+        self.logger.info("Sending bundle without context")
+        dtnclient.send_bundle(
+            rest_url=self.agent_url,
+            uuid=self.uuid,
+            destination=DESTINATION,
+            source=self.endpoint_id,
+            payload=payload,
+        )
+
     def send_context_bundle(
         self, payload: str, bundle_type: str, closest_backbone: Node
     ):
@@ -95,11 +104,13 @@ class TrafficGenerator:
             "y_dest": str(closest_backbone.y_pos),
         }
         self.logger.info(f"Bundle context: {context}")
-        dtnclient.send_bundle(
-            rest_url=self.bundle_url,
-            bundle_recipient=DESTINATION,
-            bundle_payload=payload,
-            bundle_context=context,
+        dtnclient.send_context_bundle(
+            rest_url=self.agent_url,
+            uuid=self.uuid,
+            destination=DESTINATION,
+            source=self.endpoint_id,
+            payload=payload,
+            context=context,
         )
 
     def find_closest_backbone(self) -> Tuple[Node, float]:
@@ -125,9 +136,9 @@ class TrafficGenerator:
         To solve this, we generate a unique seed for each node by hashing the seed together with the node's name.
         """
         name_binary = bytes(node_name, encoding="utf8")
-        unique_seed: bytes = sha1(seed + name_binary).digest()
-        self.logger.info(f"RNG seed: {unique_seed}")
-        random.seed(unique_seed)
+        node_seed: bytes = sha1(seed + name_binary).digest()
+        self.logger.info(f"RNG seed: {node_seed}")
+        random.seed(node_seed)
 
     def generate_payload(self, size_min: int, size_max: int, in_bytes: bool) -> str:
         size: int = random.randint(size_min, size_max)
@@ -138,10 +149,3 @@ class TrafficGenerator:
             (int(size / 8)) + 1, byteorder="little", signed=False
         )
         return str(standard_b64encode(payload), "utf-8")
-
-    def send_bundle(self, payload: str):
-        self.logger.info("Sending bundle without context")
-        with open(f"/tmp/{self.node_name}.bin", "w") as f:
-            f.write(payload)
-        command = f'cat /tmp/{self.node_name}.bin | dtncat send "http://127.0.0.1:8080" "{DESTINATION}"'
-        subprocess.call(command, shell=True)

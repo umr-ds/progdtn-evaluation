@@ -19,14 +19,14 @@ def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
     with open(logging_file, "w", buffering=1) as f:
         f.write("routing,node,timestamp,size\n")
         now = int(time.time())
-        store_size = get_size(rest_url=rest_url, p=False)
+        store_size = get_size(rest_url=rest_url)
         logging.info(f"Initial store size: {store_size}")
         f.write(f"{routing},{node_name},{now},{store_size}\n")
 
         while True:
             time.sleep(60)
             now = int(time.time())
-            store_size = get_size(rest_url=rest_url, p=False)
+            store_size = get_size(rest_url=rest_url)
             logging.info(f"Store size: {store_size}")
             f.write(f"{routing},{node_name},{now},{store_size}\n")
 
@@ -61,11 +61,11 @@ if __name__ == "__main__":
     context = routing == "context"
     logging.info(f"Using Context: {context}")
 
-    context_url = build_url(
-        address=config_data["REST"]["address"], port=config_data["REST"]["context_port"]
+    routing_url = build_url(
+        address=config_data["REST"]["address"], port=config_data["REST"]["routing_port"]
     )
-    bundle_url = build_url(
-        address=config_data["REST"]["address"], port=config_data["REST"]["bundle_port"]
+    agent_url = build_url(
+        address=config_data["REST"]["address"], port=config_data["REST"]["agent_port"]
     )
 
     nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
@@ -75,10 +75,11 @@ if __name__ == "__main__":
     if this_node.type == "sensor":
         logging.info("Initialising Traffic Generator")
         traffic_helper = TrafficGenerator(
-            bundle_url=bundle_url,
-            context_url=context_url,
+            agent_url=agent_url,
+            routing_url=routing_url,
             seed=seed,
             node_name=config_data["Node"]["name"],
+            endpoint_id=config_data["Node"]["endpoint_id"],
             nodes=nodes,
             context=context,
         )
@@ -88,12 +89,12 @@ if __name__ == "__main__":
     if context:
         node_type = {"node_type": this_node.type}
         logging.info(f"Sending node type: {node_type}")
-        send_context(rest_url=context_url, context_name="role", node_context=node_type)
+        send_context(rest_url=routing_url, context_name="role", node_context=node_type)
 
         if this_node.type == "sensor":
             logging.info("Initialising SensorContext")
             context_generator = SensorContext(
-                rest_url=context_url,
+                rest_url=routing_url,
                 node_name=config_data["Node"]["name"],
                 wifi_range=config_data["Scenario"]["wifi_range"],
                 nodes=nodes,
@@ -104,7 +105,7 @@ if __name__ == "__main__":
         if this_node.type == "visitor":
             logging.info("Initialising Movement Generator")
             movement_helper: m_c.NS2Movements = m_c.generate_movement(
-                rest_url=context_url,
+                rest_url=routing_url,
                 path=config_data["Scenario"]["movements"],
                 node_name=config_data["Node"]["name"],
             )
@@ -113,7 +114,7 @@ if __name__ == "__main__":
 
     logging.info("Daemonising")
     run(
-        rest_url=bundle_url,
+        rest_url=agent_url,
         logging_file=config_data["Node"]["store_log"],
         node_name=config_data["Node"]["name"],
         routing=routing,
