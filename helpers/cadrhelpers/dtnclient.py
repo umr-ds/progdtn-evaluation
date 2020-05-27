@@ -24,14 +24,7 @@ def load_payload(path: str) -> str:
 
 
 def load_context(path: str) -> Dict[str, Any]:
-    """Load bundle context from provided file and parse it to check if it is valid JSON
-
-    Args:
-        path (str): Path of the context-file
-
-    Return:
-        str:
-    """
+    """Load bundle context from provided file and parse it to check if it is valid JSON"""
     with open(path, "r") as f:
         contents: str = f.read()
         # try to parse json to see if it is valid
@@ -49,6 +42,19 @@ def load_id(path: str) -> Dict[str, str]:
         return ids
 
 
+def _submit_bundle(rest_url: str, data: Dict[str, Any]) -> None:
+    response: requests.Response = requests.post(
+        f"{rest_url}/build", data=json.dumps(data)
+    )
+    if response.status_code != 200:
+        print(f"Status: {response.status_code}", file=sys.stderr)
+        print(response.text, file=sys.stderr)
+    else:
+        parsed_response = response.json()
+        if parsed_response["error"]:
+            print(f"ERROR: {parsed_response['error']}", file=sys.stderr)
+
+
 def send_bundle(
     rest_url: str, id_file: str, destination: str, payload: str, lifetime: str = "24h"
 ) -> None:
@@ -63,45 +69,31 @@ def send_bundle(
             "payload_block": payload,
         },
     }
-    response: requests.Response = requests.post(
-        f"{rest_url}/build", data=json.dumps(data)
-    )
-    if response.status_code != 200:
-        print(f"Status: {response.status_code}", file=sys.stderr)
-        print(response.text, file=sys.stderr)
-    else:
-        parsed_response = response.json()
-        if parsed_response["error"]:
-            print(f"ERROR: {parsed_response['error']}", file=sys.stderr)
+    _submit_bundle(rest_url=rest_url, data=data)
 
 
 def send_context_bundle(
     rest_url: str,
-    bundle_recipient: str,
-    bundle_context: Dict[str, Any],
-    bundle_payload: str,
+    id_file: str,
+    destination: str,
+    payload: str,
+    context: Dict[str, Any],
+    lifetime: str = "24h",
 ) -> None:
-    """Send a bundle via the context-REST agent
-
-    Args:
-        rest_url (str): URL of the REST-interface
-        bundle_recipient (str): DTN EndpointID of the bundle's recipient
-        bundle_context (Dict[str, Any]): Bundle's context
-        bundle_payload (str): Bundle payload
-    """
-
-    bundle_data: str = json.dumps(
-        {
-            "recipient": bundle_recipient,
-            "context": bundle_context,
-            "payload": bundle_payload,
-        }
-    )
-
-    response: requests.Response = requests.post(f"{rest_url}/send", data=bundle_data)
-    if response.status_code != 202:
-        print(f"Status: {response.status_code}")
-    print(response.text)
+    """Send a bundle with a context block"""
+    ids = load_id(path=id_file)
+    data = {
+        "uuid": ids["uuid"],
+        "arguments": {
+            "destination": destination,
+            "source": ids["endpoint_id"],
+            "creation_timestamp_now": 1,
+            "lifetime": lifetime,
+            "payload_block": payload,
+            "context_block": context,
+        },
+    }
+    _submit_bundle(rest_url=rest_url, data=data)
 
 
 def send_context(
@@ -167,7 +159,6 @@ def get_size(rest_url: str, p: bool = True) -> int:
     Returns:
         Size of store if request was successful, -1 otherwise
     """
-
     response: requests.Response = requests.get(f"{rest_url}/size")
     response_text = response.text
     if p:
@@ -245,12 +236,22 @@ if __name__ == "__main__":
 
         if args.action == "send":
             payload = load_payload(path=args.payload)
-            send_bundle(
-                rest_url=url,
-                id_file=args.uuid,
-                destination=args.recipient,
-                payload=payload,
-            )
+            if args.context:
+                context = load_context(args.context)
+                send_context_bundle(
+                    rest_url=url,
+                    id_file=args.uuid,
+                    destination=args.recipient,
+                    payload=payload,
+                    context=context,
+                )
+            else:
+                send_bundle(
+                    rest_url=url,
+                    id_file=args.uuid,
+                    destination=args.recipient,
+                    payload=payload,
+                )
         elif args.action == "fetch":
             fetch_pending(rest_url=url, id_file=args.uuid)
         elif args.action == "register":
@@ -267,6 +268,8 @@ if __name__ == "__main__":
             )
         elif args.action == "get":
             get_node_context(rest_url=url)
+        elif args.action == "size":
+            get_size(rest_url=url, p=True)
         else:
             print("UNSUPPORTED ACTION", file=sys.stderr)
     else:
