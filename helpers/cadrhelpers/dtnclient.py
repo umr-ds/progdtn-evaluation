@@ -15,6 +15,9 @@ class RESTError(Exception):
     status_code: int
     error: str
 
+    def __str__(self) -> str:
+        return f"RESTError happened: {self.status_code} - {self.error}"
+
 
 def load_payload(path: str) -> str:
     """Loads payload from specified file

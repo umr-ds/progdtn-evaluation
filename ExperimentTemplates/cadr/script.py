@@ -22,7 +22,7 @@ if __name__ in ["__main__", "__builtin__"]:
         f.write(seed.to_bytes(4, byteorder="little", signed=False))
 
     with open("/tmp/routing", "w") as f:
-        f.write({{routing}})
+        f.write("{{routing}}")
 
     framework.start()
     logging.basicConfig(level=logging.DEBUG)

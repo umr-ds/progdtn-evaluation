@@ -22,9 +22,9 @@ log_file = "{node.nodedir}/helpers.log"
 log_level = "INFO"
 
 [REST]
-address = "127.0.0.1"
-bundle_port = 35038
-context_port = 35043
+address = "localhost"
+agent_port = 8080
+routing_port = 35043
 
 [Scenario]
 xml = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"

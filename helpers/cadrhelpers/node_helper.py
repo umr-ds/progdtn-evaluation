@@ -8,7 +8,7 @@ import logging
 
 import cadrhelpers.movement_context as m_c
 
-from cadrhelpers.dtnclient import build_url, get_size, send_context
+from cadrhelpers.dtnclient import build_url, get_size, send_context, RESTError
 from cadrhelpers.traffic_generator import TrafficGenerator
 from cadrhelpers.node_context import SensorContext
 
@@ -26,9 +26,12 @@ def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
         while True:
             time.sleep(60)
             now = int(time.time())
-            store_size = get_size(rest_url=rest_url)
-            logging.info(f"Store size: {store_size}")
-            f.write(f"{routing},{node_name},{now},{store_size}\n")
+            try:
+                store_size = get_size(rest_url=rest_url)
+                logging.info(f"Store size: {store_size}")
+                f.write(f"{routing},{node_name},{now},{store_size}\n")
+            except RESTError as err:
+                logging.error(err)
 
 
 if __name__ == "__main__":
