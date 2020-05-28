@@ -3,7 +3,7 @@ from core.services.coreservices import CoreService, ServiceMode
 
 
 class Dtn7Service(CoreService):
-    name = "dt7"
+    name = "dtn7"
     group = "dtn"
     executables = ("dtnd", "dtn-tool")
     dependencies = ()
