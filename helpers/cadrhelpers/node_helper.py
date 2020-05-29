@@ -19,19 +19,19 @@ def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
     with open(logging_file, "w", buffering=1) as f:
         f.write("routing,node,timestamp,size\n")
         now = int(time.time())
-        store_size = get_size(rest_url=rest_url)
-        logging.info(f"Initial store size: {store_size}")
-        f.write(f"{routing},{node_name},{now},{store_size}\n")
+        #store_size = get_size(rest_url=rest_url)
+        #logging.info(f"Initial store size: {store_size}")
+        #f.write(f"{routing},{node_name},{now},{store_size}\n")
 
         while True:
             time.sleep(60)
-            now = int(time.time())
-            try:
-                store_size = get_size(rest_url=rest_url)
-                logging.info(f"Store size: {store_size}")
-                f.write(f"{routing},{node_name},{now},{store_size}\n")
-            except RESTError as err:
-                logging.error(err)
+            #now = int(time.time())
+            #try:
+            #    store_size = get_size(rest_url=rest_url)
+            #    logging.info(f"Store size: {store_size}")
+            #    f.write(f"{routing},{node_name},{now},{store_size}\n")
+            #except RESTError as err:
+            #    logging.error(err)
 
 
 if __name__ == "__main__":
