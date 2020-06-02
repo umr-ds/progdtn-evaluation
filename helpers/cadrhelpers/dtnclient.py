@@ -3,11 +3,11 @@
 import sys
 import argparse
 import base64
-import json
 from typing import Any, Dict, List
 from dataclasses import dataclass
 
 import requests
+import rapidjson as json
 
 
 @dataclass()
@@ -142,7 +142,7 @@ def send_bundle(
     """Sends a bundle via the REST application agent
 
     Args:
-        rest_url: Address + Port+ Prefix for REST actions
+        rest_url: http:// + Address + Port+ Prefix for REST actions
         uuid: Authentication token received via the register-method.
         source: BPv7 endpoint ID which will be set as the bundle's source.
                 Needs to be one of the IDs of the agent's node

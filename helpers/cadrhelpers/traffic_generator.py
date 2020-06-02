@@ -3,10 +3,10 @@ import multiprocessing
 import math
 import time
 import logging
+import string
 
 from dataclasses import dataclass
 from hashlib import sha1
-from base64 import standard_b64encode
 from typing import Tuple
 
 import cadrhelpers.dtnclient as dtnclient
@@ -64,14 +64,13 @@ class TrafficGenerator:
             self.logger.info(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
-            bundle_type = random.choice(["simple"])
+            bundle_type: str = random.choice(["simple", "bulk"])
             self.logger.info(f"Sending {bundle_type} bundle")
             if bundle_type == "simple":
-                payload = self.generate_payload(32, 128, False)
+                payload = self.generate_payload(4, 16)
             else:
-                # TODO: bulk bundles turned out to be not really feasible...
                 # Between 1 and 10 MByte
-                payload = self.generate_payload(1000000, 100000000, True)
+                payload = self.generate_payload(1000000, 100000000)
 
             if self.context:
                 self.send_context_bundle(
@@ -140,12 +139,9 @@ class TrafficGenerator:
         self.logger.info(f"RNG seed: {node_seed}")
         random.seed(node_seed)
 
-    def generate_payload(self, size_min: int, size_max: int, in_bytes: bool) -> str:
+    def generate_payload(self, size_min: int, size_max: int) -> str:
         size: int = random.randint(size_min, size_max)
-        if in_bytes:
-            size *= 8
-        self.logger.info(f"Generating payload of size {size}")
-        payload: bytes = random.getrandbits(size).to_bytes(
-            (int(size / 8)) + 1, byteorder="little", signed=False
+        payload: str = "".join(
+            random.choices(string.ascii_letters + string.digits, k=size)
         )
-        return str(standard_b64encode(payload), "utf-8")
+        return payload
