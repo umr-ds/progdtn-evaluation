@@ -14,7 +14,7 @@ from cadrhelpers.movement_context import Nodes, Node
 from cadrhelpers.dtnclient import send_context
 
 
-DESTINATION = "dtn:backbone"
+DESTINATION = "dtn://backbone/"
 
 
 def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
