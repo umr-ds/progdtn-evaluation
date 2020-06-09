@@ -25,7 +25,7 @@ def parse_pidstat_file(pidstat_path):
         pidstat_df = pd.DataFrame(stats_list, columns=csv_header)
 
         # prepend log modification date time, convert to datetime
-        pidstat_df["Time"] = str(modify_date) + " " + pidstat_df["Time"]
+        #pidstat_df["Time"] = str(modify_date) + " " + pidstat_df["Time"]
         pidstat_df["Time"] = pd.to_datetime(pidstat_df["Time"])
         pidstat_df["node"] = node
 
@@ -42,23 +42,21 @@ def parse_pidstat_file(pidstat_path):
                  'sh',
                  'ldconfig.real',
                  'sleep',
-                 'tee']
+                 'tee',]
             )
         ]
         
         dir_path = os.path.dirname(pidstat_path)
         parameters = parse_parameters(dir_path)
 
-        pidstat_df['software'] = parameters['software']
-        pidstat_df['size'] = parameters['size']
+        pidstat_df['routing'] = parameters['routing']
         pidstat_df['id'] = parameters['simInstanceId']
-        pidstat_df['node_num'] = parameters['node_num']
 
         return pidstat_df
 
 
 def parse_pidstat_instance(instance_path):
-    pidstat_paths = glob.glob(os.path.join(instance_path, "*.conf_pidstat.log"))
+    pidstat_paths = glob.glob(os.path.join(instance_path, "*.conf_pidstat"))
         
     parsed_pidstats = [parse_pidstat_file(path) for path in pidstat_paths]
         
