@@ -3,6 +3,11 @@ import os
 from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService, ServiceMode
 
+from cadrhelpers.movement_context import parse_scenario_xml, get_node_type
+
+
+XML_PATH = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+
 
 class Dtn7Service(CoreService):
     name = "dtn7"
@@ -28,6 +33,14 @@ class Dtn7Service(CoreService):
                 routing = f.read().strip()
         else:
             routing = "epidemic"
+
+        nodes = parse_scenario_xml(XML_PATH)
+        node_type = get_node_type(nodes=nodes, name=node.name)
+
+        if node_type == "backbone":
+            cla_id = 'node = "dtn://backbone/"'
+        else:
+            cla_id = ""
 
         if filename == "dtnd.toml":
             # if we are running "context_epidemic" or "context_complex",
@@ -60,6 +73,7 @@ rest = true
 [[listen]]
 protocol = "tcpcl"
 endpoint = ":4556"
+{cla_id}
 
 [routing]
 algorithm = "{routing}"
