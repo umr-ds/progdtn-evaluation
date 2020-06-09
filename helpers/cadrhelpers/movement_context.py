@@ -243,6 +243,22 @@ def get_node_info(element: ElementTree.Element) -> Node:
     return Node(id=node_id, name=node_name, type=node_type, x_pos=x_pos, y_pos=y_pos)
 
 
+def get_node_type(nodes: Nodes, name: str) -> str:
+    for node in nodes.sensors:
+        if node.name == name:
+            return "sensor"
+
+    for node in nodes.backbone:
+        if node.name == name:
+            return "backbone"
+
+    for node in nodes.visitors:
+        if node.name == name:
+            return "visitor"
+
+    return ""
+
+
 if __name__ == "__main__":
     url = build_url(address="localhost", port=35043)
     ns2_movement = generate_movement(
