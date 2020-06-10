@@ -8,30 +8,32 @@ import logging
 
 import cadrhelpers.movement_context as m_c
 
-from cadrhelpers.dtnclient import build_url, get_size, send_context, RESTError
-from cadrhelpers.traffic_generator import TrafficGenerator
+from cadrhelpers.dtnclient import build_url, send_context, register, RESTError, fetch_pending
+from cadrhelpers.traffic_generator import TrafficGenerator, DESTINATION
 from cadrhelpers.node_context import SensorContext
 
 
-def run(rest_url: str, logging_file: str, node_name: str, routing: str) -> None:
+def run(rest_url: str, logging_file: str, this_node: m_c.Node) -> None:
     logging.info("Starting store size logging")
 
     with open(logging_file, "w", buffering=1) as f:
         f.write("routing,node,timestamp,size\n")
-        now = int(time.time())
-        #store_size = get_size(rest_url=rest_url)
-        #logging.info(f"Initial store size: {store_size}")
-        #f.write(f"{routing},{node_name},{now},{store_size}\n")
 
-        while True:
-            time.sleep(60)
-            #now = int(time.time())
-            #try:
-            #    store_size = get_size(rest_url=rest_url)
-            #    logging.info(f"Store size: {store_size}")
-            #    f.write(f"{routing},{node_name},{now},{store_size}\n")
-            #except RESTError as err:
-            #    logging.error(err)
+        if this_node.type == "backbone":
+            eid = f"dtn://{DESTINATION}/"
+        else:
+            eid = f"dtn://{this_node.name}/"
+
+        try:
+            registration_data = register(rest_url=rest_url, endpoint_id=eid)
+
+            while True:
+                time.sleep(60)
+                # empty store of pending bundles
+                fetch_pending(rest_url=rest_url, uuid=registration_data["uuid"])
+
+        except RESTError as err:
+            logging.error(err)
 
 
 if __name__ == "__main__":
@@ -119,6 +121,5 @@ if __name__ == "__main__":
     run(
         rest_url=agent_url,
         logging_file=config_data["Node"]["store_log"],
-        node_name=config_data["Node"]["name"],
-        routing=routing,
+        this_node=this_node,
     )
