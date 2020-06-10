@@ -23,20 +23,14 @@ def parse_bwm(bwm_path):
     df = df.loc[df['bytes_out/s'] < 54000000 * 100]
     df = df.loc[df['iface'] == 'total']
     
-    try:
-        df["ts"] = pd.to_datetime(df["ts"], unit="s")
-    except Exception as e:
-        print(bwm_path)
-        raise e
+    df["ts"] = pd.to_datetime(df["ts"], unit="s")
     df["node"] = os.path.basename(bwm_path).split(".")[0]
     
     dir_path = os.path.dirname(bwm_path)
     parameters = parse_parameters(dir_path)
     
-    df['software'] = parameters['software']
-    df['size'] = parameters['size']
+    df['routing'] = parameters['routing']
     df['id'] = parameters['simInstanceId']
-    df['node_num'] = parameters['node_num']
     
     return df
 
