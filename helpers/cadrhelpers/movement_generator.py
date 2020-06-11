@@ -27,8 +27,8 @@ class Point:
     y: float
 
 
-def read_waypoints(movement_file: str) -> Dict[str, List[Point]]:
-    with open(movement_file, "r") as f:
+def read_waypoints(waypoint_file: str) -> Dict[str, List[Point]]:
+    with open(waypoint_file, "r") as f:
         reader = csv.reader(f)
         movement_points: Dict[str, List[Point]] = {}
         for row in reader:
@@ -41,12 +41,21 @@ def read_waypoints(movement_file: str) -> Dict[str, List[Point]]:
 
 
 def compute_travel_time(
-    distance: float, speed: float, wait_time: float = 2.0, precision: int = 2
+    distance: float,
+    speed: float,
+    wait_time: float = 2.0,
+    jitter: float = -1.0,
+    precision: int = 2,
 ) -> float:
     """Compute the time needed to travel the given distance.
     Includes an optional grace period to compensate for numerical error during floating point computations.
     """
-    return round((distance / speed) + wait_time, precision)
+    if jitter > 0:
+        random_wait: float = random.uniform(0, jitter)
+    else:
+        random_wait = 0.0
+
+    return round((distance / speed) + wait_time + random_wait, precision)
 
 
 def compute_distance(
@@ -81,6 +90,7 @@ def transform_to_ns(
     waypoints: Dict[str, List[Point]],
     output_file: str,
     wait_time: float = 2.0,
+    jitter: float = -1.0,
     fast_mode: bool = False,
     ludicrous_speed: bool = False,
 ) -> None:
@@ -112,7 +122,7 @@ def transform_to_ns(
                     end_y=next_point.y,
                 )
                 current_time += compute_travel_time(
-                    distance=distance, speed=speed, wait_time=wait_time
+                    distance=distance, speed=speed, wait_time=wait_time, jitter=jitter
                 )
                 current_time = round(current_time, 0)
                 current_point = next_point
@@ -148,6 +158,13 @@ if __name__ == "__main__":
         help="set wait time between arriving at one waypoint and departing for the next",
     )
     parser.add_argument(
+        "-j",
+        "--jitter",
+        type=float,
+        default=-1.0,
+        help="Set to value >0 to have nodes wait for a random time period at waipoints",
+    )
+    parser.add_argument(
         "--seed",
         help="optional seed for the software RNG, set to get a deterministic result",
     )
@@ -162,6 +179,7 @@ if __name__ == "__main__":
         waypoints=waypoints,
         output_file=args.output,
         wait_time=args.wait_time,
+        jitter=args.jitter,
         fast_mode=args.fast,
         ludicrous_speed=args.ludicrous_speed,
     )

@@ -8,7 +8,13 @@ import logging
 
 import cadrhelpers.movement_context as m_c
 
-from cadrhelpers.dtnclient import build_url, send_context, register, RESTError, fetch_pending
+from cadrhelpers.dtnclient import (
+    build_url,
+    send_context,
+    register,
+    RESTError,
+    fetch_pending,
+)
 from cadrhelpers.traffic_generator import TrafficGenerator, DESTINATION
 from cadrhelpers.node_context import SensorContext
 

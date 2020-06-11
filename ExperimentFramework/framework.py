@@ -29,19 +29,26 @@ def param(key, default=None):
         if default is not None:
             return default
         else:
-            print(f'Requested parameter {key} is undefined. Aborting experiment...')
+            print(f"Requested parameter {key} is undefined. Aborting experiment...")
             sys.exit(1)
     parameters.requestedParams.add(key)
     return parameters.params[key]
 
 
 def log(key, message):
-    messages.append({'key': str(key), 'offset': _offsetFromStart(), 'type': 0, 'message': str(message)})
+    messages.append(
+        {
+            "key": str(key),
+            "offset": _offsetFromStart(),
+            "type": 0,
+            "message": str(message),
+        }
+    )
 
 
 def addLogfile(filename):
     try:
-        with open(filename, 'r') as myfile:
+        with open(filename, "r") as myfile:
             log(filename, myfile.read())
     except IOError:
         warn(filename, "IO Error while adding logfile with MACI.")
@@ -50,14 +57,21 @@ def addLogfile(filename):
 def addBinaryFile(filename):
     print(f"adding binary file {filename}")
     try:
-        with open("binary_files.txt", 'a') as myfile:
+        with open("binary_files.txt", "a") as myfile:
             myfile.write(f"{filename}\n")
     except IOError:
         warn(filename, "IO Error adding binary file with MACI.")
 
 
 def warn(key, message):
-    messages.append({'key': str(key), 'offset': _offsetFromStart(), 'type': 1, 'message': str(message)})
+    messages.append(
+        {
+            "key": str(key),
+            "offset": _offsetFromStart(),
+            "type": 1,
+            "message": str(message),
+        }
+    )
 
 
 def is_number(s):
@@ -79,18 +93,32 @@ def record(key, value, offset=None, key1=None, key2=None):
         # breaks current work of Nikolas, but activate soon
         # return
 
-    measurements.append({'key': str(key), 'offset': offset, 'value': str(value), 'key1': str(key1), 'key2': str(key2)})
+    measurements.append(
+        {
+            "key": str(key),
+            "offset": offset,
+            "value": str(value),
+            "key1": str(key1),
+            "key2": str(key2),
+        }
+    )
 
 
 def checkRequestedParams():
-    for (paramKey, paramValue) in [(k, v) for (k, v) in parameters.params.items() if
-                                   k not in parameters.requestedParams]:
-        warn("Framework", f"Parameter {paramKey} with value {paramValue} was not requested by experiment")
+    for (paramKey, paramValue) in [
+        (k, v)
+        for (k, v) in parameters.params.items()
+        if k not in parameters.requestedParams
+    ]:
+        warn(
+            "Framework",
+            f"Parameter {paramKey} with value {paramValue} was not requested by experiment",
+        )
 
 
 def loadTmpResults():
     try:
-        with open('result_tmp.json', 'r') as file:
+        with open("result_tmp.json", "r") as file:
             for line in file:
                 measurements.append(json.loads(line))
     except IOError:
@@ -99,7 +127,7 @@ def loadTmpResults():
 
 def loadTmpMessages():
     try:
-        with open('message_tmp.json', 'r') as file:
+        with open("message_tmp.json", "r") as file:
             for line in file:
                 messages.append(json.loads(line))
     except IOError:
@@ -111,8 +139,8 @@ def stop():
     loadTmpResults()
     loadTmpMessages()
 
-    with open('result.json', 'w') as file:
+    with open("result.json", "w") as file:
         json.dump(measurements, file)
 
-    with open('messages.json', 'w') as file:
+    with open("messages.json", "w") as file:
         json.dump(messages, file)

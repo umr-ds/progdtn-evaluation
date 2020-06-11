@@ -4,13 +4,18 @@ import os
 import time
 import logging
 
-import framework
-
 from core.emulator.coreemu import CoreEmu, Session
 from core.emulator.enumerations import EventTypes
 from core.services import ServiceManager
 
+import framework
 from log_files import *
+from movement_generation import generate_randomised_ns2
+
+
+WAYPOINT_FILE = "/dtn_routing/scenarios/wanderwege/waypoints.csv"
+CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+JITTER = 30.0
 
 
 if __name__ in ["__main__", "__builtin__"]:
@@ -24,6 +29,10 @@ if __name__ in ["__main__", "__builtin__"]:
     with open("/tmp/routing", "w") as f:
         f.write("{{routing}}")
 
+    generate_randomised_ns2(
+        waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
+    )
+
     framework.start()
     logging.basicConfig(level=logging.DEBUG)
 
@@ -34,9 +43,7 @@ if __name__ in ["__main__", "__builtin__"]:
 
     ServiceManager.add_services("/root/.core/myservices")
 
-    session.open_xml(
-        file_name="/dtn_routing/scenarios/wanderwege/wanderwege.xml", start=True
-    )
+    session.open_xml(file_name=CORE_XML, start=True)
     time.sleep(10)
 
     # Run the experiment

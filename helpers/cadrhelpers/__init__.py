@@ -4,5 +4,5 @@ __all__ = [
     "movement_context",
     "traffic_generator",
     "node_context",
-    "movement_generator"
+    "movement_generator",
 ]

@@ -25,7 +25,10 @@ class DTN7:
     def send_file(self, node_name: str, path: str, dst: str):
         node = self.session.nodes[node_name]
         node.cmd(
-            "bash -c 'cat {path} | dtncat send \"http://127.0.0.1:8080\" \"dtn://{dst}/\"'".format(**locals()))
+            'bash -c \'cat {path} | dtncat send "http://127.0.0.1:8080" "dtn://{dst}/"\''.format(
+                **locals()
+            )
+        )
 
     def wait_for_arrival(self, node_name):
         node = self.session.nodes[node_name]
