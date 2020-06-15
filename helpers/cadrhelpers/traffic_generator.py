@@ -33,6 +33,7 @@ class TrafficGenerator:
     endpoint_id: str
     nodes: Nodes
     context: bool
+    context_algorithm: str
     uuid: str = ""
     logger: logging.Logger = logging.getLogger(__name__)
 
@@ -73,11 +74,14 @@ class TrafficGenerator:
                 payload = self.generate_payload(1000000, 100000000)
 
             if self.context:
-                self.send_context_bundle(
-                    payload=payload,
-                    bundle_type=bundle_type,
-                    closest_backbone=closest_backbone,
-                )
+                if self.context_algorithm == "spray":
+                    self.send_context_spray(payload=payload)
+                else:
+                    self.send_context_bundle(
+                        payload=payload,
+                        bundle_type=bundle_type,
+                        closest_backbone=closest_backbone,
+                    )
             else:
                 self.send_bundle(payload=payload)
 
@@ -93,7 +97,7 @@ class TrafficGenerator:
 
     def send_context_bundle(
         self, payload: str, bundle_type: str, closest_backbone: Node
-    ):
+    ) -> None:
         self.logger.info("Sending bundle with context")
         timestamp = int(time.time())
         context = {
@@ -103,6 +107,18 @@ class TrafficGenerator:
             "y_dest": str(closest_backbone.y_pos),
         }
         self.logger.info(f"Bundle context: {context}")
+        dtnclient.send_context_bundle(
+            rest_url=self.agent_url,
+            uuid=self.uuid,
+            destination=DESTINATION,
+            source=self.endpoint_id,
+            payload=payload,
+            context=context,
+        )
+
+    def send_context_spray(self, payload: str) -> None:
+        self.logger.info("Sending simulated spray bundle")
+        context = {"copies": "5"}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,

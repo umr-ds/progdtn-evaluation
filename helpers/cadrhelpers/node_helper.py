@@ -69,8 +69,12 @@ if __name__ == "__main__":
         routing = "epidemic"
     logging.info(f"Routing Algorithm: {routing}")
 
-    context = routing == "context"
+    context = "context" in routing
     logging.info(f"Using Context: {context}")
+
+    context_algorithm = ""
+    if context:
+        context_algorithm: str = routing.split("_")[0]
 
     routing_url = build_url(
         address=config_data["REST"]["address"], port=config_data["REST"]["routing_port"]
@@ -93,11 +97,12 @@ if __name__ == "__main__":
             endpoint_id=config_data["Node"]["endpoint_id"],
             nodes=nodes,
             context=context,
+            context_algorithm=context_algorithm,
         )
         traffic_helper.run()
         logging.info("Initialised Traffic Generator")
 
-    if context:
+    if context_algorithm == "complex":
         node_type = {"node_type": this_node.type}
         logging.info(f"Sending node type: {node_type}")
         send_context(rest_url=routing_url, context_name="role", node_context=node_type)

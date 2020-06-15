@@ -113,6 +113,10 @@ listenaddress = "127.0.0.1:35043"
                 with open("/root/context_complex.js", "r") as f:
                     context = f.read()
                     return context
+            elif "spray" in routing:
+                with open("/root/context_spray.js", "r") as f:
+                    context = f.read()
+                    return context
             else:
                 return ""
 
