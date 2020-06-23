@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     context_algorithm = ""
     if context:
-        context_algorithm: str = routing.split("_")[0]
+        context_algorithm: str = routing.split("_")[1]
 
     routing_url = build_url(
         address=config_data["REST"]["address"], port=config_data["REST"]["routing_port"]

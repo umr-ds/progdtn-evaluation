@@ -1,6 +1,8 @@
 from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService
 
+SCENARIO = "wanderwege"
+
 
 class NodeHelperService(CoreService):
 
@@ -27,7 +29,7 @@ agent_port = 8080
 routing_port = 35043
 
 [Scenario]
-xml = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
-movements = "/dtn_routing/scenarios/randomWaypoint/randomWaypoint.ns_movements"
+xml = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.xml"
+movements = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.ns_movements"
 wifi_range = 275.0
 """

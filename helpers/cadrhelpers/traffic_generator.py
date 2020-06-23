@@ -44,6 +44,9 @@ class TrafficGenerator:
         self.logger.info("Traffic generator running")
 
     def _run(self) -> None:
+        self.logger.info(f"Using context {self.context}")
+        if self.context:
+            self.logger.info(f"Context algorithm: {self.context_algorithm}")
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
         closest_backbone, closest_distance = self.find_closest_backbone()
         self.logger.info(f"Closest backbone: {closest_backbone}")
@@ -52,7 +55,7 @@ class TrafficGenerator:
             rest_url=self.agent_url, endpoint_id=self.endpoint_id
         )["uuid"]
 
-        if self.context:
+        if self.context_algorithm == "complex":
             send_context(
                 rest_url=self.routing_url,
                 context_name="backbone",
@@ -76,12 +79,14 @@ class TrafficGenerator:
             if self.context:
                 if self.context_algorithm == "spray":
                     self.send_context_spray(payload=payload)
-                else:
+                elif self.context_algorithm == "complex":
                     self.send_context_bundle(
                         payload=payload,
                         bundle_type=bundle_type,
                         closest_backbone=closest_backbone,
                     )
+                else:
+                    self.send_with_empty_context(payload=payload)
             else:
                 self.send_bundle(payload=payload)
 
@@ -119,6 +124,18 @@ class TrafficGenerator:
     def send_context_spray(self, payload: str) -> None:
         self.logger.info("Sending simulated spray bundle")
         context = {"copies": "5"}
+        dtnclient.send_context_bundle(
+            rest_url=self.agent_url,
+            uuid=self.uuid,
+            destination=DESTINATION,
+            source=self.endpoint_id,
+            payload=payload,
+            context=context,
+        )
+
+    def send_with_empty_context(self, payload: str) -> None:
+        self.logger.info("Sending conext bundle with empty context")
+        context = {}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
