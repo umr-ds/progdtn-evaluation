@@ -1,59 +1,105 @@
-import datetime
 import json
 import glob
 import os
 
+from datetime import datetime
+from typing import Dict, List, Union
+from pandas import DataFrame
+
 
 def log_entry_time(log_entry):
-    return datetime.datetime.strptime(
-            log_entry["time"][:-4], "%Y-%m-%dT%H:%M:%S.%f")
+    return datetime.strptime(log_entry["time"][:-4], "%Y-%m-%dT%H:%M:%S.%f")
 
-def parse_dtnd(dtnd_path):
+
+def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
+    params: Dict[str, Union[str, int]] = {}
+    with open(path, "r") as f:
+        # I don't know any better way to do this
+        # I tried executing the code with exec() and then accessing the assigned variables
+        # but that doesn't work. Probably because of some namespacing issue...
+        # (I can see the variables with the correct values in the debugger, but I can't access them in code
+        for line in f:
+            if "params =" in line:
+                pseudo_json = line.split("=")[1].strip().replace("'", '"')
+                params = json.loads(pseudo_json)
+    return params
+
+
+def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
     bundles = {}
+    node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
     event = ""
-    
-    with open(dtnd_path, 'r') as f:
+
+    with open(node_path, "r") as f:
         for line in f.readlines():
             try:
                 entry = json.loads(line)
-                if entry["msg"] == "Transmission of bundle requested": # A bundle is about to be sent
+                if entry["msg"] == "REST client sent bundle":  # A bundle is created
+                    interesting_event = True
+                    event = "creation"
+
+                if (
+                    entry["msg"] == "Transmission of bundle requested"
+                ):  # A bundle is about to be sent
                     interesting_event = True
                     event = "sending"
-                if entry["msg"] == "Incoming bundle": # Received bundle
+
+                if entry["msg"] == "Incoming bundle":  # Received bundle
                     interesting_event = True
-                    event = "receiving"
-                if entry["msg"] == "Received bundle for local delivery": # Bundle reached destination
+                    event = "reception"
+
+                if (
+                    entry["msg"] == "Received bundle for local delivery"
+                ):  # Bundle reached destination
                     interesting_event = True
-                    event = "local"
-                    print(event)
-                    
+                    event = "delivery"
+
                 if interesting_event:
                     events = bundles.get(entry["bundle"], [])
-                    events.append({
-                        "timestamp": log_entry_time(entry),
-                        "event": event
-                    })
+                    events.append(
+                        {
+                            "routing": routing_algorithm,
+                            "timestamp": log_entry_time(entry),
+                            "event": event,
+                            "node": node_id,
+                            "bundle": entry["bundle"],
+                        }
+                    )
                     bundles[entry["bundle"]] = events
 
                     interesting_event = False
                     event = ""
             except:
                 pass
-    
+
     return bundles
 
 
-def parse_bundle_times_instance(instance_path):
-    dtnd_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
-    
-    parsed_dtnds = [parse_dtnd(p) for p in dtnd_paths]
-    return parsed_dtnds
+def parse_bundle_events_instance(
+    instance_path: str,
+) -> List[Dict[str, List[Dict[str, Union[str, datetime]]]]]:
+    node_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
+    param_path = os.path.join(instance_path, "parameters.py")
+    params = parse_instance_parameters(path=param_path)
 
-    
-def parse_bundle_times(experiment_path):
+    parsed_nodes = [parse_node(node_path=p, routing_algorithm=params["routing"]) for p in node_paths]
+    return parsed_nodes
+
+
+def parse_bundle_events(experiment_path: str) -> DataFrame:
     instance_paths = glob.glob(os.path.join(experiment_path, "*"))
-    
-    parsed_instances = [parse_bundle_times_instance(path) for path in instance_paths]
-    
-    print(parsed_instances)
+
+    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths]
+    bundle_events: List[Dict[str, Union[str, datetime]]] = []
+    for instance in parsed_instances:
+        for node in instance:
+            for _, events in node.items():
+                bundle_events += events
+    event_frame = DataFrame(bundle_events)
+    event_frame.sort_values(by="timestamp")
+    return event_frame
+
+
+if __name__ == "__main__":
+    parse_bundle_events("/research_data/epidemic")
