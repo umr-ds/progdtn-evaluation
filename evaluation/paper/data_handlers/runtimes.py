@@ -3,8 +3,8 @@ import glob
 import os
 
 from datetime import datetime
-from typing import Dict, List, Union
-from pandas import DataFrame
+from typing import Dict, List, Union, Tuple
+from pandas import DataFrame, Timestamp
 
 
 def log_entry_time(log_entry):
@@ -101,5 +101,40 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
     return event_frame
 
 
+def compute_bundle_runtimes(event_frame: DataFrame) -> Tuple[List[str], List[str], List[str], DataFrame]:
+    bundles: List[str] = event_frame.bundle.unique().tolist()
+    bundle_runtimes: List[Dict[str, Union[str, int]]] = []
+    successful: List[str] = []
+    unsuccessful: List[str] = []
+
+    for bundle in bundles:
+        bundle_events = event_frame[event_frame.bundle == bundle]
+        creation = bundle_events[bundle_events.event == "creation"]
+        if creation.empty:
+            print(f"Bundle {bundle} was not created?")
+            continue
+
+        creation_time: Timestamp = creation["timestamp"].iloc[0]
+
+        delivery = bundle_events[bundle_events.event == "delivery"]
+        delivered = not delivery.empty
+
+        if delivered:
+            successful.append(bundle)
+            delivery_time: Timestamp = delivery["timestamp"].iloc[0]
+            bundle_runtimes.append({
+                "routing": bundle_events["routing"].iloc[0],
+                "bundle": bundle,
+                "duration_s": (delivery_time - creation_time).seconds
+            })
+        else:
+            unsuccessful.append(bundle)
+
+        runtimes_df = DataFrame(bundle_runtimes)
+
+    return bundles, successful, unsuccessful, runtimes_df
+
+
 if __name__ == "__main__":
-    parse_bundle_events("/research_data/epidemic")
+    event_frame = parse_bundle_events("/research_data/epidemic")
+    _, _, _, times = compute_bundle_runtimes(event_frame=event_frame)
