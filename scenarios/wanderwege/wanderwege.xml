@@ -621,7 +621,7 @@
       <configuration name="file" value="/dtn_routing/scenarios/wanderwege/wanderwege.ns_movements"/>
       <configuration name="refresh_ms" value="50"/>
       <configuration name="loop" value="1"/>
-      <configuration name="autostart" value=""/>
+      <configuration name="autostart" value="1"/>
       <configuration name="map" value=""/>
       <configuration name="script_start" value=""/>
       <configuration name="script_pause" value=""/>
