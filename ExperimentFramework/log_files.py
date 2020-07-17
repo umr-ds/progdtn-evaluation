@@ -1,5 +1,6 @@
 import os
 import shutil
+import pathlib
 
 import framework
 
@@ -40,7 +41,9 @@ def _is_blacklisted(name):
     return False
 
 
-def collect_logs(session_dir):
+def collect_logs(session_dir: str, sim_path: str, instance_id: str) -> None:
+    instance_path = f"{sim_path}/{instance_id}"
+    pathlib.Path(instance_path).mkdir(parents=True, exist_ok=True)
     for root, _, files in os.walk(session_dir):
         for f in files:
             src_file_path = os.path.join(root, f)
@@ -56,11 +59,10 @@ def collect_logs(session_dir):
             new_file_name = src_file_path.replace(session_dir_trailing, "").replace(
                 "/", "_"
             )
-            dst_file_path = f"{os.getcwd()}/{new_file_name}"
+            dst_file_path = f"{instance_path}/{new_file_name}"
 
             try:
                 shutil.move(src_file_path, dst_file_path)
-                prepare_log_file(new_file_name)
             except IOError:
                 continue
 

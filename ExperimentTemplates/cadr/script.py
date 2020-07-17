@@ -3,6 +3,7 @@
 import os
 import time
 import logging
+import pathlib
 
 from core.emulator.coreemu import CoreEmu, Session
 from core.emulator.enumerations import EventTypes
@@ -13,6 +14,7 @@ from log_files import *
 from movement_generation import generate_randomised_ns2
 
 
+DATA_PATH = "/research_data"
 WAYPOINT_FILE = "/dtn_routing/scenarios/wanderwege/waypoints.csv"
 CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
 JITTER = 30.0
@@ -21,6 +23,12 @@ JITTER = 30.0
 if __name__ in ["__main__", "__builtin__"]:
     seed: int = {{seed}}
     print(f"Seed: {seed}")
+
+    sim_id: str = {{simId}}
+    sim_instance_id: str = {{simInstanceId}}
+
+    sim_path: str = f"{DATA_PATH}/{sim_id}"
+    pathlib.Path(sim_path).mkdir(parents=True, exist_ok=True)
 
     # write seed to file so that core services can use it
     with open("/tmp/seed", "wb") as f:
@@ -57,7 +65,7 @@ if __name__ in ["__main__", "__builtin__"]:
     # Finally, we wait another 10 seconds to make sure everyhing is clean.
     session.set_state(EventTypes.DATACOLLECT_STATE)
     time.sleep(2)
-    collect_logs(session.session_dir)
+    collect_logs(session_dir=session.session_dir, sim_path=sim_path, instance_id=sim_instance_id)
     coreemu.shutdown()
     os.system("core-cleanup")
     time.sleep(10)
