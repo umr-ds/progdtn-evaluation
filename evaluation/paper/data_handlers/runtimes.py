@@ -40,12 +40,18 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                     event = "creation"
 
                 if (
-                    entry["msg"] == "Transmission of bundle requested"
+                    entry["msg"] == "Sending bundle to a CLA (ConvergenceSender)"
                 ):  # A bundle is about to be sent
                     interesting_event = True
                     event = "sending"
 
-                if entry["msg"] == "Incoming bundle":  # Received bundle
+                if (
+                    entry["msg"] == "Sending bundle failed"
+                ):  # A bundle is about to be sent
+                    interesting_event = True
+                    event = "failure"
+
+                if entry["msg"] == "Received bundle from peer":  # Received bundle
                     interesting_event = True
                     event = "reception"
 
