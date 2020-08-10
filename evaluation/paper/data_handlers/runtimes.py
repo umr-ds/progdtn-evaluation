@@ -25,7 +25,7 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
     return params
 
 
-def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
+def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
@@ -48,11 +48,11 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                     event = "sending"
                     from_to = None
 
-                if (
-                    entry["msg"] == "Sending bundle failed"
-                ):  # A bundle is about to be sent
-                    interesting_event = True
-                    event = "failure"
+                #if (
+                #    entry["msg"] == "Sending bundle failed"
+                #):  # A bundle is about to be sent
+                #    interesting_event = True
+                #    event = "failure"
 
                 if entry["msg"] == "Received bundle from peer":  # Received bundle
                     interesting_event = True
@@ -66,11 +66,19 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                     event = "delivery"
                     from_to = None
 
+                if (
+                    entry["msg"] == "Selected routing algorithm"
+                ):  # Bundle reached destination
+                    interesting_event = True
+                    event = "start"
+                    from_to = None
+
                 if interesting_event:
                     events = bundles.get(entry["bundle"], [])
                     events.append(
                         {
                             "routing": routing_algorithm,
+                            "sim_instance_id": sim_instance_id,
                             "timestamp": log_entry_time(entry),
                             "event": event,
                             "node": node_id,
@@ -89,13 +97,13 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
 
 
 def parse_bundle_events_instance(
-    instance_path: str,
+    instance_path: str
 ) -> List[Dict[str, List[Dict[str, Union[str, datetime]]]]]:
     node_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
     param_path = os.path.join(instance_path, "parameters.py")
     params = parse_instance_parameters(path=param_path)
 
-    parsed_nodes = [parse_node(node_path=p, routing_algorithm=params["routing"]) for p in node_paths]
+    parsed_nodes = [parse_node(node_path=p, routing_algorithm=params["routing"], sim_instance_id=params["simInstanceId"]) for p in node_paths]
     return parsed_nodes
 
 
@@ -149,4 +157,5 @@ def compute_bundle_runtimes(event_frame: DataFrame) -> Tuple[List[str], List[str
 
 if __name__ == "__main__":
     event_frame = parse_bundle_events("/research_data/epidemic")
-    _, _, _, times = compute_bundle_runtimes(event_frame=event_frame)
+    #_, _, _, times = compute_bundle_runtimes(event_frame=event_frame)
+    event_frame.to_csv("/research_data/cadr.csv")
