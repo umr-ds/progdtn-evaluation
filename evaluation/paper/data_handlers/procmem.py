@@ -68,11 +68,18 @@ def parse_pidstat_instance(instance_path):
     return pidstat_df
 
 
-def parse_pidstat(experiment_path):
-    instance_paths = glob.glob(os.path.join(experiment_path, "*"))
+def parse_pidstat(binary_files_path):
+    experiment_paths = glob.glob(os.path.join(binary_files_path, "*"))
+    
+    instance_paths = []
+    for experiment_path in experiment_paths:
+        instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
     
     parsed_instances = [parse_pidstat_instance(path) for path in instance_paths]
     df = pd.concat(parsed_instances, sort=False)
     df = df.sort_values(["Time", "id", "node"]).reset_index()
+    
+    df = df.groupby(['id', 'routing', 'dt']).sum()
+    df = df[['%CPU', 'RSS']]
         
     return df

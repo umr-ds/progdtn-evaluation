@@ -30,6 +30,7 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
     event = ""
+    from_to = None
 
     with open(node_path, "r") as f:
         for line in f.readlines():
@@ -38,12 +39,14 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                 if entry["msg"] == "REST client sent bundle":  # A bundle is created
                     interesting_event = True
                     event = "creation"
+                    from_to = None
 
                 if (
                     entry["msg"] == "Sending bundle to a CLA (ConvergenceSender)"
                 ):  # A bundle is about to be sent
                     interesting_event = True
                     event = "sending"
+                    from_to = None
 
                 if (
                     entry["msg"] == "Sending bundle failed"
@@ -54,12 +57,14 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                 if entry["msg"] == "Received bundle from peer":  # Received bundle
                     interesting_event = True
                     event = "reception"
+                    from_to = entry["src"]["EndpointType"]["Ssp"].replace("/", "")
 
                 if (
                     entry["msg"] == "Received bundle for local delivery"
                 ):  # Bundle reached destination
                     interesting_event = True
                     event = "delivery"
+                    from_to = None
 
                 if interesting_event:
                     events = bundles.get(entry["bundle"], [])
@@ -69,6 +74,7 @@ def parse_node(node_path: str, routing_algorithm: str) -> Dict[str, List[Dict[st
                             "timestamp": log_entry_time(entry),
                             "event": event,
                             "node": node_id,
+                            "from_to": from_to,
                             "bundle": entry["bundle"],
                         }
                     )
@@ -103,7 +109,7 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
             for _, events in node.items():
                 bundle_events += events
     event_frame = DataFrame(bundle_events)
-    event_frame.sort_values(by="timestamp")
+    event_frame = event_frame.sort_values(by="timestamp")
     return event_frame
 
 
