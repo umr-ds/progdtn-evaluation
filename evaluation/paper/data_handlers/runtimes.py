@@ -31,6 +31,7 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
     interesting_event = False
     event = ""
     from_to = None
+    metadata_bundles = []
 
     with open(node_path, "r") as f:
         for line in f.readlines():
@@ -53,8 +54,11 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
                 #):  # A bundle is about to be sent
                 #    interesting_event = True
                 #    event = "failure"
-
+                
                 if entry["msg"] == "Received bundle from peer":  # Received bundle
+                    if entry["bundle"] in metadata_bundles:
+                        continue
+                    
                     interesting_event = True
                     event = "reception"
                     from_to = entry["src"]["EndpointType"]["Ssp"].replace("/", "")
@@ -72,6 +76,11 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
                     interesting_event = True
                     event = "start"
                     from_to = None
+                    
+                if (
+                    entry["msg"] == "CONTEXT: Is context bundle"
+                ):
+                    metadata_bundles.append(entry["bundle"])
 
                 if interesting_event:
                     events = bundles.get(entry["bundle"], [])
@@ -99,6 +108,7 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
 def parse_bundle_events_instance(
     instance_path: str
 ) -> List[Dict[str, List[Dict[str, Union[str, datetime]]]]]:
+    print(f"Parsing {instance_path}")
     node_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
     param_path = os.path.join(instance_path, "parameters.py")
     params = parse_instance_parameters(path=param_path)
@@ -108,7 +118,14 @@ def parse_bundle_events_instance(
 
 
 def parse_bundle_events(experiment_path: str) -> DataFrame:
-    instance_paths = glob.glob(os.path.join(experiment_path, "*"))
+    experiment_paths = glob.glob(os.path.join(experiment_path, "*"))
+
+    instance_paths = []
+    for experiment_path in experiment_paths:
+        if "dtlsr" in experiment_path:
+            continue
+            
+        instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
 
     parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
@@ -118,6 +135,7 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
                 bundle_events += events
     event_frame = DataFrame(bundle_events)
     event_frame = event_frame.sort_values(by="timestamp")
+    print("Parsing done")
     return event_frame
 
 
