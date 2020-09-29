@@ -122,11 +122,10 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
 
     instance_paths = []
     for experiment_path in experiment_paths:
-        if "dtlsr" in experiment_path:
-            continue
             
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
 
+    
     parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
     for instance in parsed_instances:
