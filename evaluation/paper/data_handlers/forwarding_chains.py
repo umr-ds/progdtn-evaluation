@@ -4,8 +4,10 @@ import os
 
 from typing import Dict, List, Union, Tuple, Set
 from datetime import datetime
+from graphviz import Digraph
 
 INSTANCE_PATH = "/research_data/final/ids/36"
+GRAPH_PATH = "/research_data/final/graphs"
 
 
 def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
@@ -77,7 +79,13 @@ def parse_node(
     return bundles, creations, forwards
 
 
-def instance_chains(instance_path: str):
+def instance_chains(
+    instance_path: str,
+) -> Tuple[
+    Set[str],
+    Dict[str, Dict[str, Union[str, datetime]]],
+    Dict[str, List[Dict[str, Union[str, datetime]]]],
+]:
     node_paths: List[str] = glob.glob(
         os.path.join(instance_path, "*.conf_dtnd_run.log")
     )
@@ -100,8 +108,45 @@ def instance_chains(instance_path: str):
             bundle_forwards += node_forwards.get(bundle, [])
             forwards[bundle] = bundle_forwards
 
-    pass
+    return bundles, creations, forwards
+
+
+def dump_graph(
+    output_folder: str,
+    bundles: Set[str],
+    creations: Dict[str, Dict[str, Union[str, datetime]]],
+    forwards: Dict[str, List[Dict[str, Union[str, datetime]]]],
+) -> None:
+    for bundle in bundles:
+        safe_bundle_name = bundle.replace(":", "").replace("/", "")
+        out_source = f"{safe_bundle_name}.dot"
+        dot = Digraph(comment=f"Bundle: {bundle}")
+        dot.node("S", "Creation")
+        dot.node(creations[bundle]["node"])
+        dot.edge("S", creations[bundle]["node"])
+
+        nodes: Set[str] = set()
+        for forward in forwards[bundle]:
+            sender = forward["node"]
+            nodes.add(sender)
+            recipient = forward["peer"]
+            nodes.add(recipient)
+            dot.edge(sender, recipient)
+
+        for node in nodes:
+            dot.node(node)
+
+        with open(os.path.join(output_folder, out_source), "w") as f:
+            f.write(dot.source)
+
+        dot.render(os.path.join(output_folder, safe_bundle_name))
 
 
 if __name__ == "__main__":
-    instance_chains(INSTANCE_PATH)
+    bundles, creations, forwards = instance_chains(INSTANCE_PATH)
+    dump_graph(
+        output_folder=GRAPH_PATH,
+        bundles=bundles,
+        creations=creations,
+        forwards=forwards,
+    )
