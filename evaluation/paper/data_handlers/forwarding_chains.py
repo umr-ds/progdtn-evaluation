@@ -5,9 +5,11 @@ import os
 from typing import Dict, List, Union, Tuple, Set
 from datetime import datetime
 from graphviz import Digraph
+from pathlib import Path, PurePath
 
-INSTANCE_PATH = "/research_data/final/ids/36"
-GRAPH_PATH = "/research_data/final/graphs"
+BASE_PATH = "/research_data/final-2/"
+EXPERIMENTS_DIRECTORY = "ids"
+GRAPH_DIRECTORY = "graphs"
 
 
 def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
@@ -54,9 +56,7 @@ def parse_node(
                         "bundle": entry["bundle"],
                     }
 
-                elif (
-                    entry["msg"] == "Sending bundle to a CLA (ConvergenceSender)"
-                ):  # A bundle is about to be sent
+                elif entry["msg"] == "Sending bundle succeeded":  # A bundle is sent
                     endpoint = entry["cla"]["EndpointType"]
                     if endpoint:
                         peer = endpoint["Ssp"].replace("/", "")
@@ -74,7 +74,10 @@ def parse_node(
                         forwards[entry["bundle"]] = bundle_forwards
 
             except json.JSONDecodeError as err:
-                print(f"Json parsing error: {err}")
+                # as it turns out, logrus cannot output map[bundle.EndpointID]bundle.EndpointID as JSON
+                if "Failed to obtain reader" not in line:
+                    print(f"Json parsing error in {node_path}: {err}")
+                    print(f"Content: {line}")
 
     return bundles, creations, forwards
 
@@ -82,6 +85,7 @@ def parse_node(
 def instance_chains(
     instance_path: str,
 ) -> Tuple[
+    str,
     Set[str],
     Dict[str, Dict[str, Union[str, datetime]]],
     Dict[str, List[Dict[str, Union[str, datetime]]]],
@@ -91,6 +95,7 @@ def instance_chains(
     )
     param_path: str = os.path.join(instance_path, "parameters.py")
     params: Dict[str, Union[str, int]] = parse_instance_parameters(path=param_path)
+    instance_name = f"{params['routing']}-{params['simInstanceId']}"
 
     bundles: Set[str] = set()
     creations: Dict[str, Dict[str, Union[str, datetime]]] = {}
@@ -103,30 +108,39 @@ def instance_chains(
         )
         bundles = bundles.union(node_bundles)
         creations = {**creations, **node_creations}
-        for bundle in node_bundles:
+        for bundle, node_bundle_forwards in node_forwards.items():
             bundle_forwards = forwards.get(bundle, [])
-            bundle_forwards += node_forwards.get(bundle, [])
+            bundle_forwards += node_bundle_forwards
             forwards[bundle] = bundle_forwards
 
-    return bundles, creations, forwards
+    return instance_name, bundles, creations, forwards
 
 
 def dump_graph(
-    output_folder: str,
+    output_anchor: PurePath,
     bundles: Set[str],
     creations: Dict[str, Dict[str, Union[str, datetime]]],
     forwards: Dict[str, List[Dict[str, Union[str, datetime]]]],
 ) -> None:
+
+    source_directory = output_anchor / "src"
+    pdf_directory = output_anchor / "pdf"
+
+    Path(source_directory).mkdir(parents=True, exist_ok=True)
+    Path(pdf_directory).mkdir(parents=True, exist_ok=True)
+
     for bundle in bundles:
         safe_bundle_name = bundle.replace(":", "").replace("/", "")
-        out_source = f"{safe_bundle_name}.dot"
+        out_source = source_directory / f"{safe_bundle_name}.dot"
+        out_pdf = pdf_directory / f"{safe_bundle_name}"
+
         dot = Digraph(comment=f"Bundle: {bundle}")
         dot.node("S", "Creation")
         dot.node(creations[bundle]["node"])
         dot.edge("S", creations[bundle]["node"])
 
         nodes: Set[str] = set()
-        for forward in forwards[bundle]:
+        for forward in forwards.get(bundle, []):
             sender = forward["node"]
             nodes.add(sender)
             recipient = forward["peer"]
@@ -136,17 +150,29 @@ def dump_graph(
         for node in nodes:
             dot.node(node)
 
-        with open(os.path.join(output_folder, out_source), "w") as f:
+        with open(out_source, "w") as f:
             f.write(dot.source)
 
-        dot.render(os.path.join(output_folder, safe_bundle_name))
+        dot.render(out_pdf, cleanup=True)
+
+
+def plot_simulation_series(base_path: PurePath) -> None:
+    experiment_path = base_path / EXPERIMENTS_DIRECTORY
+    instance_paths = glob.glob(os.path.join(experiment_path, "*"))
+
+    for instance_path in instance_paths:
+        instance_name, bundles, creations, forwards = instance_chains(
+            instance_path=instance_path
+        )
+        instance_graphs = base_path / GRAPH_DIRECTORY / instance_name
+        dump_graph(
+            output_anchor=instance_graphs,
+            bundles=bundles,
+            creations=creations,
+            forwards=forwards,
+        )
 
 
 if __name__ == "__main__":
-    bundles, creations, forwards = instance_chains(INSTANCE_PATH)
-    dump_graph(
-        output_folder=GRAPH_PATH,
-        bundles=bundles,
-        creations=creations,
-        forwards=forwards,
-    )
+    base_path = PurePath(BASE_PATH)
+    plot_simulation_series(base_path=base_path)

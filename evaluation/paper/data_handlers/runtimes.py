@@ -25,7 +25,9 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
     return params
 
 
-def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
+def parse_node(
+    node_path: str, routing_algorithm: str, sim_instance_id: str
+) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
@@ -49,16 +51,16 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
                     event = "sending"
                     from_to = None
 
-                #if (
+                # if (
                 #    entry["msg"] == "Sending bundle failed"
-                #):  # A bundle is about to be sent
+                # ):  # A bundle is about to be sent
                 #    interesting_event = True
                 #    event = "failure"
-                
+
                 if entry["msg"] == "Received bundle from peer":  # Received bundle
                     if entry["bundle"] in metadata_bundles:
                         continue
-                    
+
                     interesting_event = True
                     event = "reception"
                     from_to = entry["src"]["EndpointType"]["Ssp"].replace("/", "")
@@ -76,10 +78,8 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
                     interesting_event = True
                     event = "start"
                     from_to = None
-                    
-                if (
-                    entry["msg"] == "CONTEXT: Is context bundle"
-                ):
+
+                if entry["msg"] == "CONTEXT: Is context bundle":
                     metadata_bundles.append(entry["bundle"])
 
                 if interesting_event:
@@ -106,14 +106,21 @@ def parse_node(node_path: str, routing_algorithm: str, sim_instance_id: str) -> 
 
 
 def parse_bundle_events_instance(
-    instance_path: str
+    instance_path: str,
 ) -> List[Dict[str, List[Dict[str, Union[str, datetime]]]]]:
     print(f"Parsing {instance_path}")
     node_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
     param_path = os.path.join(instance_path, "parameters.py")
     params = parse_instance_parameters(path=param_path)
 
-    parsed_nodes = [parse_node(node_path=p, routing_algorithm=params["routing"], sim_instance_id=params["simInstanceId"]) for p in node_paths]
+    parsed_nodes = [
+        parse_node(
+            node_path=p,
+            routing_algorithm=params["routing"],
+            sim_instance_id=params["simInstanceId"],
+        )
+        for p in node_paths
+    ]
     return parsed_nodes
 
 
@@ -122,10 +129,8 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
 
     instance_paths = []
     for experiment_path in experiment_paths:
-            
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
 
-    
     parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
     for instance in parsed_instances:
@@ -138,7 +143,9 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
     return event_frame
 
 
-def compute_bundle_runtimes(event_frame: DataFrame) -> Tuple[List[str], List[str], List[str], DataFrame]:
+def compute_bundle_runtimes(
+    event_frame: DataFrame,
+) -> Tuple[List[str], List[str], List[str], DataFrame]:
     bundles: List[str] = event_frame.bundle.unique().tolist()
     bundle_runtimes: List[Dict[str, Union[str, int]]] = []
     successful: List[str] = []
@@ -159,11 +166,13 @@ def compute_bundle_runtimes(event_frame: DataFrame) -> Tuple[List[str], List[str
         if delivered:
             successful.append(bundle)
             delivery_time: Timestamp = delivery["timestamp"].iloc[0]
-            bundle_runtimes.append({
-                "routing": bundle_events["routing"].iloc[0],
-                "bundle": bundle,
-                "duration_s": (delivery_time - creation_time).seconds
-            })
+            bundle_runtimes.append(
+                {
+                    "routing": bundle_events["routing"].iloc[0],
+                    "bundle": bundle,
+                    "duration_s": (delivery_time - creation_time).seconds,
+                }
+            )
         else:
             unsuccessful.append(bundle)
 
@@ -174,5 +183,5 @@ def compute_bundle_runtimes(event_frame: DataFrame) -> Tuple[List[str], List[str
 
 if __name__ == "__main__":
     event_frame = parse_bundle_events("/research_data/epidemic")
-    #_, _, _, times = compute_bundle_runtimes(event_frame=event_frame)
+    # _, _, _, times = compute_bundle_runtimes(event_frame=event_frame)
     event_frame.to_csv("/research_data/cadr.csv")
