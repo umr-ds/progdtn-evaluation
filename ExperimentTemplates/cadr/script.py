@@ -16,7 +16,7 @@ from movement_generation import generate_randomised_ns2
 
 DATA_PATH = "/research_data"
 WAYPOINT_FILE = "/dtn_routing/scenarios/wanderwege/waypoints.csv"
-CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege-small.xml"
+CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
 JITTER = 30.0
 
 

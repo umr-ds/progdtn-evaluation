@@ -1,6 +1,7 @@
 import json
 import glob
 import os
+import numpy
 
 from datetime import datetime
 from typing import Dict, List, Union, Tuple
@@ -39,47 +40,33 @@ def parse_node(
         for line in f.readlines():
             try:
                 entry = json.loads(line)
+                bundle_size = numpy.nan
+                
                 if entry["msg"] == "REST client sent bundle":  # A bundle is created
+                    bundle_size = entry["size"]
                     interesting_event = True
                     event = "creation"
-                    from_to = None
 
-                if (
-                    entry["msg"] == "Sending bundle to a CLA (ConvergenceSender)"
-                ):  # A bundle is about to be sent
+                elif entry["msg"] == "Sending bundle to a CLA (ConvergenceSender)": # A bundle is about to be sent
                     interesting_event = True
                     event = "sending"
-                    from_to = None
-
-                # if (
-                #    entry["msg"] == "Sending bundle failed"
-                # ):  # A bundle is about to be sent
-                #    interesting_event = True
-                #    event = "failure"
-
-                if entry["msg"] == "Received bundle from peer":  # Received bundle
-                    if entry["bundle"] in metadata_bundles:
-                        continue
-
+                
+                elif entry["msg"] == "Received bundle from peer":  # Received bundle               
                     interesting_event = True
                     event = "reception"
-                    from_to = entry["src"]["EndpointType"]["Ssp"].replace("/", "")
 
-                if (
-                    entry["msg"] == "Received bundle for local delivery"
-                ):  # Bundle reached destination
+                elif entry["msg"] == "Received bundle for local delivery":  # Bundle reached destination
                     interesting_event = True
                     event = "delivery"
-                    from_to = None
 
-                if (
-                    entry["msg"] == "Selected routing algorithm"
-                ):  # Bundle reached destination
+                elif entry["msg"] == "Selected routing algorithm":  # Bundle reached destination
                     interesting_event = True
                     event = "start"
-                    from_to = None
-
-                if entry["msg"] == "CONTEXT: Is context bundle":
+                    
+                elif entry["msg"] == "CONTEXT: Is context bundle": # Meta data bundle for context algorithms
+                    metadata_bundles.append(entry["bundle"])
+                    
+                elif entry["msg"] == "Received metadata": # Meta data bundle for DTLSR and Prophet
                     metadata_bundles.append(entry["bundle"])
 
                 if interesting_event:
@@ -91,16 +78,27 @@ def parse_node(
                             "timestamp": log_entry_time(entry),
                             "event": event,
                             "node": node_id,
-                            "from_to": from_to,
                             "bundle": entry["bundle"],
+                            "bundle_size": bundle_size,
                         }
                     )
                     bundles[entry["bundle"]] = events
 
                     interesting_event = False
-                    event = ""
+                    event = ""    
             except:
                 pass
+            
+    for bundle_id in bundles:
+        bundle_list = bundles[bundle_id]
+        for bundle_entry in bundle_list:
+            bundle_entry_id = bundle_entry["bundle"]
+            if bundle_entry_id in metadata_bundles:
+                is_meta = True
+            else:
+                is_meta = False
+            
+            bundle_entry['meta'] = is_meta
 
     return bundles
 

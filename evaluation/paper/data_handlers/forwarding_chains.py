@@ -7,7 +7,7 @@ from datetime import datetime
 from graphviz import Digraph
 from pathlib import Path, PurePath
 
-BASE_PATH = "/research_data/final-2/"
+BASE_PATH = "/storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/binary_files/2"
 EXPERIMENTS_DIRECTORY = "ids"
 GRAPH_DIRECTORY = "graphs"
 
