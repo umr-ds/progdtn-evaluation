@@ -5,4 +5,5 @@ __all__ = [
     "traffic_generator",
     "node_context",
     "movement_generator",
+    "log_saver",
 ]

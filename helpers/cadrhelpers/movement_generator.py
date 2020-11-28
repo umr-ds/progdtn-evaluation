@@ -11,13 +11,14 @@ from dataclasses import dataclass
 
 # selection of different methods of locomotion, with speeds (in m/s)
 # and reasonable derivations to add a bit of randomness
-LOCOMOTION = {
+LOCOMOTION: Dict[str, Dict[str, float]] = {
     "walk": {"low": 1.25, "high": 1.5},
     "powerwalk": {"low": 1.9, "high": 2.5},
     "jog": {"low": 3.0, "high": 3.6},
 }
 # define the fastest method of locomotion
 LOCOMOTION["fastest"] = LOCOMOTION["jog"]
+LOCOMOTION["slowest"] = LOCOMOTION["walk"]
 
 
 @dataclass()
@@ -69,11 +70,15 @@ def compute_distance(
 
 def node_speed(
     locomotion: str,
+    slow_mode: bool = False,
     fast_mode: bool = False,
     ludicrous_speed: bool = False,
     precision: int = 2,
 ) -> float:
-    if fast_mode:
+    speed: float
+    if slow_mode:
+        speed = LOCOMOTION["slowest"]["low"]
+    elif fast_mode:
         speed = LOCOMOTION["fastest"]["high"]
     else:
         speed = random.uniform(
@@ -91,6 +96,7 @@ def transform_to_ns(
     output_file: str,
     wait_time: float = 2.0,
     jitter: float = -1.0,
+    slow_mode: bool = False,
     fast_mode: bool = False,
     ludicrous_speed: bool = False,
 ) -> None:
@@ -109,6 +115,7 @@ def transform_to_ns(
             for next_point in node_movements[1:]:
                 speed = node_speed(
                     locomotion=node_locomotion,
+                    slow_mode=slow_mode,
                     fast_mode=fast_mode,
                     ludicrous_speed=ludicrous_speed,
                 )
@@ -146,6 +153,11 @@ if __name__ == "__main__":
         help="make everyone move with 10 times their normal speed",
     )
     parser.add_argument(
+        "--slow",
+        action="store_true",
+        default="Have all nodes run with the minimum speed.",
+    )
+    parser.add_argument(
         "--fast",
         action="store_true",
         default="Have all nodes run with the maximum speed, so that you can make sure that you trace takes long enough",
@@ -180,6 +192,7 @@ if __name__ == "__main__":
         output_file=args.output,
         wait_time=args.wait_time,
         jitter=args.jitter,
+        slow_mode=args.slow,
         fast_mode=args.fast,
         ludicrous_speed=args.ludicrous_speed,
     )

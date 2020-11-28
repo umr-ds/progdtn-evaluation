@@ -35,4 +35,4 @@ def generate_randomised_ns2(
     random.seed(seed)
     ns2_path = get_movement_file(core_xml)
     waypoints = read_waypoints(waypoint_file=waypoint_file)
-    transform_to_ns(waypoints=waypoints, output_file=ns2_path, jitter=jitter)
+    transform_to_ns(waypoints=waypoints, output_file=ns2_path, jitter=jitter, slow_mode=True)
