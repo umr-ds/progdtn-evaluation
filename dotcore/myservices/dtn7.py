@@ -71,7 +71,7 @@ websocket = true
 rest = true
 
 [[listen]]
-protocol = "tcpcl"
+protocol = "mtcp"
 endpoint = ":4556"
 {cla_id}
 

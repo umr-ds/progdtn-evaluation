@@ -1,5 +1,5 @@
 ### Build dtnd & dtncat
-FROM golang:1.14.4 AS dtn7-builder
+FROM golang:1.15.3 AS dtn7-builder
 
 COPY dtn7-go /dtn7-go
 WORKDIR /dtn7-go

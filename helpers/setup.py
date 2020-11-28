@@ -7,5 +7,5 @@ setup(
     author="Markus Sommer",
     author_email="msommer@informatik.uni-marburg.de",
     packages=find_packages(),
-    install_requires=["requests", "python-rapidjson"],
+    install_requires=["requests", "python-rapidjson", "toml"],
 )

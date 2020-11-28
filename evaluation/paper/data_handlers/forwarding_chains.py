@@ -7,7 +7,7 @@ from datetime import datetime
 from graphviz import Digraph
 from pathlib import Path, PurePath
 
-BASE_PATH = "/research_data/final-2/"
+BASE_PATH = "/research_data/1/"
 EXPERIMENTS_DIRECTORY = "ids"
 GRAPH_DIRECTORY = "graphs"
 
