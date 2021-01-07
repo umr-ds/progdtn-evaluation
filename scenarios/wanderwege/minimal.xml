@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/dtn_routing/scenarios/wanderwege/minimal.xml">
+  <networks>
+    <network id="1" name="wlan1" model="basic_range" type="WIRELESS_LAN">
+      <position x="1115" y="689" lat="47.574991349878054" lon="-122.12230578458207" alt="2.0"/>
+    </network>
+  </networks>
+  <devices>
+    <device id="2" name="n2" type="sensor" class="" image="">
+      <position x="1038" y="616" lat="47.57543374672005" lon="-122.12299748735083" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+      </services>
+    </device>
+    <device id="3" name="n3" type="backbone" class="" image="">
+      <position x="1047" y="749" lat="47.57462773323685" lon="-122.12291663897525" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+      </services>
+    </device>
+  </devices>
+  <links>
+    <link node_one="1" node_two="2">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.1" ip4_mask="16" ip6="2001::1" ip6_mask="64"/>
+    </link>
+    <link node_one="1" node_two="3">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.2" ip4_mask="16" ip6="2001::2" ip6_mask="64"/>
+    </link>
+  </links>
+  <mobility_configurations>
+    <mobility_configuration node="1" model="basic_range">
+      <configuration name="range" value="275"/>
+      <configuration name="bandwidth" value="54000000"/>
+      <configuration name="jitter" value="0"/>
+      <configuration name="delay" value="20000"/>
+      <configuration name="error" value="0"/>
+    </mobility_configuration>
+  </mobility_configurations>
+  <emane_global_configuration>
+    <emulator/>
+    <core>
+      <configuration name="platform_id_start" value="1"/>
+      <configuration name="nem_id_start" value="1"/>
+      <configuration name="link_enabled" value="1"/>
+      <configuration name="loss_threshold" value="30"/>
+      <configuration name="link_interval" value="1"/>
+      <configuration name="link_timeout" value="4"/>
+    </core>
+  </emane_global_configuration>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="100.0"/>
+  <session_options>
+    <configuration name="controlnet" value=""/>
+    <configuration name="controlnet0" value=""/>
+    <configuration name="controlnet1" value=""/>
+    <configuration name="controlnet2" value=""/>
+    <configuration name="controlnet3" value=""/>
+    <configuration name="controlnet_updown_script" value=""/>
+    <configuration name="enablerj45" value="1"/>
+    <configuration name="preservedir" value="0"/>
+    <configuration name="enablesdt" value="0"/>
+    <configuration name="sdturl" value="tcp://127.0.0.1:50000/"/>
+  </session_options>
+  <session_metadata>
+    <configuration name="canvas c1" value="{name {Canvas1}} {wallpaper-style {upperleft}} {wallpaper {/dtn_routing/scenarios/wanderwege/map.png}} {refpt {0 0 47.5791667 -122.132322 2.0}} {scale {100.0}} {size {2560 1357}}"/>
+    <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=no background_images=no annotations=yes grid=no traffic_start=0"/>
+  </session_metadata>
+  <default_services>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="prouter">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+    <node type="visitor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+    </node>
+    <node type="backbone">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+    </node>
+    <node type="sensor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+    </node>
+  </default_services>
+</scenario>

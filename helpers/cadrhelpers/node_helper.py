@@ -50,6 +50,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config_data = toml.load(args.path)
+    logging.info(f"Using config: {config_data}")
 
     logging.basicConfig(
         level=config_data["Node"]["log_level"], filename=config_data["Node"]["log_file"]

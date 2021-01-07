@@ -29,7 +29,7 @@ agent_port = 8080
 routing_port = 35043
 
 [Scenario]
-xml = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.xml"
+xml = "/dtn_routing/scenarios/{SCENARIO}/minimal.xml"
 movements = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.ns_movements"
 wifi_range = 275.0
 """
