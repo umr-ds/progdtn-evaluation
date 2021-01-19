@@ -6,7 +6,7 @@ from core.services.coreservices import CoreService, ServiceMode
 from cadrhelpers.movement_context import parse_scenario_xml, get_node_type
 
 
-XML_PATH = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+XML_PATH = "/dtn_routing/scenarios/wanderwege/minimal.xml"
 
 
 class Dtn7Service(CoreService):
@@ -38,9 +38,9 @@ class Dtn7Service(CoreService):
         node_type = get_node_type(nodes=nodes, name=node.name)
 
         if node_type == "backbone":
-            cla_id = 'node = "dtn://backbone/"'
+            cla_id = '"dtn://backbone/"'
         else:
-            cla_id = ""
+            cla_id = f'"dtn://{node.name}/"'
 
         if filename == "dtnd.toml":
             # if we are running "context_epidemic" or "context_complex",
@@ -51,7 +51,7 @@ class Dtn7Service(CoreService):
             return f"""
 [core]
 store = "store_{node.name}"
-node-id = "dtn://{node.name}/"
+node-id = {cla_id}
 inspect-all-bundles = true
 
 [logging]
@@ -73,7 +73,6 @@ rest = true
 [[listen]]
 protocol = "mtcp"
 endpoint = ":4556"
-{cla_id}
 
 [routing]
 algorithm = "{routing}"

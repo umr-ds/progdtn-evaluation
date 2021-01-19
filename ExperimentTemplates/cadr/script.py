@@ -37,9 +37,9 @@ if __name__ in ["__main__", "__builtin__"]:
     with open("/tmp/routing", "w") as f:
         f.write("{{routing}}")
 
-    generate_randomised_ns2(
-        waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
-    )
+    #generate_randomised_ns2(
+    #    waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
+    #)
 
     framework.start()
     logging.basicConfig(level=logging.DEBUG)
