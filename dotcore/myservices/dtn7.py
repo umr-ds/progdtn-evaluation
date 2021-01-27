@@ -61,8 +61,8 @@ format = "json"
 
 [discovery]
 ipv4 = true
-ipv6 = true
-interval = 30
+ipv6 = false
+interval = 2
 
 [agents]
 [agents.webserver]

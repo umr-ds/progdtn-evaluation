@@ -64,7 +64,8 @@ class TrafficGenerator:
 
         while True:
             # wait between 1 and 10 minutes and then send a bundle
-            sleep_time = random.randint(60, 600)
+            #sleep_time = random.randint(60, 600)
+            sleep_time = 30
             self.logger.info(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 

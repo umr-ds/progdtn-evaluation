@@ -26,7 +26,7 @@ def run(rest_url: str, logging_file: str, this_node: m_c.Node) -> None:
         f.write("routing,node,timestamp,size\n")
 
         if this_node.type == "backbone":
-            eid = f"dtn://{DESTINATION}/"
+            eid = DESTINATION
         else:
             eid = f"dtn://{this_node.name}/"
 
