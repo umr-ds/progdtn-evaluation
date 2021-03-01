@@ -63,15 +63,13 @@ class TrafficGenerator:
             )
 
         while True:
-            # wait between 1 and 10 minutes and then send a bundle
-            #sleep_time = random.randint(60, 600)
-            sleep_time = 30
+            sleep_time = random.randint(60, 3600)
             self.logger.info(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
 
-            bundle_type: str = random.choice(["simple", "bulk"])
+            bundle_type: str = random.choice(["small", "large"])
             self.logger.info(f"Sending {bundle_type} bundle")
-            if bundle_type == "simple":
+            if bundle_type == "large":
                 payload = self.generate_payload(4, 16)
             else:
                 # Between 1 and 10 MByte
@@ -90,6 +88,7 @@ class TrafficGenerator:
                     self.send_with_empty_context(payload=payload)
             else:
                 self.send_bundle(payload=payload)
+            return
 
     def send_bundle(self, payload: str):
         self.logger.info("Sending bundle without context")

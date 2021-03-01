@@ -97,7 +97,7 @@
       </services>
     </device>
     <device id="12" name="n12" type="backbone" class="" image="">
-      <position x="383" y="466" lat="47.57634276959645" lon="-122.12888145246183" alt="2.0"/>
+      <position x="198" y="322" lat="47.57721541671123" lon="-122.13054333573744" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -106,7 +106,7 @@
       </services>
     </device>
     <device id="13" name="n13" type="backbone" class="" image="">
-      <position x="1604" y="263" lat="47.577572955426184" lon="-122.11791302284273" alt="2.0"/>
+      <position x="1845" y="368" lat="47.576936656019335" lon="-122.11574808300799" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -115,7 +115,7 @@
       </services>
     </device>
     <device id="14" name="n14" type="backbone" class="" image="">
-      <position x="605" y="939" lat="47.5734762638821" lon="-122.12688719253107" alt="2.0"/>
+      <position x="774" y="688" lat="47.57499741013402" lon="-122.12536903970093" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -124,7 +124,7 @@
       </services>
     </device>
     <device id="15" name="n15" type="backbone" class="" image="">
-      <position x="1588" y="698" lat="47.57493680754284" lon="-122.11805675328817" alt="2.0"/>
+      <position x="1372" y="911" lat="47.57364595569352" lon="-122.11999711430188" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -133,7 +133,7 @@
       </services>
     </device>
     <device id="16" name="n16" type="backbone" class="" image="">
-      <position x="2210" y="689" lat="47.574991349878054" lon="-122.11246923222095" alt="2.0"/>
+      <position x="2143" y="902" lat="47.573700499373274" lon="-122.11307110346132" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -187,7 +187,7 @@
       </services>
     </device>
     <device id="22" name="n22" type="sensor" class="" image="">
-      <position x="268" y="357" lat="47.577003316319804" lon="-122.12991451503856" alt="2.0"/>
+      <position x="376" y="450" lat="47.57643973110519" lon="-122.12894433453172" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -304,7 +304,7 @@
       </services>
     </device>
     <device id="35" name="n35" type="sensor" class="" image="">
-      <position x="2130" y="896" lat="47.57373686179487" lon="-122.11318788444825" alt="2.0"/>
+      <position x="2202" y="658" lat="47.57517921748672" lon="-122.11254109744368" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -313,7 +313,7 @@
       </services>
     </device>
     <device id="36" name="n36" type="sensor" class="" image="">
-      <position x="1375" y="888" lat="47.5737853449844" lon="-122.11997016484337" alt="2.0"/>
+      <position x="1587" y="686" lat="47.57500953064383" lon="-122.11806573644103" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -394,7 +394,7 @@
       </services>
     </device>
     <device id="45" name="n45" type="sensor" class="" image="">
-      <position x="802" y="693" lat="47.574967108847204" lon="-122.12511751142135" alt="2.0"/>
+      <position x="629" y="895" lat="47.57374292219602" lon="-122.12667159686289" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>
@@ -430,7 +430,7 @@
       </services>
     </device>
     <device id="49" name="n49" type="sensor" class="" image="">
-      <position x="1817" y="341" lat="47.57710027660535" lon="-122.11599961128753" alt="2.0"/>
+      <position x="1570" y="287" lat="47.57742751624348" lon="-122.11821845003932" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
         <service name="pidstat"/>

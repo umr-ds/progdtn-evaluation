@@ -6,7 +6,7 @@ from core.services.coreservices import CoreService, ServiceMode
 from cadrhelpers.movement_context import parse_scenario_xml, get_node_type
 
 
-XML_PATH = "/dtn_routing/scenarios/wanderwege/minimal.xml"
+XML_PATH = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
 
 
 class Dtn7Service(CoreService):

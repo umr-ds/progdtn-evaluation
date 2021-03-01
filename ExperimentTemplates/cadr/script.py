@@ -16,7 +16,7 @@ from movement_generation import generate_randomised_ns2
 
 DATA_PATH = "/research_data"
 WAYPOINT_FILE = "/dtn_routing/scenarios/wanderwege/waypoints.csv"
-CORE_XML = "/dtn_routing/scenarios/wanderwege/minimal.xml"
+CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
 JITTER = 30.0
 
 
@@ -37,9 +37,9 @@ if __name__ in ["__main__", "__builtin__"]:
     with open("/tmp/routing", "w") as f:
         f.write("{{routing}}")
 
-    #generate_randomised_ns2(
-    #    waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
-    #)
+    generate_randomised_ns2(
+        waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
+    )
 
     framework.start()
     logging.basicConfig(level=logging.DEBUG)
