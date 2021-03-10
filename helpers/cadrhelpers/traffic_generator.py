@@ -1,31 +1,55 @@
+#! /usr/bin/env python3
+
 import random
-import multiprocessing
-import math
 import time
-import logging
 import string
+import argparse
+import sys
+import toml
 
 from dataclasses import dataclass
 from hashlib import sha1
-from typing import Tuple
+from typing import Tuple, List
+from base64 import b64decode
 
 import cadrhelpers.dtnclient as dtnclient
-from cadrhelpers.movement_context import Nodes, Node
-from cadrhelpers.dtnclient import send_context
-
+from cadrhelpers.movement_context import Nodes, Node, parse_scenario_xml
+from cadrhelpers.dtnclient import send_context, build_url
+from cadrhelpers.util import is_context, compute_euclidean_distance
 
 DESTINATION = "dtn://backbone/"
+T_START = 60
+T_STOP = 3600
 
 
-def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
-    x_diff = math.pow(node_a.x_pos - node_b.x_pos, 2)
-    y_diff = math.pow(node_a.y_pos - node_b.y_pos, 2)
-    return math.sqrt(x_diff + y_diff)
+def compute_wait_times(t_start: int, t_stop: int, count: int) -> List[int]:
+    send_times: List[int] = []
+    runtime = t_stop - t_start
+    slot_length = int(runtime / count)
+
+    slot_start = t_start
+    slot_stop = t_start + slot_length
+    while len(send_times) < count:
+        send_time = random.randint(slot_start, slot_stop)
+        send_times.append(send_time)
+        slot_start = slot_stop + 1
+        slot_stop = slot_start + slot_length
+
+    print(f"Timestamps for bundle generation: {send_times}", flush=True)
+
+    wait_times: List[int] = [send_times[0]]
+    timestamp: int = send_times[0]
+    for send_time in send_times[1:]:
+        wait_times.append(send_time - timestamp)
+        timestamp = send_time
+
+    print(f"Wait times for these timestamps: {wait_times}", flush=True)
+
+    return wait_times
 
 
 @dataclass()
 class TrafficGenerator:
-
     agent_url: str
     routing_url: str
     seed: bytes
@@ -34,22 +58,20 @@ class TrafficGenerator:
     nodes: Nodes
     context: bool
     context_algorithm: str
+    payload_size: int
+    number_of_bundles: int
     uuid: str = ""
-    logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
-        self.logger.info("Starting traffic generator")
-        process = multiprocessing.Process(target=self._run)
-        process.start()
-        self.logger.info("Traffic generator running")
-
-    def _run(self) -> None:
-        self.logger.info(f"Using context {self.context}")
+        print(f"Using context {self.context}", flush=True)
         if self.context:
-            self.logger.info(f"Context algorithm: {self.context_algorithm}")
+            print(f"Context algorithm: {self.context_algorithm}", flush=True)
+
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
         closest_backbone, closest_distance = self.find_closest_backbone()
-        self.logger.info(f"Closest backbone: {closest_backbone}")
+        print(f"Closest backbone: {closest_backbone}", flush=True)
+
+        wait_times = compute_wait_times(T_START, T_STOP, self.number_of_bundles)
 
         self.uuid = dtnclient.register(
             rest_url=self.agent_url, endpoint_id=self.endpoint_id
@@ -62,18 +84,11 @@ class TrafficGenerator:
                 node_context={"distance": str(closest_distance)},
             )
 
-        while True:
-            sleep_time = random.randint(60, 3600)
-            self.logger.info(f"Waiting for {sleep_time} seconds")
+        for sleep_time in wait_times:
+            print(f"Waiting for {sleep_time} seconds", flush=True)
             time.sleep(sleep_time)
 
-            bundle_type: str = random.choice(["small", "large"])
-            self.logger.info(f"Sending {bundle_type} bundle")
-            if bundle_type == "large":
-                payload = self.generate_payload(4, 16)
-            else:
-                # Between 1 and 10 MByte
-                payload = self.generate_payload(1000000, 100000000)
+            payload = self.generate_payload()
 
             if self.context:
                 if self.context_algorithm == "spray":
@@ -81,17 +96,15 @@ class TrafficGenerator:
                 elif self.context_algorithm == "complex":
                     self.send_context_bundle(
                         payload=payload,
-                        bundle_type=bundle_type,
                         closest_backbone=closest_backbone,
                     )
                 else:
                     self.send_with_empty_context(payload=payload)
             else:
                 self.send_bundle(payload=payload)
-            return
 
     def send_bundle(self, payload: str):
-        self.logger.info("Sending bundle without context")
+        print("Sending bundle without context", flush=True)
         dtnclient.send_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
@@ -101,17 +114,16 @@ class TrafficGenerator:
         )
 
     def send_context_bundle(
-        self, payload: str, bundle_type: str, closest_backbone: Node
+            self, payload: str, closest_backbone: Node
     ) -> None:
-        self.logger.info("Sending bundle with context")
+        print("Sending bundle with context", flush=True)
         timestamp = int(time.time())
         context = {
             "timestamp": str(timestamp),
-            "bundle_type": str(bundle_type),
             "x_dest": str(closest_backbone.x_pos),
             "y_dest": str(closest_backbone.y_pos),
         }
-        self.logger.info(f"Bundle context: {context}")
+        print(f"Bundle context: {context}", flush=True)
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
@@ -122,7 +134,7 @@ class TrafficGenerator:
         )
 
     def send_context_spray(self, payload: str) -> None:
-        self.logger.info("Sending simulated spray bundle")
+        print("Sending simulated spray bundle", flush=True)
         context = {"copies": "5"}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
@@ -134,7 +146,7 @@ class TrafficGenerator:
         )
 
     def send_with_empty_context(self, payload: str) -> None:
-        self.logger.info("Sending conext bundle with empty context")
+        print("Sending conext bundle with empty context", flush=True)
         context = {}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
@@ -169,12 +181,54 @@ class TrafficGenerator:
         """
         name_binary = bytes(node_name, encoding="utf8")
         node_seed: bytes = sha1(seed + name_binary).digest()
-        self.logger.info(f"RNG seed: {node_seed}")
+        print(f"RNG seed: {node_seed}", flush=True)
         random.seed(node_seed)
 
-    def generate_payload(self, size_min: int, size_max: int) -> str:
-        size: int = random.randint(size_min, size_max)
+    def generate_payload(self) -> str:
         payload: str = "".join(
-            random.choices(string.ascii_letters + string.digits, k=size)
+            random.choices(string.ascii_letters + string.digits, k=self.payload_size)
         )
         return payload
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Generates simulation traffic."
+    )
+    parser.add_argument("path", help="Path to the config file")
+    args = parser.parse_args()
+
+    node_config = toml.load(args.path)
+    print(f"Using config: {node_config}", flush=True)
+
+    nodes: Nodes = parse_scenario_xml(path=node_config["Scenario"]["xml"])
+    this_node = nodes.get_node_for_name(node_name=node_config["Node"]["name"])
+    print(f"This node's type: {this_node.type}", flush=True)
+
+    if this_node.type != "sensor":
+        print("Node type does not produce bundles.", flush=True)
+        sys.exit(0)
+
+    routing_url = build_url(
+        address=node_config["REST"]["address"], port=node_config["REST"]["routing_port"]
+    )
+    agent_url = build_url(
+        address=node_config["REST"]["address"], port=node_config["REST"]["agent_port"]
+    )
+
+    seed = b64decode(bytes(node_config["Experiment"]["seed"], "utf-8"))
+    context, context_algorithm = is_context(node_config["Experiment"]["routing"])
+
+    traffig_generator = TrafficGenerator(
+        agent_url=agent_url,
+        routing_url=routing_url,
+        seed=seed,
+        node_name=this_node.name,
+        endpoint_id=node_config["Node"]["endpoint_id"],
+        nodes=nodes,
+        context=context,
+        context_algorithm=context_algorithm,
+        payload_size=node_config["Experiment"]["payload_size"],
+        number_of_bundles=node_config["Experiment"]["bundles_per_node"]
+    )
+    traffig_generator.run()

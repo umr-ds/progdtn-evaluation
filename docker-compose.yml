@@ -7,8 +7,8 @@ services:
         volumes:
             - /lib/modules:/lib/modules
             - /tmp/.X11-unix:/tmp/.X11-unix
-            - ./dotcore:/root/.core
-            - .:/dtn_routing
+            #- ./dotcore:/root/.core
+            #- .:/dtn_routing
             - /storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/binary_files:/research_data
         tty: true
         privileged: true
@@ -18,7 +18,7 @@ services:
         tmpfs:
             - /tmp:exec,mode=777,size=200G
         environment:
-            - CORE_PARAMS=/dtn_routing/scenarios/wanderwege/wanderwege.xml
+            - CORE_PARAMS=/dtn_routing/scenarios/minimal/minimal.xml
             - DISPLAY
             - BACKEND
             - ALGORITHMS

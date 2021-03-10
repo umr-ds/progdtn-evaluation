@@ -26,6 +26,7 @@ RUN apt update \
     bwm-ng \
     sysstat \
     tcpdump \
+    htop \
     && apt clean
 
 # install core-dtn7 integration
@@ -42,7 +43,10 @@ COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_spray.js /root/context_spray.
 COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
 COPY helpers/cadrhelpers/node_helper.py /usr/local/sbin/node_helper
 COPY helpers/cadrhelpers/log_saver.py /usr/local/sbin/log_saver
+COPY helpers/cadrhelpers/traffic_generator.py /usr/local/sbin/traffic_generator
 
 # install python package for dependencies
 COPY helpers /root/helpers
 RUN pip3 install /root/helpers
+
+COPY . /dtn_routing

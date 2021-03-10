@@ -6,6 +6,8 @@ import time
 import os
 import logging
 
+from typing import Tuple
+
 import cadrhelpers.movement_context as m_c
 
 from cadrhelpers.dtnclient import (
@@ -70,6 +72,7 @@ if __name__ == "__main__":
         routing = "epidemic"
     logging.info(f"Routing Algorithm: {routing}")
 
+
     context = "context" in routing
     logging.info(f"Using Context: {context}")
 
@@ -87,21 +90,6 @@ if __name__ == "__main__":
     nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
     this_node = nodes.get_node_for_name(node_name=config_data["Node"]["name"])
     logging.info(f"This node's type: {this_node.type}")
-
-    if this_node.type == "sensor":
-        logging.info("Initialising Traffic Generator")
-        traffic_helper = TrafficGenerator(
-            agent_url=agent_url,
-            routing_url=routing_url,
-            seed=seed,
-            node_name=config_data["Node"]["name"],
-            endpoint_id=config_data["Node"]["endpoint_id"],
-            nodes=nodes,
-            context=context,
-            context_algorithm=context_algorithm,
-        )
-        traffic_helper.run()
-        logging.info("Initialised Traffic Generator")
 
     if context_algorithm == "complex":
         node_type = {"node_type": this_node.type}

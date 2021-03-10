@@ -1,0 +1,17 @@
+[Node]
+name = "n2"
+endpoint_id = "dtn://n2/"
+
+[Scenario]
+xml = "../../scenarios/minimal/minimal.xml"
+
+[REST]
+address = "localhost"
+agent_port = 8080
+routing_port = 35043
+
+[Experiment]
+seed = "AAAAAA=="
+routing = "epidemic"
+payload_size = 10000
+bundles_per_node = 70

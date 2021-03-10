@@ -13,6 +13,7 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
       </services>
     </device>
     <device id="3" name="n3" type="backbone" class="" image="">
@@ -22,6 +23,7 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
       </services>
     </device>
   </devices>

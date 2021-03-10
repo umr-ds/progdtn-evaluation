@@ -1,0 +1,15 @@
+[Scenario]
+xml = "/dtn_routing/scenarios/minimal/minimal.xml"
+movements = "/dtn_routing/scenarios/minimal/minimal.ns_movements"
+wifi_range = 275.0
+
+[Experiment]
+seed = "AAAAAA=="
+routing = "epidemic"
+payload_size = 10000
+bundles_per_node = 1
+
+[REST]
+address = "localhost"
+agent_port = 8080
+routing_port = 35043

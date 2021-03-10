@@ -1,11 +1,8 @@
 from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService
 
-SCENARIO = "wanderwege"
-
 
 class NodeHelperService(CoreService):
-
     name = "NodeHelper"
     executables = ("node_helper",)
     dependencies = ("dtn7",)
@@ -27,9 +24,4 @@ log_level = "INFO"
 address = "localhost"
 agent_port = 8080
 routing_port = 35043
-
-[Scenario]
-xml = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.xml"
-movements = "/dtn_routing/scenarios/{SCENARIO}/{SCENARIO}.ns_movements"
-wifi_range = 275.0
 """

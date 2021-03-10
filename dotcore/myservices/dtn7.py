@@ -1,4 +1,4 @@
-import os
+import toml
 
 from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService, ServiceMode
@@ -6,7 +6,7 @@ from core.services.coreservices import CoreService, ServiceMode
 from cadrhelpers.movement_context import parse_scenario_xml, get_node_type
 
 
-XML_PATH = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"
 
 
 class Dtn7Service(CoreService):
@@ -28,19 +28,17 @@ class Dtn7Service(CoreService):
 
     @classmethod
     def generate_config(cls, node: CoreNode, filename: str):
-        if os.path.isfile("/tmp/routing"):
-            with open("/tmp/routing", "r") as f:
-                routing = f.read().strip()
-        else:
-            routing = "epidemic"
+        experiment_config = toml.load(EXPERIMENT_CONFIG)
 
-        nodes = parse_scenario_xml(XML_PATH)
+        nodes = parse_scenario_xml(experiment_config["Scenario"]["xml"])
         node_type = get_node_type(nodes=nodes, name=node.name)
 
         if node_type == "backbone":
             cla_id = '"dtn://backbone/"'
         else:
             cla_id = f'"dtn://{node.name}/"'
+
+        routing = experiment_config["Experiment"]["routing"]
 
         if filename == "dtnd.toml":
             # if we are running "context_epidemic" or "context_complex",
