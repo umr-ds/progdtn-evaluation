@@ -5,7 +5,7 @@ from typing import List, Dict
 import pandas as pd
 from pandas import DataFrame
 
-from cadrhelpers.movement_context import parse_scenario_xml
+from cadrhelpers.util import parse_scenario_xml
 
 
 def check_node_crash(simulation_directory: str, node_name: str) -> bool:

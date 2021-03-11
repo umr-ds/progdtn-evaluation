@@ -2,8 +2,7 @@ import multiprocessing
 import logging
 
 from cadrhelpers.dtnclient import send_context
-from cadrhelpers.movement_context import Nodes
-from cadrhelpers.util import compute_euclidean_distance
+from cadrhelpers.util import compute_euclidean_distance, Nodes
 
 
 class SensorContext:

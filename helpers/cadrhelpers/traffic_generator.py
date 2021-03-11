@@ -13,9 +13,14 @@ from typing import Tuple, List
 from base64 import b64decode
 
 import cadrhelpers.dtnclient as dtnclient
-from cadrhelpers.movement_context import Nodes, Node, parse_scenario_xml
 from cadrhelpers.dtnclient import send_context, build_url
-from cadrhelpers.util import is_context, compute_euclidean_distance
+from cadrhelpers.util import (
+    is_context,
+    compute_euclidean_distance,
+    parse_scenario_xml,
+    Node,
+    Nodes,
+)
 
 DESTINATION = "dtn://backbone/"
 T_START = 60
@@ -113,9 +118,7 @@ class TrafficGenerator:
             payload=payload,
         )
 
-    def send_context_bundle(
-            self, payload: str, closest_backbone: Node
-    ) -> None:
+    def send_context_bundle(self, payload: str, closest_backbone: Node) -> None:
         print("Sending bundle with context", flush=True)
         timestamp = int(time.time())
         context = {
@@ -192,9 +195,7 @@ class TrafficGenerator:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generates simulation traffic."
-    )
+    parser = argparse.ArgumentParser(description="Generates simulation traffic.")
     parser.add_argument("path", help="Path to the config file")
     args = parser.parse_args()
 
@@ -229,6 +230,6 @@ if __name__ == "__main__":
         context=context,
         context_algorithm=context_algorithm,
         payload_size=node_config["Experiment"]["payload_size"],
-        number_of_bundles=node_config["Experiment"]["bundles_per_node"]
+        number_of_bundles=node_config["Experiment"]["bundles_per_node"],
     )
     traffig_generator.run()

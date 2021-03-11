@@ -1,12 +1,16 @@
+#! /usr/bin/env python3
+
+import argparse
 import multiprocessing
 import time
 import math
-import logging
+import toml
+import sys
 
-import xml.etree.ElementTree as ElementTree
+from typing import List, Tuple, Dict
 
 from cadrhelpers.dtnclient import send_context, build_url
-from typing import List, Tuple, Dict, Union
+from cadrhelpers.util import parse_scenario_xml, Nodes
 
 
 class NS2Movement:
@@ -45,45 +49,38 @@ class NS2Movements:
         self.y_pos: float = y_pos
         self.movements: List[NS2Movement] = movements
         self.step: int = 0
-        self.logger: logging.Logger = logging.getLogger(__name__)
 
     def run(self) -> None:
-        """Performs periodic context updates when movement changes
-        Spawns a new process
-        """
-        self.logger.info("Starting NS2 movement context generator")
-        process = multiprocessing.Process(target=self._run)
-        process.start()
-        self.logger.info("Movement context running")
+        print("Starting movement context updater.", flush=True)
 
-    def _run(self) -> None:
-        """Does the actual work"""
         # differentiate between node who start moving immediately and those who take a while to get going
         if self.movements[0].timestamp != 0:
-            self.logger.info(
-                f"No inital movement, waiting for {self.movements[0].timestamp} seconds"
+            print(
+                f"No inital movement, waiting for {self.movements[0].timestamp} seconds",
+                flush=True,
             )
             time.sleep(self.movements[0].timestamp)
 
         vector = self.compute_vector()
-        self.logger.info(f"New movement vector: {vector}")
+        print(f"New movement vector: {vector}", flush=True)
         self.update_context(vector)
         self.move_step()
-        self.logger.info(f"Position at end of movement: ({self.x_pos}, {self.y_pos})")
+        print(f"Position at end of movement: ({self.x_pos}, {self.y_pos})", flush=True)
 
         # main wait-and-update-loop
         while self.step < len(self.movements):
-            wait_time: int = self.movements[self.step].timestamp - self.movements[
-                self.step - 1
-            ].timestamp
-            self.logger.info(f"Next change in movement in {wait_time} seconds")
+            wait_time: int = (
+                self.movements[self.step].timestamp
+                - self.movements[self.step - 1].timestamp
+            )
+            print(f"Next change in movement in {wait_time} seconds", flush=True)
             time.sleep(wait_time)
             vector = self.compute_vector()
-            self.logger.info(f"New movement vector: {vector}")
+            print(f"New movement vector: {vector}", flush=True)
             self.update_context(vector)
             self.move_step()
-            self.logger.info(
-                f"Position at end of movement: ({self.x_pos}, {self.y_pos})"
+            print(
+                f"Position at end of movement: ({self.x_pos}, {self.y_pos})", flush=True
             )
 
     def move_step(self) -> None:
@@ -95,7 +92,7 @@ class NS2Movements:
     def update_context(self, vector: Tuple[float, float]) -> None:
         """Update node context in dtnd"""
         context: Dict[str, float] = {"x": vector[0], "y": vector[1]}
-        self.logger.info(f"Sending movement vector to dtnd: {context}")
+        print(f"Sending movement vector to dtnd: {context}", flush=True)
         send_context(
             rest_url=self.rest_url, context_name="movement", node_context=context
         )
@@ -132,7 +129,7 @@ def filter_ns2(path: str, node_name: str) -> List[str]:
     return commands
 
 
-def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
+def parse_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     """Turns the ns2 text file into a NS2Movement object"""
     commands = filter_ns2(path=path, node_name=node_name)
     start_x: float = 0.0
@@ -165,108 +162,36 @@ def generate_movement(rest_url: str, path: str, node_name: str) -> NS2Movements:
     )
 
 
-class Node:
-    """Simulation node"""
-
-    def __init__(self, id: int, name: str, type: str, x_pos: float, y_pos: float):
-        self.id: int = id
-        self.name: str = name
-        self.type: str = type
-        self.x_pos: float = x_pos
-        self.y_pos: float = y_pos
-
-    def __repr__(self) -> str:
-        return f"Node(id={self.id}, name='{self.name}', type='{self.type}', x_pos={self.x_pos}, y_pos={self.y_pos})"
-
-
-class Nodes:
-    """All the nodes in the simulation"""
-
-    def __init__(self, visitors: List[Node], sensors: List[Node], backbone: List[Node]):
-        self.visitors: List[Node] = visitors
-        self.sensors: List[Node] = sensors
-        self.backbone: List[Node] = backbone
-
-    def get_node_for_name(self, node_name: str) -> Node:
-        ourself: Union[Node, None] = None
-
-        for node in self.visitors + self.sensors + self.backbone:
-            if node.name == node_name:
-                ourself = node
-
-        assert (
-            ourself is not None
-        ), "This node should really show up in the list of nodes"
-        return ourself
-
-
-def parse_scenario_xml(path: str) -> Nodes:
-    """Parse the scenario's xml definition and separate the different types of nodes
-
-    Returns:
-        Three lists (visitors, sensors, backbone)
-    """
-    tree = ElementTree.parse(path)
-    root = tree.getroot()
-
-    visitors: List[Node] = []
-    sensors: List[Node] = []
-    backbone: List[Node] = []
-
-    for child in root:
-        if child.tag == "devices":
-            for node_data in child:
-                node = get_node_info(node_data)
-                if node.type == "visitor":
-                    visitors.append(node)
-                elif node.type == "sensor":
-                    sensors.append(node)
-                elif node.type == "backbone":
-                    backbone.append(node)
-
-    return Nodes(visitors=visitors, sensors=sensors, backbone=backbone)
-
-
-def get_node_info(element: ElementTree.Element) -> Node:
-    """Extract the info aof a node from the xml tree"""
-    node_id: int = int(element.attrib["id"])
-    node_name: str = element.attrib["name"]
-    node_type: str = element.attrib["type"]
-    x_pos: float = 0.0
-    y_pos: float = 0.0
-
-    for sub_element in element:
-        if sub_element.tag == "position":
-            x_pos = float(sub_element.attrib["x"])
-            y_pos = float(sub_element.attrib["y"])
-
-    return Node(id=node_id, name=node_name, type=node_type, x_pos=x_pos, y_pos=y_pos)
-
-
-def get_node_type(nodes: Nodes, name: str) -> str:
-    for node in nodes.sensors:
-        if node.name == name:
-            return "sensor"
-
-    for node in nodes.backbone:
-        if node.name == name:
-            return "backbone"
-
-    for node in nodes.visitors:
-        if node.name == name:
-            return "visitor"
-
-    return ""
-
-
 if __name__ == "__main__":
-    url = build_url(address="localhost", port=35043)
-    ns2_movement = generate_movement(
-        rest_url=url,
-        path="/home/msommer/devel/cadr-evaluation/scenarios/randomWaypoint/randomWaypoint.ns_movements",
-        node_name="n11",
+    parser = argparse.ArgumentParser(
+        description="Generates context data of node movement."
+    )
+    parser.add_argument("path", help="Path to the config file")
+    args = parser.parse_args()
+
+    node_config = toml.load(args.path)
+    print(f"Using config: {node_config}", flush=True)
+
+    nodes: Nodes = parse_scenario_xml(path=node_config["Scenario"]["xml"])
+    this_node = nodes.get_node_for_name(node_name=node_config["Node"]["name"])
+    print(f"This node's type: {this_node.type}", flush=True)
+
+    if this_node.type != "visitor":
+        print("This node type does not move", flush=True)
+        sys.exit(0)
+
+    if node_config["Experiment"]["routing"] != "context_complex":
+        print("Experiment does not require context information", flush=True)
+        sys.exit(0)
+
+    routing_url = build_url(
+        address=node_config["REST"]["address"], port=node_config["REST"]["routing_port"]
     )
 
-    nodes = parse_scenario_xml(
-        "/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml"
+    movement_context = parse_movement(
+        rest_url=routing_url,
+        path=node_config["Scenario"]["movements"],
+        node_name=node_config["Node"]["name"],
     )
+
+    movement_context.run()

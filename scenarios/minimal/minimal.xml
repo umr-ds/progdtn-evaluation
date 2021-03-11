@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<scenario name="/dtn_routing/scenarios/wanderwege/minimal.xml">
+<scenario name="/dtn_routing/scenarios/minimal/minimal.xml">
   <networks>
-    <network id="1" name="wlan1" model="basic_range" type="WIRELESS_LAN">
+    <network id="1" name="wlan1" type="WIRELESS_LAN">
       <position x="1115" y="689" lat="47.574991349878054" lon="-122.12230578458207" alt="2.0"/>
     </network>
   </networks>
@@ -23,7 +23,16 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
-        <service name="TrafficGenerator"/>
+      </services>
+    </device>
+    <device id="4" name="n4" type="visitor" class="" image="">
+      <position x="943" y="677" lat="47.57506407290332" lon="-122.12385088687074" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="MovementContext"/>
       </services>
     </device>
   </devices>
@@ -33,6 +42,9 @@
     </link>
     <link node_one="1" node_two="3">
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.2" ip4_mask="16" ip6="2001::2" ip6_mask="64"/>
+    </link>
+    <link node_one="1" node_two="4">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.3" ip4_mask="16" ip6="2001::3" ip6_mask="64"/>
     </link>
   </links>
   <mobility_configurations>
@@ -114,6 +126,7 @@
       <service name="pidstat"/>
       <service name="dtn7"/>
       <service name="NodeHelper"/>
+      <service name="TrafficGenerator"/>
     </node>
   </default_services>
 </scenario>

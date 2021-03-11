@@ -3,8 +3,7 @@ import toml
 from core.nodes.base import CoreNode
 from core.services.coreservices import CoreService, ServiceMode
 
-from cadrhelpers.movement_context import parse_scenario_xml, get_node_type
-
+from cadrhelpers.util import parse_scenario_xml, get_node_type
 
 EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"
 

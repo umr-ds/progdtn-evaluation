@@ -9,6 +9,7 @@ import logging
 from typing import Tuple
 
 import cadrhelpers.movement_context as m_c
+import cadrhelpers.util
 
 from cadrhelpers.dtnclient import (
     build_url,
@@ -21,7 +22,7 @@ from cadrhelpers.traffic_generator import TrafficGenerator, DESTINATION
 from cadrhelpers.node_context import SensorContext
 
 
-def run(rest_url: str, logging_file: str, this_node: m_c.Node) -> None:
+def run(rest_url: str, logging_file: str, this_node: cadrhelpers.util.Node) -> None:
     logging.info("Starting store size logging")
 
     with open(logging_file, "w", buffering=1) as f:
@@ -72,7 +73,6 @@ if __name__ == "__main__":
         routing = "epidemic"
     logging.info(f"Routing Algorithm: {routing}")
 
-
     context = "context" in routing
     logging.info(f"Using Context: {context}")
 
@@ -87,7 +87,9 @@ if __name__ == "__main__":
         address=config_data["REST"]["address"], port=config_data["REST"]["agent_port"]
     )
 
-    nodes: m_c.Nodes = m_c.parse_scenario_xml(path=config_data["Scenario"]["xml"])
+    nodes: cadrhelpers.util.Nodes = cadrhelpers.util.parse_scenario_xml(
+        path=config_data["Scenario"]["xml"]
+    )
     this_node = nodes.get_node_for_name(node_name=config_data["Node"]["name"])
     logging.info(f"This node's type: {this_node.type}")
 
@@ -106,16 +108,6 @@ if __name__ == "__main__":
             )
             context_generator.run()
             logging.info("Initialised SensorContext")
-
-        if this_node.type == "visitor":
-            logging.info("Initialising Movement Generator")
-            movement_helper: m_c.NS2Movements = m_c.generate_movement(
-                rest_url=routing_url,
-                path=config_data["Scenario"]["movements"],
-                node_name=config_data["Node"]["name"],
-            )
-            movement_helper.run()
-            logging.info("Initialised Movement Generator")
 
     logging.info("Daemonising")
     run(
