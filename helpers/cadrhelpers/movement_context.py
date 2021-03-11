@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
 import argparse
-import multiprocessing
 import time
 import math
 import toml
@@ -43,6 +42,7 @@ class NS2Movements:
         y_pos: float,
         movements: List[NS2Movement],
     ):
+        print("Initialising MovementContext", flush=True)
         self.node_name: str = node_name
         self.rest_url: str = rest_url
         self.x_pos: float = x_pos

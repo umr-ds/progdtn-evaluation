@@ -1,0 +1,13 @@
+[Node]
+name = "n2"
+
+[Scenario]
+xml = "../../scenarios/minimal/minimal.xml"
+wifi_range = 275.0
+
+[REST]
+address = "localhost"
+routing_port = 35044
+
+[Experiment]
+routing = "context_complex"

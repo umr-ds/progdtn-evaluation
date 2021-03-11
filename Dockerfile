@@ -45,6 +45,7 @@ COPY helpers/cadrhelpers/node_helper.py /usr/local/sbin/node_helper
 COPY helpers/cadrhelpers/log_saver.py /usr/local/sbin/log_saver
 COPY helpers/cadrhelpers/traffic_generator.py /usr/local/sbin/traffic_generator
 COPY helpers/cadrhelpers/movement_context.py /usr/local/sbin/movement_context
+COPY helpers/cadrhelpers/node_context.py /usr/local/sbin/node_context
 
 # install python package for dependencies
 COPY helpers /root/helpers

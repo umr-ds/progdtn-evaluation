@@ -13,6 +13,7 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
+        <service name="NodeContext"/>
         <service name="TrafficGenerator"/>
       </services>
     </device>
@@ -23,6 +24,7 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
+        <service name="NodeContext"/>
       </services>
     </device>
     <device id="4" name="n4" type="visitor" class="" image="">
@@ -32,6 +34,7 @@
         <service name="pidstat"/>
         <service name="dtn7"/>
         <service name="NodeHelper"/>
+        <service name="NodeContext"/>
         <service name="MovementContext"/>
       </services>
     </device>

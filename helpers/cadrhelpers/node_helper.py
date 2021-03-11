@@ -93,22 +93,6 @@ if __name__ == "__main__":
     this_node = nodes.get_node_for_name(node_name=config_data["Node"]["name"])
     logging.info(f"This node's type: {this_node.type}")
 
-    if context_algorithm == "complex":
-        node_type = {"node_type": this_node.type}
-        logging.info(f"Sending node type: {node_type}")
-        send_context(rest_url=routing_url, context_name="role", node_context=node_type)
-
-        if this_node.type == "sensor":
-            logging.info("Initialising SensorContext")
-            context_generator = SensorContext(
-                rest_url=routing_url,
-                node_name=config_data["Node"]["name"],
-                wifi_range=config_data["Scenario"]["wifi_range"],
-                nodes=nodes,
-            )
-            context_generator.run()
-            logging.info("Initialised SensorContext")
-
     logging.info("Daemonising")
     run(
         rest_url=agent_url,
