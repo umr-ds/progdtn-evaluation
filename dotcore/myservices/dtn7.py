@@ -46,6 +46,9 @@ class Dtn7Service(CoreService):
             if "context" in routing:
                 routing = "context"
 
+            agent_address = f"localhost:{experiment_config['REST']['agent_port']}"
+            routing_address = f"localhost:{experiment_config['REST']['routing_port']}"
+
             return f"""
 [core]
 store = "store_{node.name}"
@@ -64,7 +67,7 @@ interval = 2
 
 [agents]
 [agents.webserver]
-address = "localhost:8080"
+address = "{agent_address}"
 websocket = true
 rest = true
 
@@ -97,7 +100,7 @@ ageinterval = "1m"
 
 [routing.contextconf]
 scriptpath = "{node.nodedir}/context.js"
-listenaddress = "127.0.0.1:35043"
+listenaddress = "{routing_address}"
 
 """
 
