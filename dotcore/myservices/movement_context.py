@@ -12,7 +12,9 @@ class TrafficGeneratorService(CoreService):
     executables = ("movement_context",)
     dependencies = ("dtn7",)
     configs = ("movement_context.toml",)
-    startup = (f'bash -c "nohup movement_context {configs[0]} &> movement_context_run.log &"',)
+    startup = (
+        f'bash -c "nohup movement_context {configs[0]} &> movement_context_run.log &"',
+    )
 
     @classmethod
     def generate_config(cls, node: CoreNode, filename: str):

@@ -12,7 +12,9 @@ class TrafficGeneratorService(CoreService):
     executables = ("traffic_generator",)
     dependencies = ("dtn7",)
     configs = ("traffic_generator.toml",)
-    startup = (f'bash -c "nohup traffic_generator {configs[0]} &> traffic_generator_run.log &"',)
+    startup = (
+        f'bash -c "nohup traffic_generator {configs[0]} &> traffic_generator_run.log &"',
+    )
 
     @classmethod
     def generate_config(cls, node: CoreNode, filename: str):

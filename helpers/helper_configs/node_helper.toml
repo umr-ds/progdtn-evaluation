@@ -1,0 +1,9 @@
+[Node]
+name = "n2"
+
+[Scenario]
+xml = "../../scenarios/minimal/minimal.xml"
+
+[REST]
+address = "localhost"
+agent_port = 8080
