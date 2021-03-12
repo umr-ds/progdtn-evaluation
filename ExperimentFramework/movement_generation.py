@@ -23,7 +23,7 @@ def get_movement_file(xml_path: str) -> str:
 
 def generate_randomised_ns2(
     waypoint_file: str, core_xml: str, jitter: float, seed: int
-) -> None:
+) -> str:
     """Generate a randomised ns2 movement file
 
     Args:
@@ -35,4 +35,7 @@ def generate_randomised_ns2(
     random.seed(seed)
     ns2_path = get_movement_file(core_xml)
     waypoints = read_waypoints(waypoint_file=waypoint_file)
-    transform_to_ns(waypoints=waypoints, output_file=ns2_path, jitter=jitter, slow_mode=True)
+    transform_to_ns(
+        waypoints=waypoints, output_file=ns2_path, jitter=jitter, slow_mode=True
+    )
+    return ns2_path

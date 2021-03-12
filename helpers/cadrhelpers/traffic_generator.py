@@ -10,7 +10,6 @@ import toml
 from dataclasses import dataclass
 from hashlib import sha1
 from typing import Tuple, List
-from base64 import b64decode
 
 import cadrhelpers.dtnclient as dtnclient
 from cadrhelpers.dtnclient import send_context, build_url
@@ -217,7 +216,7 @@ if __name__ == "__main__":
         address=node_config["REST"]["address"], port=node_config["REST"]["agent_port"]
     )
 
-    seed = b64decode(bytes(node_config["Experiment"]["seed"], "utf-8"))
+    seed = bytes([node_config["Experiment"]["seed"]])
     context, context_algorithm = is_context(node_config["Experiment"]["routing"])
 
     traffig_generator = TrafficGenerator(

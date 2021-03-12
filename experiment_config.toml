@@ -4,7 +4,7 @@ movements = "/dtn_routing/scenarios/minimal/minimal.ns_movements"
 wifi_range = 275.0
 
 [Experiment]
-seed = "AAAAAA=="
+seed = 0
 routing = "epidemic"
 payload_size = 10000
 bundles_per_node = 1

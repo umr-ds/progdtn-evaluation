@@ -11,7 +11,7 @@ agent_port = 8080
 routing_port = 35043
 
 [Experiment]
-seed = "AAAAAA=="
+seed = 0
 routing = "epidemic"
 payload_size = 10000
 bundles_per_node = 70
