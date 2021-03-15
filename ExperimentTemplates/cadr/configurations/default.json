@@ -1,1 +1,1 @@
-{"paramValues":{"routing":["epidemic", "binary_spray", "prophet", "dtlsr", "context_epidemic", "context_spray", "context_complex"], "payload_size": [1, 10, 100, 1000], "bundles_per_node": [1, 2, 5, 10]},"capabilities":["core"],"repetitions":"5","seeds":1}
+{"paramValues":{"routing":["epidemic", "binary_spray", "prophet", "dtlsr", "context_epidemic", "context_spray", "context_complex"], "payload_size": [1000, 1000000, 10000000], "bundles_per_node": [5, 10, 50, 100]},"capabilities":["core"],"repetitions":"5","seeds":1}
