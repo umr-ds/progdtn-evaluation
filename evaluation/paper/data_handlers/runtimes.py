@@ -27,8 +27,8 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
 
 
 def parse_node(
-    node_path: str, routing_algorithm: str, sim_instance_id: str
-) -> Dict[str, List[Dict[str, Union[str, datetime]]]]:
+    node_path: str, routing_algorithm: str, sim_instance_id: str, payload_size: int, bundles_per_node: int
+) -> Dict[str, List[Dict[str, Union[str, int, datetime]]]]:
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
@@ -75,6 +75,8 @@ def parse_node(
                         {
                             "routing": routing_algorithm,
                             "sim_instance_id": sim_instance_id,
+                            "payload_size": payload_size,
+                            "bundles_per_node": bundles_per_node,
                             "timestamp": log_entry_time(entry),
                             "event": event,
                             "node": node_id,
@@ -115,6 +117,8 @@ def parse_bundle_events_instance(
         parse_node(
             node_path=p,
             routing_algorithm=params["routing"],
+            payload_size=params["payload_size"],
+            bundles_per_node=params["bundles_per_node"],
             sim_instance_id=params["simInstanceId"],
         )
         for p in node_paths
