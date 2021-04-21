@@ -85,7 +85,7 @@ class TrafficGenerator:
             send_context(
                 rest_url=self.routing_url,
                 context_name="backbone",
-                node_context={"distance": str(closest_distance)},
+                node_context={"distance": closest_distance},
             )
 
         for sleep_time in wait_times:

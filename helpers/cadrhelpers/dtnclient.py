@@ -201,9 +201,10 @@ def send_context(rest_url: str, context_name: str, node_context: Dict[str, Any])
     Raises:
         RESTError if anything goes wrong
     """
-    contest_str: str = json.dumps(node_context)
+    context_str: str = json.dumps(node_context)
+    print(f"Sending context: {context_str}", flush=True)
     response: requests.Response = requests.post(
-        f"{rest_url}/context/{context_name}", data=contest_str
+        f"{rest_url}/context/{context_name}", data=context_str
     )
     if response.status_code != 202:
         raise RESTError(status_code=response.status_code, error=response.text)
