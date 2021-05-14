@@ -4,12 +4,9 @@ from __future__ import annotations
 from typing import Dict, Union, List
 from json import loads
 from glob import glob
-from os import path
+import os
+import json
 from dataclasses import dataclass
-
-
-EXPERIMENT_PATH = "/research_data/debug/ids/"
-
 
 @dataclass
 class Scenario:
@@ -40,6 +37,9 @@ class TrafficGenerator:
     rng_seed: str
     timestamps: List[int]
     wait_times: List[int]
+    num_sent: int
+    num_dtnd: int
+    really_sent: int
 
     def __eq__(self, other):
         return isinstance(other, TrafficGenerator) and self.node_id == other.node_id
@@ -88,6 +88,10 @@ def parse_traffic_generator(path: str) -> TrafficGenerator:
     rng_seed = ""
     timestamps: List[int] = []
     wait_times: List[int] = []
+    num_sent = 0
+    num_dtnd = 0
+    really_sent = 0
+    
     with open(path, "r") as f:
         for line in f:
             if "Using config:" in line:
@@ -100,45 +104,58 @@ def parse_traffic_generator(path: str) -> TrafficGenerator:
                 timestamps = loads(line[33:].strip())
             if "Wait times for these timestamps:" in line:
                 wait_times = loads((line[32:].strip()))
+            if "Sending bundle" in line:
+                really_sent = really_sent + 1
+        
+    dtnd_path = f"{os.path.dirname(os.path.abspath(path))}/{node_id}.conf_dtnd_run.log"
+    with open(dtnd_path, "r") as f:
+        for line in f:
+            if "REST client sent bundle" in line:
+                num_dtnd = num_dtnd + 1
+                
+    
     return TrafficGenerator(
-        node_id=node_id, rng_seed=rng_seed, timestamps=timestamps, wait_times=wait_times
+        node_id=node_id, rng_seed=rng_seed, timestamps=timestamps, wait_times=wait_times, num_sent=len(timestamps), num_dtnd=num_dtnd, really_sent=really_sent
     )
 
+if __name__ == '__main__':
+    EXPERIMENT_PATH = "/research_data/debug/ids/"
+    scenarios: List[Scenario] = []
+    instances: Dict[Scenario, List[TrafficGenerator]] = {}
 
-scenarios: List[Scenario] = []
-instances: Dict[Scenario, List[TrafficGenerator]] = {}
+    instance_paths: List[str] = glob(os.path.join(EXPERIMENT_PATH, "*"))
+    for instance_path in instance_paths:
+        scenario = parse_instance_parameters(os.path.join(instance_path, "parameters.py"))
+        scenarios.append(scenario)
 
-instance_paths: List[str] = glob(path.join(EXPERIMENT_PATH, "*"))
-for instance_path in instance_paths:
-    scenario = parse_instance_parameters(path.join(instance_path, "parameters.py"))
-    scenarios.append(scenario)
+        node_paths = glob(path.join(instance_path, "*.conf_traffic_generator_run.log"))
+        generators: List[TrafficGenerator] = []
+        for node_path in node_paths:
+            node_generator = parse_traffic_generator(node_path)
+            generators.append(node_generator)
 
-    node_paths = glob(path.join(instance_path, "*.conf_traffic_generator_run.log"))
-    generators: List[TrafficGenerator] = []
-    for node_path in node_paths:
-        node_generator = parse_traffic_generator(node_path)
-        generators.append(node_generator)
+        instances[scenario] = generators
 
-    instances[scenario] = generators
+    for scenario in scenarios:
+        for other_scenario in scenarios:
+            if scenario.matches(other_scenario):
+                generators_a = instances[scenario]
+                generators_b = instances[other_scenario]
 
-for scenario in scenarios:
-    for other_scenario in scenarios:
-        if scenario.matches(other_scenario):
-            generators_a = instances[scenario]
-            generators_b = instances[other_scenario]
-
-            for generator in generators_a:
-                for other_generator in generators_b:
-                    if generator == other_generator:
-                        if not generator.matches(other_generator):
-                            foo = generator.matches(other_generator)
-                            print(
-                                f"Mismatch between instances {scenario.instance_id} and {other_scenario.instance_id}:"
-                            )
-                            print(
-                                f"Params: bundles_per_node: {scenario.bundles_per_node}, seed: {scenario.seed}, payload_size: {scenario.payload_size}"
-                            )
-                            print(f"Node: {generator.node_id}")
-                            print("Differences:")
-                            generator.difference(other_generator)
-                            print("-----------------------------")
+                for generator in generators_a:
+                    for other_generator in generators_b:
+                        if generator == other_generator:
+                            if not generator.matches(other_generator):
+                                foo = generator.matches(other_generator)
+                                print(
+                                    f"Mismatch between instances {scenario.instance_id} and {other_scenario.instance_id}:"
+                                )
+                                print(
+                                    f"Params: bundles_per_node: {scenario.bundles_per_node}, seed: {scenario.seed}, payload_size: {scenario.payload_size}"
+                                )
+                                print(f"Node: {generator.node_id}")
+                                print("Differences:")
+                                generator.difference(other_generator)
+                                print("-----------------------------")
+                            else:
+                                print(f"Instances {scenario.instance_id} and {other_scenario.instance_id} match.")
