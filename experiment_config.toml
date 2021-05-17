@@ -7,6 +7,8 @@ wifi_range = 275.0
 seed = 0
 routing = "epidemic"
 payload_size = 10000
+generate_payload = false
+payload_path = "/tmp/payload"
 bundles_per_node = 1
 
 [REST]

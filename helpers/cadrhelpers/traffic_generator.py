@@ -39,7 +39,7 @@ def compute_wait_times(t_start: int, t_stop: int, count: int) -> List[int]:
         slot_start = slot_stop + 1
         slot_stop = slot_start + slot_length
 
-    print(f"Timestamps for bundle generation: {send_times}", flush=True)
+    print(f"{time.time()}: Timestamps for bundle generation: {send_times}", flush=True)
 
     wait_times: List[int] = [send_times[0]]
     timestamp: int = send_times[0]
@@ -47,7 +47,7 @@ def compute_wait_times(t_start: int, t_stop: int, count: int) -> List[int]:
         wait_times.append(send_time - timestamp)
         timestamp = send_time
 
-    print(f"Wait times for these timestamps: {wait_times}", flush=True)
+    print(f"{time.time()}: Wait times for these timestamps: {wait_times}", flush=True)
 
     return wait_times
 
@@ -64,16 +64,19 @@ class TrafficGenerator:
     context_algorithm: str
     payload_size: int
     number_of_bundles: int
+    generate_payload: bool = True
+    payload: str = ""
+    payload_path: str = ""
     uuid: str = ""
 
     def run(self) -> None:
-        print(f"Using context {self.context}", flush=True)
+        print(f"{time.time()}: Using context {self.context}", flush=True)
         if self.context:
-            print(f"Context algorithm: {self.context_algorithm}", flush=True)
+            print(f"{time.time()}: Context algorithm: {self.context_algorithm}", flush=True)
 
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
         closest_backbone, closest_distance = self.find_closest_backbone()
-        print(f"Closest backbone: {closest_backbone}", flush=True)
+        print(f"{time.time()}: Closest backbone: {closest_backbone}", flush=True)
 
         wait_times = compute_wait_times(T_START, T_STOP, self.number_of_bundles)
 
@@ -88,27 +91,33 @@ class TrafficGenerator:
                 node_context={"distance": closest_distance},
             )
 
+        if not self.generate_payload:
+            self._load_payload()
+
         for sleep_time in wait_times:
-            print(f"Waiting for {sleep_time} seconds", flush=True)
+            print(f"{time.time()}: Waiting for {sleep_time} seconds", flush=True)
             time.sleep(sleep_time)
 
-            payload = self.generate_payload()
+            if self.generate_payload:
+                self.payload = self._generate_payload()
 
             if self.context:
                 if self.context_algorithm == "spray":
-                    self.send_context_spray(payload=payload)
+                    self.send_context_spray(payload=self.payload)
                 elif self.context_algorithm == "complex":
                     self.send_context_bundle(
-                        payload=payload,
+                        payload=self.payload,
                         closest_backbone=closest_backbone,
                     )
                 else:
-                    self.send_with_empty_context(payload=payload)
+                    self.send_with_empty_context(payload=self.payload)
             else:
-                self.send_bundle(payload=payload)
+                self.send_bundle(payload=self.payload)
+
+        print(f"{time.time()}: TDone sending", flush=True)
 
     def send_bundle(self, payload: str):
-        print("Sending bundle without context", flush=True)
+        print(f"{time.time()}: Sending bundle without context", flush=True)
         dtnclient.send_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
@@ -116,16 +125,17 @@ class TrafficGenerator:
             source=self.endpoint_id,
             payload=payload,
         )
+        print(f"{time.time()}: Bundle sent", flush=True)
 
     def send_context_bundle(self, payload: str, closest_backbone: Node) -> None:
-        print("Sending bundle with context", flush=True)
+        print(f"{time.time()}: Sending bundle with context", flush=True)
         timestamp = int(time.time())
         context = {
             "timestamp": str(timestamp),
             "x_dest": str(closest_backbone.x_pos),
             "y_dest": str(closest_backbone.y_pos),
         }
-        print(f"Bundle context: {context}", flush=True)
+        print(f"{time.time()}: Bundle context: {context}", flush=True)
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
@@ -134,9 +144,10 @@ class TrafficGenerator:
             payload=payload,
             context=context,
         )
+        print(f"{time.time()}: Bundle sent", flush=True)
 
     def send_context_spray(self, payload: str) -> None:
-        print("Sending simulated spray bundle", flush=True)
+        print(f"{time.time()}: Sending simulated spray bundle", flush=True)
         context = {"copies": "5"}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
@@ -148,7 +159,7 @@ class TrafficGenerator:
         )
 
     def send_with_empty_context(self, payload: str) -> None:
-        print("Sending conext bundle with empty context", flush=True)
+        print(f"{time.time()}: Sending conext bundle with empty context", flush=True)
         context = {}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
@@ -158,6 +169,7 @@ class TrafficGenerator:
             payload=payload,
             context=context,
         )
+        print(f"{time.time()}: Bundle sent", flush=True)
 
     def find_closest_backbone(self) -> Tuple[Node, float]:
         assert self.nodes.backbone, "There needs to be at least 1 backbone node"
@@ -183,10 +195,17 @@ class TrafficGenerator:
         """
         name_binary = bytes(node_name, encoding="utf8")
         node_seed: bytes = sha1(seed + name_binary).digest()
-        print(f"RNG seed: {node_seed}", flush=True)
+        print(f"{time.time()}: RNG seed: {node_seed}", flush=True)
         random.seed(node_seed)
 
-    def generate_payload(self) -> str:
+    def _load_payload(self) -> None:
+        print(f'{time.time()}: Loading payload')
+        with open(self.payload_path, "r") as f:
+            self.payload = f.read()
+        print(f'{time.time()}: Payload size: {len(self.payload)}')
+
+    def _generate_payload(self) -> str:
+        print(f'{time.time()}: Generating payload')
         payload: str = "".join(
             random.choices(string.ascii_letters + string.digits, k=self.payload_size)
         )
@@ -199,14 +218,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     node_config = toml.load(args.path)
-    print(f"Using config: {node_config}", flush=True)
+    print(f"{time.time()}: Using config: {node_config}", flush=True)
 
     nodes: Nodes = parse_scenario_xml(path=node_config["Scenario"]["xml"])
     this_node = nodes.get_node_for_name(node_name=node_config["Node"]["name"])
-    print(f"This node's type: {this_node.type}", flush=True)
+    print(f"{time.time()}: This node's type: {this_node.type}", flush=True)
 
     if this_node.type != "sensor":
-        print("Node type does not produce bundles.", flush=True)
+        print(f"{time.time()}: Node type does not produce bundles.", flush=True)
         sys.exit(0)
 
     routing_url = build_url(
@@ -229,6 +248,9 @@ if __name__ == "__main__":
         context=context,
         context_algorithm=context_algorithm,
         payload_size=node_config["Experiment"]["payload_size"],
+        generate_payload=node_config["Experiment"]["generate_payload"],
+        payload_path=node_config["Experiment"]["payload_path"],
         number_of_bundles=node_config["Experiment"]["bundles_per_node"],
     )
     traffig_generator.run()
+    print(f"{time.time()}: Terminated", flush=True)
