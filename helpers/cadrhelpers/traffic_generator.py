@@ -10,6 +10,7 @@ import toml
 from dataclasses import dataclass
 from hashlib import sha1
 from typing import Tuple, List
+from requests.exceptions import Timeout
 
 import cadrhelpers.dtnclient as dtnclient
 from cadrhelpers.dtnclient import send_context, build_url
@@ -95,26 +96,29 @@ class TrafficGenerator:
             self._load_payload()
 
         for sleep_time in wait_times:
-            print(f"{time.time()}: Waiting for {sleep_time} seconds", flush=True)
-            time.sleep(sleep_time)
+            try:
+                print(f"{time.time()}: Waiting for {sleep_time} seconds", flush=True)
+                time.sleep(sleep_time)
 
-            if self.generate_payload:
-                self.payload = self._generate_payload()
+                if self.generate_payload:
+                    self.payload = self._generate_payload()
 
-            if self.context:
-                if self.context_algorithm == "spray":
-                    self.send_context_spray(payload=self.payload)
-                elif self.context_algorithm == "complex":
-                    self.send_context_bundle(
-                        payload=self.payload,
-                        closest_backbone=closest_backbone,
-                    )
+                if self.context:
+                    if self.context_algorithm == "spray":
+                        self.send_context_spray(payload=self.payload)
+                    elif self.context_algorithm == "complex":
+                        self.send_context_bundle(
+                            payload=self.payload,
+                            closest_backbone=closest_backbone,
+                        )
+                    else:
+                        self.send_with_empty_context(payload=self.payload)
                 else:
-                    self.send_with_empty_context(payload=self.payload)
-            else:
-                self.send_bundle(payload=self.payload)
+                    self.send_bundle(payload=self.payload)
+            except Timeout:
+                print(f"{time.time()}: Sending caused timeout", flush=True)
 
-        print(f"{time.time()}: TDone sending", flush=True)
+        print(f"{time.time()}: Done sending", flush=True)
 
     def send_bundle(self, payload: str):
         print(f"{time.time()}: Sending bundle without context", flush=True)

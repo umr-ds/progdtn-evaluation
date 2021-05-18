@@ -10,6 +10,9 @@ import requests
 import rapidjson as json
 
 
+REQUEST_TIMEOUT = 60
+
+
 @dataclass()
 class RESTError(Exception):
     status_code: int
@@ -71,7 +74,7 @@ def register(
         RESTError if anything goes wrong
     """
     id_json = json.dumps({"endpoint_id": endpoint_id})
-    response: requests.Response = requests.post(f"{rest_url}/register", data=id_json)
+    response: requests.Response = requests.post(f"{rest_url}/register", data=id_json, timeout=REQUEST_TIMEOUT)
     if response.status_code != 200:
         raise RESTError(status_code=response.status_code, error=response.text)
 
@@ -103,7 +106,7 @@ def fetch_pending(rest_url: str, uuid: str) -> List[Dict[str, Any]]:
         RESTError if anything goes wrong
     """
     response: requests.Response = requests.post(
-        f"{rest_url}/fetch", data=json.dumps({"uuid": uuid})
+        f"{rest_url}/fetch", data=json.dumps({"uuid": uuid}), timeout=REQUEST_TIMEOUT
     )
     if response.status_code != 200:
         raise RESTError(status_code=response.status_code, error=response.text)
@@ -119,7 +122,7 @@ def fetch_pending(rest_url: str, uuid: str) -> List[Dict[str, Any]]:
 
 def _submit_bundle(rest_url: str, data: Dict[str, Any]) -> None:
     response: requests.Response = requests.post(
-        f"{rest_url}/build", data=json.dumps(data)
+        f"{rest_url}/build", data=json.dumps(data), timeout=REQUEST_TIMEOUT
     )
     if response.status_code != 200:
         raise RESTError(status_code=response.status_code, error=response.text)
@@ -204,7 +207,7 @@ def send_context(rest_url: str, context_name: str, node_context: Dict[str, Any])
     context_str: str = json.dumps(node_context)
     print(f"Sending context: {context_str}", flush=True)
     response: requests.Response = requests.post(
-        f"{rest_url}/context/{context_name}", data=context_str
+        f"{rest_url}/context/{context_name}", data=context_str, timeout=REQUEST_TIMEOUT
     )
     if response.status_code != 202:
         raise RESTError(status_code=response.status_code, error=response.text)
@@ -221,7 +224,7 @@ def get_node_context(rest_url: str) -> Dict[str, Any]:
     Raises:
         RESTError if anything goes wrong
     """
-    response: requests.Response = requests.get(f"{rest_url}/context")
+    response: requests.Response = requests.get(f"{rest_url}/context", timeout=REQUEST_TIMEOUT)
     if response.status_code != 200:
         raise RESTError(status_code=response.status_code, error=response.text)
 
@@ -240,7 +243,7 @@ def get_size(rest_url: str) -> int:
     Raises:
         RESTError if anything goes wrong
     """
-    response: requests.Response = requests.get(f"{rest_url}/size")
+    response: requests.Response = requests.get(f"{rest_url}/size", timeout=REQUEST_TIMEOUT)
     response_text = response.text
 
     if response.status_code != 200:
