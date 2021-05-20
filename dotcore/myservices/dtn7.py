@@ -58,7 +58,7 @@ inspect-all-bundles = true
 [logging]
 level = "debug"
 report-caller = false
-format = "json"
+format = "text"
 
 [discovery]
 ipv4 = true
