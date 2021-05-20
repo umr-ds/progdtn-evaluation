@@ -10,13 +10,14 @@ services:
             #- ./dotcore:/root/.core
             #- .:/dtn_routing
             - /storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/binary_files:/research_data
+            - /storage/tmp:/tmp
         tty: true
         privileged: true
         cap_add:
             - NET_ADMIN
             - SYS_ADMIN
-        tmpfs:
-            - /tmp:exec,mode=777,size=200G
+              #tmpfs:
+              #- /tmp:exec,mode=777,size=200G
         environment:
             - CORE_PARAMS=/dtn_routing/scenarios/minimal/minimal.xml
             - DISPLAY

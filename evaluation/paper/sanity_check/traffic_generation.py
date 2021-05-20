@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from __future__ import annotations
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Tuple
 from json import loads
 from glob import glob
 import os
@@ -37,9 +37,15 @@ class TrafficGenerator:
     rng_seed: str
     timestamps: List[int]
     wait_times: List[int]
+    sent_times: List[float]
     num_sent: int
     num_dtnd: int
     really_sent: int
+    real_wait_times: List[Tuple[int, int]]
+    seed: int
+    routing: str
+    bundles_per_node: int
+    start_time: int
 
     def __eq__(self, other):
         return isinstance(other, TrafficGenerator) and self.node_id == other.node_id
@@ -84,28 +90,64 @@ def parse_instance_parameters(path: str) -> Scenario:
 
 
 def parse_traffic_generator(path: str) -> TrafficGenerator:
+    seed: int = 0
+    routing: str = ""
+    bundles_per_node: int = 0
     node_id = ""
     rng_seed = ""
     timestamps: List[int] = []
     wait_times: List[int] = []
+    sent_times: List[int] = []
+    wait_loop_start: int = 0
     num_sent = 0
     num_dtnd = 0
     really_sent = 0
+    real_wait_times: List[Tuple[int, int]] = []
+    start_time: int = 0
+        
+    prev_timestamp: float = 0.0
+    prev_wait_time: int = 0
     
     with open(path, "r") as f:
         for line in f:
-            if "Using config:" in line:
-                pseudo_json = line[13:].strip().replace("'", '"')
-                config = loads(pseudo_json)
-                node_id = config["Node"]["name"]
-            if "RNG seed:" in line:
-                rng_seed = line[9:].strip()
-            if "Timestamps for bundle generation:" in line:
-                timestamps = loads(line[33:].strip())
-            if "Wait times for these timestamps:" in line:
-                wait_times = loads((line[32:].strip()))
             if "Sending bundle" in line:
                 really_sent = really_sent + 1
+                current_timestamp = float(line.split(':')[0])
+                sent_times.append(int(current_timestamp) - wait_loop_start)
+                continue
+                
+            if "Waiting for" in line:
+                current_timestamp = float(line.split(':')[0])
+                
+                if not wait_loop_start:
+                    wait_loop_start = int(current_timestamp)
+                
+                wait_time = int(line.split(' ')[-2])
+                
+                if prev_wait_time != 0:
+                    actual_wait_time = current_timestamp - prev_timestamp
+                    real_wait_times.append((prev_wait_time, actual_wait_time))
+
+                prev_wait_time = wait_time
+                prev_timestamp = current_timestamp
+            
+            substr_list = line.split(':')[2:]
+            substr = ':'.join(substr_list)
+            
+            if "Using config:" in line:
+                start_time = int(float(line.split(':')[0]))
+                pseudo_json = substr.strip().replace("'", '"').replace("False", "false")
+                config = loads(pseudo_json)
+                node_id = config["Node"]["name"]
+                seed = config["Experiment"]["seed"]
+                routing = config["Experiment"]["routing"]
+                bundles_per_node = config["Experiment"]["bundles_per_node"]
+            elif "RNG seed:" in line:
+                rng_seed = substr.strip()
+            elif "Timestamps for bundle generation:" in line:
+                timestamps = loads(substr.strip())
+            elif "Wait times for these timestamps:" in line:
+                wait_times = loads(substr.strip())
         
     dtnd_path = f"{os.path.dirname(os.path.abspath(path))}/{node_id}.conf_dtnd_run.log"
     with open(dtnd_path, "r") as f:
@@ -115,7 +157,7 @@ def parse_traffic_generator(path: str) -> TrafficGenerator:
                 
     
     return TrafficGenerator(
-        node_id=node_id, rng_seed=rng_seed, timestamps=timestamps, wait_times=wait_times, num_sent=len(timestamps), num_dtnd=num_dtnd, really_sent=really_sent
+        node_id=node_id, rng_seed=rng_seed, timestamps=timestamps, wait_times=wait_times, num_sent=len(timestamps), num_dtnd=num_dtnd, really_sent=really_sent, real_wait_times=real_wait_times, seed=seed, routing=routing, bundles_per_node = bundles_per_node, sent_times=sent_times, start_time=start_time
     )
 
 if __name__ == '__main__':
