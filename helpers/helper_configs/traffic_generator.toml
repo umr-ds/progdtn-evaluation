@@ -1,9 +1,9 @@
 [Node]
-name = "n2"
+name = "n17"
 endpoint_id = "dtn://n2/"
 
 [Scenario]
-xml = "../../scenarios/minimal/minimal.xml"
+xml = "/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml"
 
 [REST]
 address = "localhost"
@@ -15,3 +15,5 @@ seed = 0
 routing = "epidemic"
 payload_size = 10000
 bundles_per_node = 70
+generate_payload=true
+payload_path=""

@@ -53,6 +53,9 @@ class Nodes:
         ), "This node should really show up in the list of nodes"
         return ourself
 
+    def __str__(self) -> str:
+        return f"Visitors: {self.visitors}\nSensors: {self.sensors}\nBackbone: {self.backbone}"
+
 
 def parse_scenario_xml(path: str) -> Nodes:
     """Parse the scenario's xml definition and separate the different types of nodes

@@ -184,7 +184,7 @@ class TrafficGenerator:
         closest_distance = compute_euclidean_distance(node_a=ourself, node_b=closest)
 
         for backbone in self.nodes.backbone:
-            distance = compute_euclidean_distance(node_a=ourself, node_b=closest)
+            distance = compute_euclidean_distance(node_a=ourself, node_b=backbone)
             if distance < closest_distance:
                 closest = backbone
                 closest_distance = distance
