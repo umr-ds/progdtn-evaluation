@@ -12,14 +12,15 @@ from cadrhelpers.dtnclient import (
     fetch_pending,
 )
 from cadrhelpers.util import Nodes, parse_scenario_xml
-from cadrhelpers.traffic_generator import DESTINATION
 
 
 def run(rest_url: str, node_type: str) -> None:
     print("Starting store size logging", flush=True)
 
-    if node_type == "backbone":
-        eid = DESTINATION
+    if node_type == "coordinator":
+        eid = "dtn://coordinator/"
+    elif node_type == "civilian":
+        eid = "dtn://civilians/"
     else:
         eid = f"dtn://{this_node.name}/"
 

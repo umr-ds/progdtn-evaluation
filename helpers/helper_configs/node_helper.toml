@@ -2,7 +2,7 @@
 name = "n2"
 
 [Scenario]
-xml = "../../scenarios/minimal/minimal.xml"
+xml = "../../scenarios/responders/responders.xml"
 
 [REST]
 address = "localhost"

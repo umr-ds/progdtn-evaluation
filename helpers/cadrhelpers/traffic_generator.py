@@ -22,9 +22,8 @@ from cadrhelpers.util import (
     Nodes,
 )
 
-DESTINATION = "dtn://backbone/"
-T_START = 60
-T_STOP = 3600
+T_START = 30
+T_STOP = 600
 
 
 def compute_wait_times(t_start: int, t_stop: int, count: int) -> List[int]:
@@ -65,6 +64,7 @@ class TrafficGenerator:
     context_algorithm: str
     payload_size: int
     number_of_bundles: int
+    destination: str
     generate_payload: bool = True
     payload: str = ""
     payload_path: str = ""
@@ -76,8 +76,8 @@ class TrafficGenerator:
             print(f"{time.time()}: Context algorithm: {self.context_algorithm}", flush=True)
 
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
-        closest_backbone, closest_distance = self.find_closest_backbone()
-        print(f"{time.time()}: Closest backbone: {closest_backbone}", flush=True)
+        # closest_backbone, closest_distance = self.find_closest_backbone()
+        # print(f"{time.time()}: Closest backbone: {closest_backbone}", flush=True)
 
         wait_times = compute_wait_times(T_START, T_STOP, self.number_of_bundles)
 
@@ -125,7 +125,7 @@ class TrafficGenerator:
         dtnclient.send_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
-            destination=DESTINATION,
+            destination=self.destination,
             source=self.endpoint_id,
             payload=payload,
         )
@@ -143,7 +143,7 @@ class TrafficGenerator:
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
-            destination=DESTINATION,
+            destination=self.destination,
             source=self.endpoint_id,
             payload=payload,
             context=context,
@@ -156,7 +156,7 @@ class TrafficGenerator:
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
-            destination=DESTINATION,
+            destination=self.destination,
             source=self.endpoint_id,
             payload=payload,
             context=context,
@@ -168,7 +168,7 @@ class TrafficGenerator:
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,
-            destination=DESTINATION,
+            destination=self.destination,
             source=self.endpoint_id,
             payload=payload,
             context=context,
@@ -228,7 +228,12 @@ if __name__ == "__main__":
     this_node = nodes.get_node_for_name(node_name=node_config["Node"]["name"])
     print(f"{time.time()}: This node's type: {this_node.type}", flush=True)
 
-    if this_node.type != "sensor":
+    destination = ""
+    if this_node.type == "civilian":
+        destination = "dtn://coordinator/"
+    elif this_node.type == "coordinator":
+        destination = "dtn://civilians/"
+    else:
         print(f"{time.time()}: Node type does not produce bundles.", flush=True)
         sys.exit(0)
 
@@ -243,6 +248,7 @@ if __name__ == "__main__":
     context, context_algorithm = is_context(node_config["Experiment"]["routing"])
 
     traffig_generator = TrafficGenerator(
+        destination=destination,
         agent_url=agent_url,
         routing_url=routing_url,
         seed=seed,

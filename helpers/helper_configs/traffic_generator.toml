@@ -3,7 +3,7 @@ name = "n17"
 endpoint_id = "dtn://n2/"
 
 [Scenario]
-xml = "/home/msommer/devel/cadr-evaluation/scenarios/wanderwege/wanderwege.xml"
+xml = "../../scenarios/responders/responders.xml"
 
 [REST]
 address = "localhost"

@@ -1,6 +1,5 @@
 [Scenario]
-xml = "/dtn_routing/scenarios/minimal/minimal.xml"
-movements = "/dtn_routing/scenarios/minimal/minimal.ns_movements"
+xml = "/dtn_routing/scenarios/responders/responders.xml"
 wifi_range = 275.0
 
 [Experiment]
@@ -9,7 +8,7 @@ routing = "epidemic"
 payload_size = 10000
 generate_payload = false
 payload_path = "/tmp/payload"
-bundles_per_node = 1
+bundles_per_node = 10
 
 [REST]
 address = "localhost"

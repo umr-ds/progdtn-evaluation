@@ -17,13 +17,11 @@ from core.services import ServiceManager
 
 import framework
 from log_files import *
-from movement_generation import generate_randomised_ns2
 
 
 EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"
 DATA_PATH = "/research_data"
-WAYPOINT_FILE = "/dtn_routing/scenarios/wanderwege/waypoints.csv"
-CORE_XML = "/dtn_routing/scenarios/wanderwege/wanderwege.xml"
+CORE_XML = "/dtn_routing/scenarios/responders/responders.xml"
 PAYLOAD_PATH = "/tmp/payload"
 JITTER = 30.0
 WIFI_RANGE = 275.0
@@ -48,10 +46,6 @@ if __name__ in ["__main__", "__builtin__"]:
 
     # [Scenario]
     experiment_config["Scenario"]["xml"] = CORE_XML
-    movements = generate_randomised_ns2(
-        waypoint_file=WAYPOINT_FILE, core_xml=CORE_XML, jitter=JITTER, seed=seed
-    )
-    experiment_config["Scenario"]["movements"] = movements
     experiment_config["Scenario"]["wifi_range"] = WIFI_RANGE
 
     # [REST]
@@ -90,7 +84,7 @@ if __name__ in ["__main__", "__builtin__"]:
     time.sleep(10)
 
     # Run the experiment
-    time.sleep(3600)
+    time.sleep(600)
 
     # When the experiment is finished, we set the session to
     # DATACOLLECT_STATE and collect the logs.

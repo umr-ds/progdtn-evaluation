@@ -33,8 +33,8 @@ class Dtn7Service(CoreService):
         nodes = parse_scenario_xml(experiment_config["Scenario"]["xml"])
         node_type = get_node_type(nodes=nodes, name=node.name)
 
-        if node_type == "backbone":
-            cla_id = '"dtn://backbone/"'
+        if node_type == "coordinator":
+            cla_id = '"dtn://coordinator/"'
         else:
             cla_id = f'"dtn://{node.name}/"'
 

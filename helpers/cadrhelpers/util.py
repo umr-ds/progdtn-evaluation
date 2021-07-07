@@ -36,15 +36,15 @@ def compute_euclidean_distance(node_a: Node, node_b: Node) -> float:
 class Nodes:
     """All the nodes in the simulation"""
 
-    def __init__(self, visitors: List[Node], sensors: List[Node], backbone: List[Node]):
-        self.visitors: List[Node] = visitors
-        self.sensors: List[Node] = sensors
-        self.backbone: List[Node] = backbone
+    def __init__(self, responders: List[Node], civilians: List[Node], coordinators: List[Node]):
+        self.responders: List[Node] = responders
+        self.civilians: List[Node] = civilians
+        self.coordinators: List[Node] = coordinators
 
     def get_node_for_name(self, node_name: str) -> Node:
         ourself: Union[Node, None] = None
 
-        for node in self.visitors + self.sensors + self.backbone:
+        for node in self.responders + self.civilians + self.coordinators:
             if node.name == node_name:
                 ourself = node
 
@@ -54,7 +54,7 @@ class Nodes:
         return ourself
 
     def __str__(self) -> str:
-        return f"Visitors: {self.visitors}\nSensors: {self.sensors}\nBackbone: {self.backbone}"
+        return f"Responders: {self.responders}\nCivilians: {self.civilians}\nCoordinators: {self.coordinators}"
 
 
 def parse_scenario_xml(path: str) -> Nodes:
@@ -66,22 +66,22 @@ def parse_scenario_xml(path: str) -> Nodes:
     tree = ElementTree.parse(path)
     root = tree.getroot()
 
-    visitors: List[Node] = []
-    sensors: List[Node] = []
-    backbone: List[Node] = []
+    responders: List[Node] = []
+    civilians: List[Node] = []
+    coordinators: List[Node] = []
 
     for child in root:
         if child.tag == "devices":
             for node_data in child:
                 node = get_node_info(node_data)
-                if node.type == "visitor":
-                    visitors.append(node)
-                elif node.type == "sensor":
-                    sensors.append(node)
-                elif node.type == "backbone":
-                    backbone.append(node)
+                if node.type == "responder":
+                    responders.append(node)
+                elif node.type == "civilian":
+                    civilians.append(node)
+                elif node.type == "coordinator":
+                    coordinators.append(node)
 
-    return Nodes(visitors=visitors, sensors=sensors, backbone=backbone)
+    return Nodes(responders=responders, civilians=civilians, coordinators=coordinators)
 
 
 def get_node_info(element: ElementTree.Element) -> Node:
@@ -101,16 +101,16 @@ def get_node_info(element: ElementTree.Element) -> Node:
 
 
 def get_node_type(nodes: Nodes, name: str) -> str:
-    for node in nodes.sensors:
+    for node in nodes.civilians:
         if node.name == name:
-            return "sensor"
+            return "civilian"
 
-    for node in nodes.backbone:
+    for node in nodes.coordinators:
         if node.name == name:
-            return "backbone"
+            return "coordinator"
 
-    for node in nodes.visitors:
+    for node in nodes.responders:
         if node.name == name:
-            return "visitor"
+            return "responder"
 
     return ""
