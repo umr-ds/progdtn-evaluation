@@ -1,5 +1,5 @@
 ### Build dtnd & dtncat
-FROM golang:1.16.2 AS dtn7-builder
+FROM golang:1.16.6 AS dtn7-builder
 
 COPY dtn7-go /dtn7-go
 WORKDIR /dtn7-go
@@ -7,7 +7,7 @@ RUN go build ./cmd/dtn-tool
 RUN go build ./cmd/dtnd
 
 ### Setup core worker container
-FROM maciresearch/core_worker:7.4.0-1
+FROM maciresearch/core_worker:7.5.1-1
 LABEL maintainer="msommer@informatik.uni-marburg.de"
 LABEL name="umrds/cadr-evaluation"
 LABEL url="https://github.com/umr-ds/cadr-evaluation"
