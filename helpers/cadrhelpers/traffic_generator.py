@@ -232,7 +232,7 @@ if __name__ == "__main__":
     if this_node.type == "civilian":
         destination = "dtn://coordinator/"
     elif this_node.type == "coordinator":
-        destination = "dtn://civilians/"
+        destination = "dtn://civilians/announcements"
     else:
         print(f"{time.time()}: Node type does not produce bundles.", flush=True)
         sys.exit(0)

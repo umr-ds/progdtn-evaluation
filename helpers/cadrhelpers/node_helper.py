@@ -20,11 +20,12 @@ def run(rest_url: str, node_type: str) -> None:
     if node_type == "coordinator":
         eid = "dtn://coordinator/"
     elif node_type == "civilian":
-        eid = "dtn://civilians/"
+        eid = "dtn://civilians/announcements"
     else:
         eid = f"dtn://{this_node.name}/"
 
     try:
+        print(f"Registering with eid: {eid}")
         registration_data = register(rest_url=rest_url, endpoint_id=eid)
 
         while True:
