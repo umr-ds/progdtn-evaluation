@@ -1,6 +1,6 @@
 import toml
 
-from core.services import CoreService, ServiceMode
+from core.services.coreservices import CoreService, ServiceMode
 
 from cadrhelpers.util import parse_scenario_xml, get_node_type
 

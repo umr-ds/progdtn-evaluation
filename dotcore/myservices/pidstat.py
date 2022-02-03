@@ -1,4 +1,4 @@
-from core.services import CoreService, ServiceMode
+from core.services.coreservices import CoreService, ServiceMode
 
 
 class PidstatService(CoreService):

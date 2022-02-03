@@ -1,6 +1,6 @@
 import toml
 
-from core.services import CoreService
+from core.services.coreservices import CoreService
 
 
 EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"

@@ -52,3 +52,6 @@ COPY helpers /root/helpers
 RUN pip3 install /root/helpers
 
 COPY . /dtn_routing
+
+RUN ln -s /usr/lib/python3.6/dist-packages/core /usr/lib/python3/dist-packages/core
+RUN ln -s /usr/lib/python3.6/dist-packages/core-5.5.2-py3.6.egg-info /usr/lib/python3/dist-packages/core-5.5.2-py3.6.egg-info
