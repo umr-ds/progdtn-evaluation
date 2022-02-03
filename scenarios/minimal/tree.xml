@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/dtn_routing/scenarios/minimal/tree.xml">
+  <networks>
+    <network id="15" name="wlan15" type="WIRELESS_LAN">
+      <position x="1028" y="164" lat="47.578172887784525" lon="-122.12308731887926" alt="2.0"/>
+    </network>
+  </networks>
+  <devices>
+    <device id="1" name="n1" type="backbone" class="" image="">
+      <position x="686" y="227" lat="47.57779111344274" lon="-122.12615955715093" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="2" name="n2" type="visitor" class="" image="">
+      <position x="362" y="393" lat="47.57678515502086" lon="-122.12907009867149" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="MovementContext"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="3" name="n3" type="visitor" class="" image="">
+      <position x="660" y="445" lat="47.57647003153984" lon="-122.1263931191248" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="MovementContext"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="4" name="n4" type="visitor" class="" image="">
+      <position x="843" y="445" lat="47.57647003153984" lon="-122.12474920215487" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="MovementContext"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="5" name="n5" type="visitor" class="" image="">
+      <position x="1048" y="445" lat="47.57647003153984" lon="-122.12290765582242" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="MovementContext"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="6" name="n6" type="sensor" class="" image="">
+      <position x="167" y="726" lat="47.57476711991442" lon="-122.1308218134755" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="7" name="n7" type="sensor" class="" image="">
+      <position x="321" y="721" lat="47.574797421316966" lon="-122.12943840793797" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="8" name="n8" type="sensor" class="" image="">
+      <position x="501" y="718" lat="47.57481560215008" lon="-122.12782144042657" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="9" name="n9" type="sensor" class="" image="">
+      <position x="613" y="718" lat="47.57481560215008" lon="-122.12681532730835" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="10" name="n10" type="sensor" class="" image="">
+      <position x="693" y="718" lat="47.57481560215008" lon="-122.12609667508104" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="11" name="n11" type="sensor" class="" image="">
+      <position x="783" y="715" lat="47.57483378297688" lon="-122.12528819132535" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="12" name="n12" type="sensor" class="" image="">
+      <position x="900" y="715" lat="47.57483378297688" lon="-122.12423716244294" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="13" name="n13" type="sensor" class="" image="">
+      <position x="1013" y="713" lat="47.57484590352457" lon="-122.12322206617188" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+    <device id="14" name="n14" type="sensor" class="" image="">
+      <position x="1148" y="718" lat="47.57481560215008" lon="-122.12200934053831" alt="2.0"/>
+      <services>
+        <service name="bwm-ng"/>
+        <service name="pidstat"/>
+        <service name="dtn7"/>
+        <service name="NodeHelper"/>
+        <service name="TrafficGenerator"/>
+        <service name="NodeContext"/>
+      </services>
+    </device>
+  </devices>
+  <links>
+    <link node_one="15" node_two="1">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.1" ip4_mask="24" ip6="2001::1" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="2">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.0.2" ip4_mask="24" ip6="2001::2" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="3">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:02" ip4="10.0.0.3" ip4_mask="24" ip6="2001::3" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="4">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:03" ip4="10.0.0.4" ip4_mask="24" ip6="2001::4" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="5">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:04" ip4="10.0.0.5" ip4_mask="24" ip6="2001::5" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="6">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:05" ip4="10.0.0.6" ip4_mask="24" ip6="2001::6" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="7">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.0.7" ip4_mask="24" ip6="2001::7" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="8">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:07" ip4="10.0.0.8" ip4_mask="24" ip6="2001::8" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="9">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.0.9" ip4_mask="24" ip6="2001::9" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="10">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:09" ip4="10.0.0.10" ip4_mask="24" ip6="2001::10" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="11">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0a" ip4="10.0.0.11" ip4_mask="24" ip6="2001::11" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="12">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0b" ip4="10.0.0.12" ip4_mask="24" ip6="2001::12" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="13">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0c" ip4="10.0.0.13" ip4_mask="24" ip6="2001::13" ip6_mask="128"/>
+    </link>
+    <link node_one="15" node_two="14">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0d" ip4="10.0.0.14" ip4_mask="24" ip6="2001::14" ip6_mask="128"/>
+    </link>
+  </links>
+  <mobility_configurations>
+    <mobility_configuration node="15" model="basic_range">
+      <configuration name="range" value="275"/>
+      <configuration name="bandwidth" value="54000000"/>
+      <configuration name="jitter" value="0"/>
+      <configuration name="delay" value="20000"/>
+      <configuration name="error" value="0"/>
+    </mobility_configuration>
+  </mobility_configurations>
+  <emane_global_configuration>
+    <emulator/>
+    <core>
+      <configuration name="platform_id_start" value="1"/>
+      <configuration name="nem_id_start" value="1"/>
+      <configuration name="link_enabled" value="1"/>
+      <configuration name="loss_threshold" value="30"/>
+      <configuration name="link_interval" value="1"/>
+      <configuration name="link_timeout" value="4"/>
+    </core>
+  </emane_global_configuration>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="100.0"/>
+  <session_options>
+    <configuration name="controlnet" value=""/>
+    <configuration name="controlnet0" value=""/>
+    <configuration name="controlnet1" value=""/>
+    <configuration name="controlnet2" value=""/>
+    <configuration name="controlnet3" value=""/>
+    <configuration name="controlnet_updown_script" value=""/>
+    <configuration name="enablerj45" value="1"/>
+    <configuration name="preservedir" value="0"/>
+    <configuration name="enablesdt" value="0"/>
+    <configuration name="sdturl" value="tcp://127.0.0.1:50000/"/>
+  </session_options>
+  <session_metadata>
+    <configuration name="canvas c1" value="{name {Canvas1}} {wallpaper-style {upperleft}} {wallpaper {/dtn_routing/scenarios/wanderwege/map.png}} {refpt {0 0 47.5791667 -122.132322 2.0}} {scale {100.0}} {size {2560 1357}}"/>
+    <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=no node_labels=yes link_labels=yes show_api=no background_images=no annotations=yes grid=no traffic_start=0"/>
+  </session_metadata>
+  <default_services>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="prouter">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+    <node type="visitor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+      <service name="MovementContext"/>
+      <service name="NodeContext"/>
+    </node>
+    <node type="backbone">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+      <service name="NodeContext"/>
+    </node>
+    <node type="sensor">
+      <service name="bwm-ng"/>
+      <service name="pidstat"/>
+      <service name="dtn7"/>
+      <service name="NodeHelper"/>
+      <service name="TrafficGenerator"/>
+      <service name="NodeContext"/>
+    </node>
+  </default_services>
+</scenario>

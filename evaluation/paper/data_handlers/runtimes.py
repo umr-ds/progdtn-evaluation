@@ -35,6 +35,8 @@ def parse_node(
     event = ""
     from_to = None
     metadata_bundles = []
+    already_received = []
+    bundle_for_civilian = "dtn://civilians/"
 
     with open(node_path, "r") as f:
         for line in f.readlines():
@@ -54,12 +56,17 @@ def parse_node(
                 elif entry["msg"] == "Received bundle from peer":  # Received bundle               
                     interesting_event = True
                     event = "reception"
+                    
+                    if bundle_for_civilian == entry["dst"]:
+                        if entry['bundle'] not in already_received:
+                            already_received.append(entry['bundle'])
+                            event = "delivery"
 
                 elif entry["msg"] == "Received bundle for local delivery":  # Bundle reached destination
                     interesting_event = True
                     event = "delivery"
 
-                elif entry["msg"] == "Selected routing algorithm":  # Bundle reached destination
+                elif entry["msg"] == "Selected routing algorithm":
                     interesting_event = True
                     event = "start"
                     
