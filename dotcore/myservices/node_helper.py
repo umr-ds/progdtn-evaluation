@@ -1,7 +1,6 @@
 import toml
 
-from core.nodes.base import CoreNode
-from core.services.coreservices import CoreService
+from core.services import CoreService
 
 
 EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"
@@ -12,10 +11,10 @@ class NodeHelperService(CoreService):
     executables = ("node_helper",)
     dependencies = ("dtn7",)
     configs = ("node_helper.toml",)
-    startup = (f'bash -c "nohup node_helper {configs[0]} &> node_helper_run.log &"',)
+    startup = ('bash -c "nohup node_helper {} &> node_helper_run.log &"'.format(configs[0]), )
 
     @classmethod
-    def generate_config(cls, node: CoreNode, filename: str):
+    def generate_config(cls, node, filename):
         config = toml.load(EXPERIMENT_CONFIG)
         config["Node"] = {}
         config["Node"]["name"] = node.name

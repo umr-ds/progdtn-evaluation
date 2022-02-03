@@ -1,7 +1,6 @@
 import toml
 
-from core.nodes.base import CoreNode
-from core.services.coreservices import CoreService
+from core.services import CoreService
 
 
 EXPERIMENT_CONFIG = "/dtn_routing/experiment_config.toml"
@@ -17,7 +16,7 @@ class TrafficGeneratorService(CoreService):
     )
 
     @classmethod
-    def generate_config(cls, node: CoreNode, filename: str):
+    def generate_config(cls, node, filename):
         config = toml.load(EXPERIMENT_CONFIG)
         config["Node"] = {}
         config["Node"]["name"] = node.name

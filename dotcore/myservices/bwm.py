@@ -1,11 +1,15 @@
-from core.services.coreservices import CoreService, ServiceMode
+from core.services import CoreService, ServiceMode
 
 
 class BWMService(CoreService):
     name = "bwm-ng"
     group = "Logging"
     executables = ("bwm-ng",)
+
     validation_mode = ServiceMode.BLOCKING
+    validate = ('bash -c "ps -C bwm-ng"', )     # ps -C returns 0 if the process is found, 1 if not.
+    validation_timer = 1                        # Wait 1 second before validating service.
+    validation_period = 1                       # Retry after 1 second if validation was not successful.
 
     startup = (
         'bash -c "\

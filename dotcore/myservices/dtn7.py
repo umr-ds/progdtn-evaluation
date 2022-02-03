@@ -1,7 +1,6 @@
 import toml
 
-from core.nodes.base import CoreNode
-from core.services.coreservices import CoreService, ServiceMode
+from core.services import CoreService, ServiceMode
 
 from cadrhelpers.util import parse_scenario_xml, get_node_type
 
@@ -13,21 +12,19 @@ class Dtn7Service(CoreService):
     name = "dtn7"
     group = "dtn"
     executables = ("dtnd", "dtn-tool")
-    dependencies = ()
+    dependencies = ("bwm-ng", "pidstat")
     configs = ("dtnd.toml", "context.js")
-    startup = (f'bash -c "nohup dtnd {configs[0]} &> dtnd_run.log &"',)
+    startup = ('bash -c "nohup dtnd {} &> dtnd_run.log &"'.format(configs[0]), )
     validation_timer = 1  # Wait 1 second before validating service.
     validation_period = 1  # Retry after 1 second if validation was not successful.
-    validation_mode = (
-        ServiceMode.NON_BLOCKING
-    )  # NON_BLOCKING uses the validate commands for validation.
-    shutdown = ('bash -c "kill -INT `pgrep dtnd`"',)
+    validation_mode = ServiceMode.NON_BLOCKING # NON_BLOCKING uses the validate commands for validation.
+    shutdown = ('bash -c "kill -INT `pgrep dtnd`"', )
     validate = (
         'bash -c "ps -C dtnd"',
     )  # ps -C returns 0 if the process is found, 1 if not.
 
     @classmethod
-    def generate_config(cls, node: CoreNode, filename: str):
+    def generate_config(cls, node, filename):
         experiment_config = toml.load(EXPERIMENT_CONFIG)
 
         nodes = parse_scenario_xml(experiment_config["Scenario"]["xml"])
@@ -36,7 +33,7 @@ class Dtn7Service(CoreService):
         if node_type == "coordinator":
             cla_id = '"dtn://coordinator/"'
         else:
-            cla_id = f'"dtn://{node.name}/"'
+            cla_id = '"dtn://{}/"'.format(node.name)
 
         routing = experiment_config["Experiment"]["routing"]
 
@@ -46,12 +43,12 @@ class Dtn7Service(CoreService):
             if "context" in routing:
                 routing = "context"
 
-            agent_address = f"localhost:{experiment_config['REST']['agent_port']}"
-            routing_address = f"localhost:{experiment_config['REST']['routing_port']}"
+            agent_address = "localhost:{}".format(experiment_config['REST']['agent_port'])
+            routing_address = "localhost:{}".format(experiment_config['REST']['routing_port'])
 
-            return f"""
+            return """
 [core]
-store = "store_{node.name}"
+store = "store_{nodename}"
 node-id = {cla_id}
 inspect-all-bundles = true
 
@@ -99,10 +96,10 @@ gamma = 0.98
 ageinterval = "1m"
 
 [routing.contextconf]
-scriptpath = "{node.nodedir}/context.js"
+scriptpath = "{nodedir}/context.js"
 listenaddress = "{routing_address}"
 
-"""
+""".format(nodename=node.name, cla_id=cla_id, agent_address=agent_address, routing=routing, nodedir=node.nodedir, routing_address=routing_address)
 
         elif filename == "context.js":
             if "epidemic" in routing:
