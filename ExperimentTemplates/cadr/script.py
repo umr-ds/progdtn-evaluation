@@ -84,7 +84,7 @@ if __name__ in ["__main__", "__builtin__"]:
     time.sleep(10)
 
     # Run the experiment
-    time.sleep(600)
+    time.sleep(3600)
 
     # When the experiment is finished, we set the session to
     # DATACOLLECT_STATE and collect the logs.

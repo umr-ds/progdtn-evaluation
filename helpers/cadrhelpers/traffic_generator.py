@@ -23,7 +23,7 @@ from cadrhelpers.util import (
 )
 
 T_START = 30
-T_STOP = 600
+T_STOP = 3600
 
 
 def compute_wait_times(t_start: int, t_stop: int, count: int) -> List[int]:
