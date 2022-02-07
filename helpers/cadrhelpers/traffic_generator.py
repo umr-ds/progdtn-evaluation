@@ -76,21 +76,12 @@ class TrafficGenerator:
             print(f"{time.time()}: Context algorithm: {self.context_algorithm}", flush=True)
 
         self.initialise_rng(seed=self.seed, node_name=self.node_name)
-        # closest_backbone, closest_distance = self.find_closest_backbone()
-        # print(f"{time.time()}: Closest backbone: {closest_backbone}", flush=True)
 
         wait_times = compute_wait_times(T_START, T_STOP, self.number_of_bundles)
 
         self.uuid = dtnclient.register(
             rest_url=self.agent_url, endpoint_id=self.endpoint_id
         )["uuid"]
-
-        if self.context_algorithm == "complex":
-            send_context(
-                rest_url=self.routing_url,
-                context_name="backbone",
-                node_context={"distance": closest_distance},
-            )
 
         if not self.generate_payload:
             self._load_payload()
@@ -109,7 +100,6 @@ class TrafficGenerator:
                     elif self.context_algorithm == "complex":
                         self.send_context_bundle(
                             payload=self.payload,
-                            closest_backbone=closest_backbone,
                         )
                     else:
                         self.send_with_empty_context(payload=self.payload)
@@ -131,13 +121,13 @@ class TrafficGenerator:
         )
         print(f"{time.time()}: Bundle sent", flush=True)
 
-    def send_context_bundle(self, payload: str, closest_backbone: Node) -> None:
+    def send_context_bundle(self, payload: str, recipient_node: Node) -> None:
         print(f"{time.time()}: Sending bundle with context", flush=True)
         timestamp = int(time.time())
         context = {
             "timestamp": str(timestamp),
-            "x_dest": str(closest_backbone.x_pos),
-            "y_dest": str(closest_backbone.y_pos),
+            "x_dest": str(recipient_node.x_pos),
+            "y_dest": str(recipient_node.y_pos),
         }
         print(f"{time.time()}: Bundle context: {context}", flush=True)
         dtnclient.send_context_bundle(
@@ -174,22 +164,6 @@ class TrafficGenerator:
             context=context,
         )
         print(f"{time.time()}: Bundle sent", flush=True)
-
-    def find_closest_backbone(self) -> Tuple[Node, float]:
-        assert self.nodes.backbone, "There needs to be at least 1 backbone node"
-
-        ourself = self.nodes.get_node_for_name(node_name=self.node_name)
-
-        closest: Node = self.nodes.backbone[0]
-        closest_distance = compute_euclidean_distance(node_a=ourself, node_b=closest)
-
-        for backbone in self.nodes.backbone:
-            distance = compute_euclidean_distance(node_a=ourself, node_b=backbone)
-            if distance < closest_distance:
-                closest = backbone
-                closest_distance = distance
-
-        return closest, closest_distance
 
     def initialise_rng(self, seed: bytes, node_name: str) -> None:
         """While we want to initialise each node's RNG deterministically so that experiments can be repeated,
