@@ -63,7 +63,7 @@ def node_types(scenario_path: str) -> Dict[str, str]:
     """Reads node definitions from scenario_path and writes a csv of the node<->type mapping to data path"""
     types: Dict[str, str] = {}
     nodes = parse_scenario_xml(path=scenario_path)
-    all_nodes = nodes.backbone + nodes.sensors + nodes.visitors
+    all_nodes = nodes.coordinators + nodes.civilians + nodes.responders
     for node in all_nodes:
         # print(f"Node {node.name} is a {node.type}")
         types[node.name] = node.type
