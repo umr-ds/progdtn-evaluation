@@ -36,9 +36,9 @@ COPY dotcore /root/.core/
 RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 # cadr scripts
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_complex.js /root/context_complex.js
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_epidemic.js /root/context_epidemic.js
-COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/context_spray.js /root/context_spray.js
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_sensors.js /root/cadr_sensors.js
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_epidemic.js /root/cadr_epidemic.js
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_spray.js /root/cadr_spray.js
 
 COPY helpers/cadrhelpers/dtnclient.py /usr/local/sbin/dtnclient
 COPY helpers/cadrhelpers/node_helper.py /usr/local/sbin/node_helper

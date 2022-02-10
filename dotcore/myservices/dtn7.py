@@ -40,8 +40,8 @@ class Dtn7Service(CoreService):
         if filename == "dtnd.toml":
             # if we are running "context_epidemic" or "context_complex",
             # the second part signifies the specific script that the routing algorithm should be instantiated with
-            if "context" in routing:
-                routing = "context"
+            if "cadr" in routing:
+                routing = "cadr"
 
             agent_address = "localhost:{}".format(experiment_config['REST']['agent_port'])
             routing_address = "localhost:{}".format(experiment_config['REST']['routing_port'])
@@ -95,7 +95,7 @@ beta = 0.25
 gamma = 0.98
 ageinterval = "1m"
 
-[routing.contextconf]
+[routing.cadrconf]
 scriptpath = "{nodedir}/context.js"
 listenaddress = "{routing_address}"
 
@@ -103,15 +103,15 @@ listenaddress = "{routing_address}"
 
         elif filename == "context.js":
             if "epidemic" in routing:
-                with open("/root/context_epidemic.js", "r") as f:
+                with open("/root/cadr_epidemic.js", "r") as f:
                     context = f.read()
                     return context
-            elif "complex" in routing:
-                with open("/root/context_complex.js", "r") as f:
+            elif "sensors" in routing:
+                with open("/root/cadr_sensors.js", "r") as f:
                     context = f.read()
                     return context
             elif "spray" in routing:
-                with open("/root/context_spray.js", "r") as f:
+                with open("/root/cadr_spray.js", "r") as f:
                     context = f.read()
                     return context
             else:
