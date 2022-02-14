@@ -4,7 +4,7 @@ from xml.etree import ElementTree as ElementTree
 
 
 def is_context(name: str) -> Tuple[bool, str]:
-    context = "context" in name
+    context = "cadr" in name
 
     context_algorithm = ""
     if context:

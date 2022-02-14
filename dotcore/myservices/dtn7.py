@@ -110,6 +110,10 @@ listenaddress = "{routing_address}"
                 with open("/root/cadr_sensors.js", "r") as f:
                     context = f.read()
                     return context
+            elif "responders" in routing:
+                with open("/root/cadr_responders.js", "r") as f:
+                    context = f.read()
+                    return context
             elif "spray" in routing:
                 with open("/root/cadr_spray.js", "r") as f:
                     context = f.read()

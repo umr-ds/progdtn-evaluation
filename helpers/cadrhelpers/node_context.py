@@ -67,7 +67,7 @@ if __name__ == "__main__":
     node_config = toml.load(args.path)
     print(f"Using config: {node_config}", flush=True)
 
-    if node_config["Experiment"]["routing"] != "context_complex":
+    if node_config["Experiment"]["routing"] != "cadr_sensors" and node_config["Experiment"]["routing"] != "cadr_responders":
         print("Experiment does not require context information", flush=True)
         sys.exit(0)
 

@@ -37,6 +37,7 @@ RUN echo "custom_services_dir = /root/.core/myservices" >> /etc/core/core.conf
 
 # cadr scripts
 COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_sensors.js /root/cadr_sensors.js
+COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_responders.js /root/cadr_responders.js
 COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_epidemic.js /root/cadr_epidemic.js
 COPY --from=dtn7-builder /dtn7-go/cmd/dtnd/cadr_spray.js /root/cadr_spray.js
 

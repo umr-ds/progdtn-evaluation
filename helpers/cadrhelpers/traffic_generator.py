@@ -97,7 +97,7 @@ class TrafficGenerator:
                 if self.context:
                     if self.context_algorithm == "spray":
                         self.send_context_spray(payload=self.payload)
-                    elif self.context_algorithm == "complex":
+                    elif self.context_algorithm == "responders":
                         self.send_context_bundle(
                             payload=self.payload,
                         )
@@ -124,10 +124,12 @@ class TrafficGenerator:
     def send_context_bundle(self, payload: str, recipient_node: Node) -> None:
         print(f"{time.time()}: Sending bundle with context", flush=True)
         timestamp = int(time.time())
+        if self.destination == "dtn://coordinator/":
+            destination = "coordinator"
+        else:
+            destination = "civilian"
         context = {
-            "timestamp": str(timestamp),
-            "x_dest": str(recipient_node.x_pos),
-            "y_dest": str(recipient_node.y_pos),
+            "destination": destination
         }
         print(f"{time.time()}: Bundle context: {context}", flush=True)
         dtnclient.send_context_bundle(
