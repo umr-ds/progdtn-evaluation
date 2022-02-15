@@ -17,8 +17,13 @@ class TrafficGeneratorService(CoreService):
 
     @classmethod
     def generate_config(cls, node, filename):
+        if node.name == "n2":
+            name = "coordinator"
+        else:
+            name = node.name
+
         config = toml.load(EXPERIMENT_CONFIG)
         config["Node"] = {}
-        config["Node"]["name"] = node.name
-        config["Node"]["endpoint_id"] = "dtn://{}/".format(node.name)
+        config["Node"]["name"] = name
+        config["Node"]["endpoint_id"] = "dtn://{}/".format(name)
         return toml.dumps(config)
