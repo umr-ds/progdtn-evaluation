@@ -121,7 +121,7 @@ class TrafficGenerator:
         )
         print(f"{time.time()}: Bundle sent", flush=True)
 
-    def send_context_bundle(self, payload: str, recipient_node: Node) -> None:
+    def send_context_bundle(self, payload: str) -> None:
         print(f"{time.time()}: Sending bundle with context", flush=True)
         timestamp = int(time.time())
         if self.destination == "dtn://coordinator/":
