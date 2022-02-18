@@ -1,13 +1,14 @@
 import json
 import glob
 import os
+import sys
 
 from typing import Dict, List, Union, Tuple, Set
 from datetime import datetime
 from graphviz import Digraph
 from pathlib import Path, PurePath
 
-BASE_PATH = "/storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/binary_files/2"
+BASE_PATH = "/research_data/dtlsr-test"
 EXPERIMENTS_DIRECTORY = "ids"
 GRAPH_DIRECTORY = "graphs"
 

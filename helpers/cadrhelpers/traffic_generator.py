@@ -144,7 +144,7 @@ class TrafficGenerator:
 
     def send_context_spray(self, payload: str) -> None:
         print(f"{time.time()}: Sending simulated spray bundle", flush=True)
-        context = {"copies": "5"}
+        context = {"copies": "10"}
         dtnclient.send_context_bundle(
             rest_url=self.agent_url,
             uuid=self.uuid,

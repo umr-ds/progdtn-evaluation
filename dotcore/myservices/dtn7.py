@@ -77,7 +77,7 @@ algorithm = "{routing}"
 
 # config for spray routing
 [routing.sprayconf]
-multiplicity = 5
+multiplicity = 10
 
 # config for dtlsr
 [routing.dtlsrconf]
