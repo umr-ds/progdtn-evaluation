@@ -27,7 +27,18 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
 
 
 def log_entry_time(log_entry):
-    return datetime.strptime(log_entry["time"][:-4], "%Y-%m-%dT%H:%M:%S.%f")
+    try:
+        timestamp = datetime.strptime(log_entry["time"][:-4], "%Y-%m-%dT%H:%M:%S.%f")
+    except ValueError:
+        print(f"Offending log entry: {log_entry}")
+        print("Trying again with only second-precision")
+        try:
+            timestamp = datetime.strptime(log_entry["time"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            print("Didn't work")
+            sys.exit(1)
+
+    return timestamp
 
 
 def parse_node(
@@ -57,9 +68,9 @@ def parse_node(
                     }
 
                 elif entry["msg"] == "Sending bundle succeeded":  # A bundle is sent
-                    endpoint = entry["cla"]["EndpointType"]
+                    endpoint = entry["cla"]["address"]
                     if endpoint:
-                        peer = endpoint["Ssp"].replace("/", "")
+                        peer = endpoint.replace("/", "").replace("dtn:", "")
                         bundle_forwards = forwards.get(entry["bundle"], [])
                         bundle_forwards.append(
                             {
