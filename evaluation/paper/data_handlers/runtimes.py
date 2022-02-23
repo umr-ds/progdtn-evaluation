@@ -1,11 +1,13 @@
 import json
 import glob
 import os
-import numpy
+import numpy as np
 
 from datetime import datetime
 from typing import Dict, List, Union, Tuple
 from pandas import DataFrame, Timestamp
+
+from data_handlers.preprocessors import node_types
 
 
 def log_entry_time(log_entry):
@@ -29,20 +31,35 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
 def parse_node(
     node_path: str, routing_algorithm: str, sim_instance_id: str, payload_size: int, bundles_per_node: int
 ) -> Dict[str, List[Dict[str, Union[str, int, datetime]]]]:
+    
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
     event = ""
     from_to = None
-    metadata_bundles = []
+    metadata_bundles = {}
     already_received = []
     bundle_for_civilian = "dtn://civilians/"
+    routing_start_time = 0
+    routing_end_time = 0
 
     with open(node_path, "r") as f:
         for line in f.readlines():
             try:
+                routing_time = 0
                 entry = json.loads(line)
-                bundle_size = numpy.nan
+                bundle_size = np.nan
+                
+                if entry["msg"] == "Starting routing decision": # The routing decision started
+                    interesting_event = True
+                    routing_start_time = log_entry_time(entry)
+                    event = "routing_start"
+                    
+                if entry["msg"] == "Routing decision finished": # The routing decision finished
+                    interesting_event = True
+                    routing_end_time = log_entry_time(entry)
+                    routing_time = routing_end_time - routing_start_time
+                    event = "routing_end"
                 
                 if entry["msg"] == "REST client sent bundle":  # A bundle is created
                     bundle_size = entry["size"]
@@ -71,10 +88,14 @@ def parse_node(
                     event = "start"
                     
                 elif entry["msg"] == "CONTEXT: Is context bundle": # Meta data bundle for context algorithms
-                    metadata_bundles.append(entry["bundle"])
+                    meta_bundle_id = entry["bundle"]
+                    meta_bundle_size = entry["Metadata Size"]
+                    metadata_bundles[meta_bundle_id] = meta_bundle_size
                     
                 elif entry["msg"] == "Received metadata": # Meta data bundle for DTLSR and Prophet
-                    metadata_bundles.append(entry["bundle"])
+                    meta_bundle_id = entry["bundle"]
+                    meta_bundle_size = entry["Metadata Size"]
+                    metadata_bundles[meta_bundle_id] = meta_bundle_size
 
                 if interesting_event:
                     events = bundles.get(entry["bundle"], [])
@@ -89,6 +110,7 @@ def parse_node(
                             "node": node_id,
                             "bundle": entry["bundle"],
                             "bundle_size": bundle_size,
+                            "routing_time": routing_time,
                         }
                     )
                     bundles[entry["bundle"]] = events
@@ -104,10 +126,13 @@ def parse_node(
             bundle_entry_id = bundle_entry["bundle"]
             if bundle_entry_id in metadata_bundles:
                 is_meta = True
+                meta_size = metadata_bundles[bundle_entry_id]
             else:
                 is_meta = False
+                meta_size = 0
             
             bundle_entry['meta'] = is_meta
+            bundle_entry["meta_bundle_size"] = meta_size
 
     return bundles
 
@@ -139,8 +164,9 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
     instance_paths = []
     for experiment_path in experiment_paths:
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
+        break
 
-    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths]
+    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths[:1]]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
     for instance in parsed_instances:
         for node in instance:
@@ -148,6 +174,30 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
                 bundle_events += events
     event_frame = DataFrame(bundle_events)
     event_frame = event_frame.sort_values(by="timestamp")
+    
+    print("Setting node types")
+    types = node_types(scenario_path="/storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/scenarios/responders/responders.xml")
+    type_frame = DataFrame(types.items(), columns=["node", "node_type"])
+    
+    merged_df = event_frame.merge(type_frame, how="left", on="node")
+    
+    print("Filling NaN bundle sizes")
+    event_frame = merged_df
+    event_frame["bundle_size"] = event_frame.groupby("bundle")["bundle_size"].transform(lambda x: x.fillna(x.mean()))
+    
+    print("Setting meta data sizes")
+    # TODO: parse, not guess.
+    event_frame['bundle_size'] = event_frame['bundle_size'].mask(event_frame['bundle_size'].isna(), np.random.uniform(100, 1000, size=len(event_frame)))
+    
+    print("Computing time delta")
+    time_df = DataFrame()
+    for _, instance in event_frame.groupby("sim_instance_id"):
+        instance_start = instance["timestamp"].iloc[0]
+        instance["timestamp_relative"] = instance["timestamp"] - instance_start
+        time_df = time_df.append(instance)
+
+    event_frame = time_df
+    
     print("Parsing done")
     return event_frame
 

@@ -96,7 +96,7 @@ def parse_pidstat(binary_files_path):
     for experiment_path in experiment_paths:
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
 
-    parsed_instances = [parse_pidstat_instance(path) for path in instance_paths]
+    parsed_instances = [parse_pidstat_instance(path) for path in instance_paths[:1]]
     df = pd.concat(parsed_instances, sort=False)
     df = df.sort_values(["Time", "id", "node"]).reset_index()
 
