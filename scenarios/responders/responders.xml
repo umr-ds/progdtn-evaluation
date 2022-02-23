@@ -6,7 +6,7 @@
     </network>
   </networks>
   <devices>
-    <device id="2" name="n2" type="coordinator" class="" image="">
+    <device id="2" name="coordinator" type="coordinator" class="" image="">
       <position x="1359" y="735" lat="47.57471257734564" lon="-122.12011389528881" alt="2.0"/>
       <services>
         <service name="bwm-ng"/>
