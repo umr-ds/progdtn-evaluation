@@ -7,6 +7,7 @@ import framework
 excluded_files = [
     # DTN7
     "store_n",
+    "store_coordinator",
 ]
 
 

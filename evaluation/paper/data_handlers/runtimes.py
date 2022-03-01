@@ -11,7 +11,7 @@ from data_handlers.preprocessors import node_types
 
 
 def log_entry_time(log_entry):
-    return datetime.strptime(log_entry["time"][:-4], "%Y-%m-%dT%H:%M:%S.%f")
+    return datetime.strptime(log_entry["time"][:26], "%Y-%m-%dT%H:%M:%S.%f")
 
 
 def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
@@ -32,6 +32,8 @@ def parse_node(
     node_path: str, routing_algorithm: str, sim_instance_id: str, payload_size: int, bundles_per_node: int
 ) -> Dict[str, List[Dict[str, Union[str, int, datetime]]]]:
     
+    print(f"Parsing node path {node_path}")
+    
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
     interesting_event = False
@@ -42,6 +44,8 @@ def parse_node(
     bundle_for_civilian = "dtn://civilians/"
     routing_start_time = 0
     routing_end_time = 0
+    
+    routing_runtimes = {}
 
     with open(node_path, "r") as f:
         for line in f.readlines():
@@ -53,12 +57,15 @@ def parse_node(
                 if entry["msg"] == "Starting routing decision": # The routing decision started
                     interesting_event = True
                     routing_start_time = log_entry_time(entry)
+                    routing_runtimes[entry['bundle']] = routing_start_time
                     event = "routing_start"
                     
                 if entry["msg"] == "Routing decision finished": # The routing decision finished
                     interesting_event = True
                     routing_end_time = log_entry_time(entry)
-                    routing_time = routing_end_time - routing_start_time
+                    tmp_routing_start = routing_runtimes[entry['bundle']]
+                    routing_time = routing_end_time - tmp_routing_start
+                    del routing_runtimes[entry['bundle']]
                     event = "routing_end"
                 
                 if entry["msg"] == "REST client sent bundle":  # A bundle is created
@@ -87,7 +94,7 @@ def parse_node(
                     interesting_event = True
                     event = "start"
                     
-                elif entry["msg"] == "CONTEXT: Is context bundle": # Meta data bundle for context algorithms
+                elif entry["msg"] == "CADR: Is context bundle": # Meta data bundle for context algorithms
                     meta_bundle_id = entry["bundle"]
                     meta_bundle_size = entry["Metadata Size"]
                     metadata_bundles[meta_bundle_id] = meta_bundle_size
@@ -164,9 +171,8 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
     instance_paths = []
     for experiment_path in experiment_paths:
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
-        break
 
-    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths[:1]]
+    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths if "633" in path]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
     for instance in parsed_instances:
         for node in instance:
