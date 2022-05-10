@@ -11,7 +11,10 @@ from data_handlers.preprocessors import node_types
 
 
 def log_entry_time(log_entry):
-    return datetime.strptime(log_entry["time"][:26], "%Y-%m-%dT%H:%M:%S.%f")
+    time_string = log_entry["time"][:26]
+    if time_string[-1] == "Z":
+        time_string = time_string[:-1]
+    return datetime.strptime(time_string, "%Y-%m-%dT%H:%M:%S.%f")
 
 
 def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
@@ -29,10 +32,8 @@ def parse_instance_parameters(path: str) -> Dict[str, Union[str, int]]:
 
 
 def parse_node(
-    node_path: str, routing_algorithm: str, sim_instance_id: str, payload_size: int, bundles_per_node: int
+    node_path: str, routing_algorithm: str, sim_instance_id: str, payload_size: int, bundles_per_node: int, logfile
 ) -> Dict[str, List[Dict[str, Union[str, int, datetime]]]]:
-    
-    print(f"Parsing node path {node_path}")
     
     bundles = {}
     node_id = node_path.split("/")[-1].split(".")[0]
@@ -61,12 +62,15 @@ def parse_node(
                     event = "routing_start"
                     
                 if entry["msg"] == "Routing decision finished": # The routing decision finished
-                    interesting_event = True
-                    routing_end_time = log_entry_time(entry)
-                    tmp_routing_start = routing_runtimes[entry['bundle']]
-                    routing_time = routing_end_time - tmp_routing_start
-                    del routing_runtimes[entry['bundle']]
-                    event = "routing_end"
+                    try:
+                        interesting_event = True
+                        routing_end_time = log_entry_time(entry)
+                        tmp_routing_start = routing_runtimes[entry['bundle']]
+                        routing_time = routing_end_time - tmp_routing_start
+                        del routing_runtimes[entry['bundle']]
+                        event = "routing_end"
+                    except KeyError:
+                        continue
                 
                 if entry["msg"] == "REST client sent bundle":  # A bundle is created
                     bundle_size = entry["size"]
@@ -81,18 +85,30 @@ def parse_node(
                     interesting_event = True
                     event = "reception"
                     
-                    if bundle_for_civilian == entry["dst"]:
-                        if entry['bundle'] not in already_received:
-                            already_received.append(entry['bundle'])
-                            event = "delivery"
+                    #if bundle_for_civilian == entry["dst"]:
+                        #if entry['bundle'] not in already_received:
+                            #already_received.append(entry['bundle'])
+                            #event = "delivery"
 
                 elif entry["msg"] == "Received bundle for local delivery":  # Bundle reached destination
                     interesting_event = True
                     event = "delivery"
 
                 elif entry["msg"] == "Selected routing algorithm":
-                    interesting_event = True
                     event = "start"
+                    events = [{
+                        "routing": routing_algorithm,
+                        "sim_instance_id": sim_instance_id,
+                        "payload_size": payload_size,
+                        "bundles_per_node": bundles_per_node,
+                        "timestamp": log_entry_time(entry),
+                        "event": event,
+                        "node": node_id,
+                        "bundle": "",
+                        "bundle_size": bundle_size,
+                        "routing_time": routing_time,
+                    }]
+                    bundles[""] = events
                     
                 elif entry["msg"] == "CADR: Is context bundle": # Meta data bundle for context algorithms
                     meta_bundle_id = entry["bundle"]
@@ -122,10 +138,25 @@ def parse_node(
                     )
                     bundles[entry["bundle"]] = events
 
-                    interesting_event = False
-                    event = ""    
-            except:
-                pass
+                interesting_event = False
+                event = ""
+                
+            except json.JSONDecodeError:
+                #print(f"JSONError: {line}", file=logfile, flush=True)
+                interesting_event = False
+                event = ""
+            except KeyError as err:
+                print(f"Key Error: {err}, node: {node_id}, line: {line}", file=logfile, flush=True)
+                interesting_event = False
+                event = ""
+            except ValueError as err:
+                print(f"Value Error: {err}, line: {line}", file=logfile, flush=True)
+                interesting_event = False
+                event = ""
+            except BaseException as err:
+                print(f"Unexpected {err}, {type(err)}", file=logfile, flush=True)
+                interesting_event = False
+                event = ""
             
     for bundle_id in bundles:
         bundle_list = bundles[bundle_id]
@@ -145,9 +176,9 @@ def parse_node(
 
 
 def parse_bundle_events_instance(
-    instance_path: str,
+    instance_path: str, logfile,
 ) -> List[Dict[str, List[Dict[str, Union[str, datetime]]]]]:
-    print(f"Parsing {instance_path}")
+    print(f"Parsing {instance_path}", file=logfile, flush=True)
     node_paths = glob.glob(os.path.join(instance_path, "*.conf_dtnd_run.log"))
     param_path = os.path.join(instance_path, "parameters.py")
     params = parse_instance_parameters(path=param_path)
@@ -159,6 +190,7 @@ def parse_bundle_events_instance(
             payload_size=params["payload_size"],
             bundles_per_node=params["bundles_per_node"],
             sim_instance_id=params["simInstanceId"],
+            logfile=logfile,
         )
         for p in node_paths
     ]
@@ -166,13 +198,15 @@ def parse_bundle_events_instance(
 
 
 def parse_bundle_events(experiment_path: str) -> DataFrame:
+    logfile = open("/storage/research_data/sommer2020cadr/parsing.log", "a")
+    
     experiment_paths = glob.glob(os.path.join(experiment_path, "*"))
 
     instance_paths = []
     for experiment_path in experiment_paths:
         instance_paths.extend(glob.glob(os.path.join(experiment_path, "*")))
 
-    parsed_instances = [parse_bundle_events_instance(path) for path in instance_paths if "633" in path]
+    parsed_instances = [parse_bundle_events_instance(path, logfile) for path in instance_paths]
     bundle_events: List[Dict[str, Union[str, datetime]]] = []
     for instance in parsed_instances:
         for node in instance:
@@ -181,21 +215,21 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
     event_frame = DataFrame(bundle_events)
     event_frame = event_frame.sort_values(by="timestamp")
     
-    print("Setting node types")
+    print("Setting node types", file=logfile, flush=True)
     types = node_types(scenario_path="/storage/research_data/sommer2020cadr/maci-docker-compose/maci_data/scenarios/responders/responders.xml")
     type_frame = DataFrame(types.items(), columns=["node", "node_type"])
     
     merged_df = event_frame.merge(type_frame, how="left", on="node")
     
-    print("Filling NaN bundle sizes")
+    print("Filling NaN bundle sizes", file=logfile, flush=True)
     event_frame = merged_df
     event_frame["bundle_size"] = event_frame.groupby("bundle")["bundle_size"].transform(lambda x: x.fillna(x.mean()))
     
-    print("Setting meta data sizes")
+    print("Setting meta data sizes", file=logfile, flush=True)
     # TODO: parse, not guess.
     event_frame['bundle_size'] = event_frame['bundle_size'].mask(event_frame['bundle_size'].isna(), np.random.uniform(100, 1000, size=len(event_frame)))
     
-    print("Computing time delta")
+    print("Computing time delta", file=logfile, flush=True)
     time_df = DataFrame()
     for _, instance in event_frame.groupby("sim_instance_id"):
         instance_start = instance["timestamp"].iloc[0]
@@ -204,12 +238,14 @@ def parse_bundle_events(experiment_path: str) -> DataFrame:
 
     event_frame = time_df
     
-    print("Parsing done")
+    print("Parsing done", file=logfile, flush=True)
+    
+    logfile.close()
     return event_frame
 
 
 def compute_bundle_runtimes(
-    event_frame: DataFrame,
+    event_frame: DataFrame, logfile,
 ) -> Tuple[List[str], List[str], List[str], DataFrame]:
     bundles: List[str] = event_frame.bundle.unique().tolist()
     bundle_runtimes: List[Dict[str, Union[str, int]]] = []
@@ -220,7 +256,7 @@ def compute_bundle_runtimes(
         bundle_events = event_frame[event_frame.bundle == bundle]
         creation = bundle_events[bundle_events.event == "creation"]
         if creation.empty:
-            print(f"Bundle {bundle} was not created?")
+            print(f"Bundle {bundle} was not created?", file=logfile, flush=True)
             continue
 
         creation_time: Timestamp = creation["timestamp"].iloc[0]
