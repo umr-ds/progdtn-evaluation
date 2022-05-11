@@ -1,5 +1,4 @@
-# Evaluation for CADR (Context Aware DTN Routing) 
-
+# Evaluation for ProgDTN (formerly CADR)
 ## ARP Cache overflow problem in big simulations
 
 When simulating a high number of nodes, it occasionally happens, that the ARP table overflows. A workaround is, to increase the threshold for the garbage collector in the kernel. Because this a kernel thing, it has to be done on the host, and not inside of the container. A more detailed writeup written here: (https://www.cyberciti.biz/faq/centos-redhat-debian-linux-neighbor-table-overflow/).
@@ -12,11 +11,11 @@ echo "
 ## works best with <= 500 client computers
 # Force gc to clean-up quickly
 net.ipv4.neigh.default.gc_interval = 3600
- 
+
 # Set ARP cache entry timeout
 net.ipv4.neigh.default.gc_stale_time = 3600
-  
-# Setup DNS threshold for arp 
+
+# Setup DNS threshold for arp
 net.ipv4.neigh.default.gc_thresh3 = 4096
 net.ipv4.neigh.default.gc_thresh2 = 2048
 net.ipv4.neigh.default.gc_thresh1 = 1024" >> /etc/sysctl.conf
