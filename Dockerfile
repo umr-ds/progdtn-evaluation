@@ -20,9 +20,13 @@ RUN apt update && apt dist-upgrade -y && apt clean
 RUN apt update \
     && apt install -y \
     python3-pip \
+    python3-dev \
+    gcc \
+    g++ \
     python3-requests \
     python3-daemon \
     python3-toml \
+    python3-wheel \
     bwm-ng \
     sysstat \
     tcpdump \
@@ -50,6 +54,8 @@ COPY helpers/cadrhelpers/node_context.py /usr/local/sbin/node_context
 
 # install python package for dependencies
 COPY helpers /root/helpers
+
+RUN pip3 install wheel
 RUN pip3 install /root/helpers
 
 COPY . /dtn_routing
